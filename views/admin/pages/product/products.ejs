@@ -1,0 +1,99 @@
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Products</h5>
+                <!-- Search Bar -->
+                <div class="input-group mb-3 gap-2">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search products" />
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" id="searchButton">Search</button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="dropdown">
+                    <button
+                        class="btn btn-primary dropdown-toggle"
+                        type="button"
+                        id="filterDropdown"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        Filter by Category
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="filterDropdown">
+                        <a class="dropdown-item" href="#" data-category="all">All</a>
+                        <a class="dropdown-item" href="#" data-category="categoryA">Category A</a>
+                        <a class="dropdown-item" href="#" data-category="categoryB">Category B</a>
+                        <!-- Add more categories here -->
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Sales Price</th>
+                                <th>Quantity</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Product 1</td>
+                                <td>Category A</td>
+                                <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
+                                <td>$49.99</td>
+                                <td>100</td>
+                                <td><img src="/admin/images/products/s1.jpg" alt="Product 1" width="50" /></td>
+                                <td>
+                                    <a href="/admin/edit-product"
+                                        ><button class="btn btn-primary btn-sm"><i class="ti ti-pencil"></i></button
+                                    ></a>
+                                    <button class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Product 2</td>
+                                <td>Category B</td>
+                                <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
+                                <td>$59.99</td>
+                                <td>75</td>
+                                <td><img src="/admin/images/products/s4.jpg" alt="Product 2" width="50" /></td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm"><i class="ti ti-pencil"></i></button>
+                                    <button class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
+                                </td>
+                            </tr>
+                            <!-- Add more rows for additional products here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

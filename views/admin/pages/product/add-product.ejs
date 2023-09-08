@@ -1,0 +1,99 @@
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Add Product</h5>
+                <div class="table-responsive">
+                    <form>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="productName"
+                                placeholder="Enter product name"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" required>
+                                <option value="">Select category</option>
+                                <!-- Add your category options here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                rows="3"
+                                placeholder="Enter product description"
+                                required
+                            ></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="productPrice" class="form-label">Product Price</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="productPrice"
+                                        placeholder="Enter product price"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="salePrice" class="form-label">Sale Price</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="salePrice"
+                                        placeholder="Enter sale price"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        id="quantity"
+                                        placeholder="Enter quantity"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="units" class="form-label">Units</label>
+                                    <input type="text" class="form-control" id="units" placeholder="Enter units" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control-file" id="productImage" accept="image/*" required />
+                            <small class="form-text text-muted"
+                                >You can select multiple images by holding down the Ctrl key (Cmd key on Mac) while
+                                clicking.</small
+                            >
+                        </div>
+                        <div class="mb-3">
+                            <label for="productTags" class="form-label">Product Tags</label>
+                            <input type="text" class="form-control" id="productTags" placeholder="Enter product tags" />
+                            <small class="form-text text-muted">Separate tags with commas (e.g., Tag1, Tag2, Tag3).</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload Product</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Edit Orders</h5>
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="referenceNo" class="form-label">Reference No</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="referenceNo"
+                                    placeholder="Enter reference no"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="paymentMethod" class="form-label">Payment Method</label>
+                                <select class="form-select" id="paymentMethod" required>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="paypal">PayPal</option>
+                                    <option value="cash_on_delivery">Cash on Delivery</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customerName" class="form-label">Customer Name</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="customerName"
+                                    placeholder="Enter customer name"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="mobile" class="form-label">Mobile</label>
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="mobile"
+                                    placeholder="Enter mobile number"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="shippingAddress" class="form-label">Shipping Address</label>
+                                <textarea
+                                    class="form-control"
+                                    id="shippingAddress"
+                                    rows="3"
+                                    placeholder="Enter shipping address"
+                                    required
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="shippingCost" class="form-label">Shipping Cost</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="shippingCost"
+                                    placeholder="Enter shipping cost"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="deliveryDate" class="form-label">Delivery Date</label>
+                                <input type="date" class="form-control" id="deliveryDate" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="totalAmount" class="form-label">Total Amount</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="totalAmount"
+                                    placeholder="Enter total amount"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="discount" class="form-label">Discount</label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="discount"
+                                    placeholder="Enter discount amount"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" required>
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="items" class="form-label">Items</label>
+                                <textarea
+                                    class="form-control"
+                                    id="items"
+                                    rows="3"
+                                    placeholder="Enter order items"
+                                    required
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

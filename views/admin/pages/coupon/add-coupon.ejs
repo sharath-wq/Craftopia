@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Add Product</h5>
+                <div class="table-responsive">
+                    <form>
+                        <div class="mb-3">
+                            <label for="couponCode" class="form-label">Coupon Code</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="couponCode"
+                                placeholder="Enter coupon code"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="couponType" class="form-label">Coupon Type</label>
+                            <select class="form-select" id="couponType" required>
+                                <option value="" disabled selected>Select coupon type</option>
+                                <option value="Percentage Off">Percentage Off</option>
+                                <option value="Fixed Amount Off">Fixed Amount Off</option>
+                                <!-- Add more coupon types as needed -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                rows="3"
+                                placeholder="Enter coupon description"
+                            ></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="amount"
+                                placeholder="Enter coupon amount"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="usageLimit" class="form-label">Usage Limit</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="usageLimit"
+                                placeholder="Enter usage limit"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="expiryDate" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="expiryDate" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Coupon</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

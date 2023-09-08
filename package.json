@@ -1,0 +1,36 @@
+{
+  "name": "craftopia",
+  "version": "1.0.0",
+  "description": "Handicraft eCommerce Shop",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "dev": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sharath-wq/craftopia.git"
+  },
+  "keywords": [
+    "ecommerce",
+    "shop",
+    "handicraft"
+  ],
+  "author": "sharath-wq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sharath-wq/craftopia/issues"
+  },
+  "homepage": "https://github.com/sharath-wq/craftopia#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "express-ejs-layouts": "^2.5.1",
+    "mongoose": "^7.5.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1"
+  }
+}

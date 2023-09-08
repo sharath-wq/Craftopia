@@ -1,0 +1,59 @@
+<div class="row">
+    <!-- First Column (25% width) -->
+
+    <!-- Second Column (75% width) -->
+    <div class="col-lg-9 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Settings</h5>
+                <h2>Personal Information</h2>
+                <form>
+                    <form>
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" class="form-control" id="dob" />
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">Mobile Number</label>
+                            <input type="tel" class="form-control" id="mobile" placeholder="Enter Mobile Number" />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter Email" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter Password" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Information</button>
+                    </form>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3">
+        <div class="card">
+            <div class="card-img-top position-relative">
+                <img src="/admin/images/profile/user-1.jpg" alt="Admin" class="img-fluid" id="profile-image" />
+                <div class="position-absolute bottom-0 start-50 translate-middle-x">
+                    <label for="profile-image-input" class="btn btn-primary btn-icon btn-sm change-pic-btn">
+                        <i class="fas fa-camera"></i> Change Picture
+                    </label>
+                    <input type="file" id="profile-image-input" style="display: none" accept="image/*" />
+                </div>
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title text-primary"><strong>John Doe</strong></h5>
+            </div>
+        </div>
+    </div>
+</div>

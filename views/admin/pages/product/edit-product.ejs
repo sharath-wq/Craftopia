@@ -1,0 +1,84 @@
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Edit Product</h5>
+                <form>
+                    <div class="form-group">
+                        <label for="productName">Product Name:</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="productName"
+                            placeholder="Enter product name"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select class="form-control" id="category" required>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="furniture">Furniture</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            rows="3"
+                            placeholder="Enter product description"
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Product Price:</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="productPrice"
+                            placeholder="Enter product price"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="salesPrice">Sales Price:</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="salesPrice"
+                            placeholder="Enter sales price"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" placeholder="Enter quantity" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="units">Units:</label>
+                        <input type="text" class="form-control" id="units" placeholder="Enter units" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="images">Images:</label>
+                        <input
+                            type="file"
+                            class="form-control-file"
+                            id="images"
+                            accept="image/*"
+                            multiple
+                            onchange="previewImages()"
+                        />
+                        <div id="image-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags">Tags:</label>
+                        <input type="text" class="form-control" id="tags" placeholder="Enter product tags" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

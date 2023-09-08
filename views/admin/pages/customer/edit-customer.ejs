@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col-lg-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Edit Customers</h5>
+                <div class="table-responsive">
+                    <form>
+                        <div class="mb-3">
+                            <label for="customerName" class="form-label">Customer Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="customerName"
+                                placeholder="Enter customer name"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                placeholder="Enter email address"
+                                required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea
+                                class="form-control"
+                                id="address"
+                                rows="3"
+                                placeholder="Enter customer address"
+                                required
+                            ></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mobile" class="form-label">Mobile</label>
+                            <input type="tel" class="form-control" id="mobile" placeholder="Enter mobile number" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <div class="form-check ml-3">
+                                <input class="form-check-input" type="radio" name="status" id="active" checked />
+                                <label class="form-check-label" for="active">Active</label>
+                            </div>
+                            <div class="form-check ml-3">
+                                <input class="form-check-input" type="radio" name="status" id="inactive" />
+                                <label class="form-check-label" for="inactive">Inactive</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Customer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
