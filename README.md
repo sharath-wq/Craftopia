@@ -2,18 +2,17 @@
 Handicrafts E-Commerce Project Readme
 =====================================
 
-Welcome to the Handicrafts E-Commerce Project! This Node.js-based website is designed for selling beautiful handicraft products. Whether you're a developer, designer, or end-user, this README will guide you through setting up and understanding this project.
+Welcome to the Craftopia Project! This Node.js-based website is designed for selling beautiful handicraft products. Whether you're a developer, designer, or end-user, this README will guide you through setting up and understanding this project.
 
 Table of Contents
 -----------------
 
-1.  [Project Overview](https://chat.openai.com/#project-overview)
-2.  [Installation](https://chat.openai.com/#installation)
-3.  [Usage](https://chat.openai.com/#usage)
-4.  [Features](https://chat.openai.com/#features)
-5.  [Technologies](https://chat.openai.com/#technologies)
-6.  [Contributing](https://chat.openai.com/#contributing)
-7.  [License](https://chat.openai.com/#license)
+1.  [Project Overview](#project-overview)
+2.  [Installation](#installation)
+3.  [Usage](#usage)
+4.  [Features](#features)
+5.  [Technologies](#technologies)
+6.  [Contributing](#contributing)
 
 1\. Project Overview
 --------------------
@@ -29,13 +28,13 @@ To run this project locally, follow these steps:
 
     bash
 
--   `git clone https://github.com/yourusername/handicrafts-ecommerce.git`
+-   `git clone https://github.com/yourusername/Craftopia.git`
 
     -   Navigate to the project directory:
 
     bash
 
-    -   `cd handicrafts-ecommerce`
+    -   `cd Craftopia`
 
     -   Install project dependencies using npm:
 
@@ -51,7 +50,7 @@ To run this project locally, follow these steps:
 
 1.  `npm start`
 
-2.  Access the website in your browser at `http://localhost:3000`.
+2.  Access the website in your browser at `http://localhost:4000`.
 
 3\. Usage
 ---------
@@ -105,12 +104,5 @@ Contributions to this project are welcome! To contribute, please follow these st
 3.  Make your changes and commit them with clear, concise commit messages.
 4.  Push your branch to your forked repository.
 5.  Create a pull request with a detailed description of your changes.
-
-7\. License
------------
-
-This project is licensed under the [MIT License](https://chat.openai.com/LICENSE). Feel free to use, modify, and distribute the code as you see fit.
-
-Thank you for using the Handicrafts E-Commerce Project! If you have any questions or encounter issues, please don't hesitate to reach out to the project maintainers.
 
 Happy crafting and shopping! 🛍️🎨
