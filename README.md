@@ -17,7 +17,7 @@ Table of Contents
 1\. Project Overview
 --------------------
 
-The Handicrafts E-Commerce Project is an online platform for both artisans and customers to interact and transact. Artisans can list their handmade products, and customers can browse, purchase, and review these items. The project aims to promote and support the craftsmanship of artisans while providing customers with unique and authentic products.
+The Handicrafts E-Commerce Project is an online platform for customers to buy handicraft goods. Admin can list their products, and customers can browse, purchase, and review these items. The project aims to promote and support the craftsmanship of artisans while providing customers with unique and authentic products.
 
 2\. Installation
 ----------------
@@ -57,9 +57,9 @@ To run this project locally, follow these steps:
 
 Once you have the project running, you can use it as follows:
 
--   As an artisan, you can:
+-   As an admin, you can:
 
-    -   Create an account and list your handicraft products for sale.
+    -   Create an account and list your products for sale.
     -   Manage your product listings, including updating prices, descriptions, and availability.
     -   View orders placed by customers.
 -   As a customer, you can:
@@ -75,10 +75,10 @@ Once you have the project running, you can use it as follows:
 -   User authentication and authorization.
 -   Product catalog with search and filtering options.
 -   Shopping cart functionality.
--   Secure payment processing (integrations like Stripe, PayPal, etc.).
+-   Secure payment processing (integrations like Paytem, PayPal, etc.).
 -   Order history and tracking.
 -   Product reviews and ratings.
--   Artisan profiles and product management.
+-   Product management.
 
 5\. Technologies
 ----------------
@@ -88,11 +88,9 @@ The project is built using the following technologies:
 -   Node.js: Server-side JavaScript runtime environment.
 -   Express.js: Web application framework for Node.js.
 -   MongoDB: NoSQL database for storing product and user data.
--   React: Front-end library for building user interfaces.
--   Redux: State management library for React.
 -   Bootstrap: Front-end framework for responsive design.
 -   JWT: JSON Web Tokens for user authentication.
--   Stripe: Payment processing integration (you can add others as needed).
+-   Paytem: Payment processing integration.
 
 6\. Contributing
 ----------------
