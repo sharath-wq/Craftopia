@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express();
 const { body, validationResult } = require("express-validator");
+const passport = require("passport");
 
 // Controllers
 const adminController = require("../../controllers/admin/adminController");
@@ -12,61 +13,59 @@ const couponController = require("../../controllers/admin/couponController");
 const custoemrController = require("../../controllers/admin/customerController");
 const orderController = require("../../controllers/admin/orderController");
 
+// Middlewares
+const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
+
 router.use((req, res, next) => {
     req.app.set("layout", "admin/layout");
     next();
 });
 
 // Admin Routes
-router.get("/", adminController.homepage);
-router.get("/dashboard", adminController.dashboardpage);
-router.get("/settings", adminController.settingspage);
-router.get("/sales-report", adminController.salesReportpage);
+router.get("/", ensureLoggedIn({ redirectTo: "/admin/login" }), adminController.homepage);
+router.get("/dashboard", ensureLoggedIn({ redirectTo: "/admin/login" }), adminController.dashboardpage);
+router.get("/settings", ensureLoggedIn({ redirectTo: "/admin/login" }), adminController.settingspage);
+router.get("/sales-report", ensureLoggedIn({ redirectTo: "/admin/login" }), adminController.salesReportpage);
 
 // Auth Rotues
-router.get("/login", authController.loginpage);
-// router.get("/register", authController.registerpage);
+router.get("/login", ensureLoggedOut({ redirectTo: "/admin/" }), authController.loginpage);
+router.get("/logout", ensureLoggedIn({ redirectTo: "/admin/login" }), authController.logoutAdmin);
 
-// router.post(
-//     "/register",
-//     [
-//         body("email").trim().isEmail().withMessage("Email must be valid email").normalizeEmail().toLowerCase(),
-//         body("mobile").trim().isMobilePhone().withMessage("Enter a valid mobile number"),
-//         body("password").trim().isLength(2).withMessage("Password length short, min 2 characters required"),
-//         body("confirm-password").custom((value, { req }) => {
-//             if (value !== req.body.password) {
-//                 throw new Error("Password do not match");
-//             }
-//             return true;
-//         }),
-//     ],
-//     authController.registerAdmin
-// );
+router.post(
+    "/login",
+    passport.authenticate("local", {
+        successReturnToOrRedirect: "/admin/dashboard",
+        failureRedirect: "/admin/login",
+        failureFlash: true,
+    })
+);
 
 // Product Routes
-router.get("/products", productController.productspage);
-router.get("/add-product", productController.addProductpage);
-router.get("/edit-product", productController.editProductpage);
+router.get("/products", ensureLoggedIn({ redirectTo: "/admin/login" }), productController.productspage);
+router.get("/add-product", ensureLoggedIn({ redirectTo: "/admin/login" }), productController.addProductpage);
+router.get("/edit-product", ensureLoggedIn({ redirectTo: "/admin/login" }), productController.editProductpage);
 
 // Category Routes
-router.get("/categories", categoryController.categoriespage);
-router.get("/add-category", categoryController.addCategorypage);
+router.get("/categories", ensureLoggedIn({ redirectTo: "/admin/login" }), categoryController.categoriespage);
+router.get("/add-category", ensureLoggedIn({ redirectTo: "/admin/login" }), categoryController.addCategorypage);
 
 // Banner Routes
-router.get("/banners", bannerController.bannerspage);
-router.get("/add-banner", bannerController.addBannerpage);
+router.get("/banners", ensureLoggedIn({ redirectTo: "/admin/login" }), bannerController.bannerspage);
+router.get("/add-banner", ensureLoggedIn({ redirectTo: "/admin/login" }), bannerController.addBannerpage);
 
 // Coupon Routes
-router.get("/coupons", couponController.couponspage);
-router.get("/add-coupon", couponController.addCoupon);
+router.get("/coupons", ensureLoggedIn({ redirectTo: "/admin/login" }), couponController.couponspage);
+router.get("/add-coupon", ensureLoggedIn({ redirectTo: "/admin/login" }), couponController.addCoupon);
 
 // Customer Routes
-router.get("/customers", custoemrController.customerpage);
-router.get("/edit-customer/:id", custoemrController.editCustomer);
+router.get("/customers", ensureLoggedIn({ redirectTo: "/admin/login" }), custoemrController.customerpage);
+
+// router.put("/customer/block/:id", custoemrController.blockCustomer);
+// router.put("/customer/unblock/:id", custoemrController.unblockCustomer);
 
 // Order Routes
-router.get("/orders", orderController.ordersPage);
-router.get("/edit-order", orderController.editOrder);
+router.get("/orders", ensureLoggedIn({ redirectTo: "/admin/login" }), orderController.ordersPage);
+router.get("/edit-order", ensureLoggedIn({ redirectTo: "/admin/login" }), orderController.editOrder);
 
 router.get("*", (req, res) => {
     res.render("admin/pages/404", { title: "404" });

@@ -13,3 +13,21 @@ exports.loginpage = asyncHandler(async (req, res) => {
         throw new Error(error);
     }
 });
+
+/**
+ * Logout Admin
+ * Method GET
+ */
+exports.logoutAdmin = asyncHandler(async (req, res, next) => {
+    try {
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+            req.flash("success", "Logged Out!");
+            res.redirect("/admin/login");
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+});

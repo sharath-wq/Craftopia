@@ -14,18 +14,8 @@
                             <li>
                                 <a href="/">home</a>
                                 <!-- <ul class="single-dropdown">
-                                            <li><a href="index.html">Fashion</a></li>
-                                            <li><a href="index-fashion-2.html">Fashion style 2</a></li>
-                                            <li><a href="index-fruits.html">fruits</a></li>
-                                            <li><a href="index-book.html">book</a></li>
-                                            <li><a href="index-electronics.html">electronics</a></li>
-                                            <li><a href="index-electronics-2.html">electronics style 2</a></li>
-                                            <li><a href="index-food.html">food & drink</a></li>
-                                            <li><a href="index-furniture.html">furniture</a></li>
-                                            <li><a href="index-handicraft.html">handicraft</a></li>
-                                            <li><a target="_blank" href="index-smart-watch.html">smart watch</a></li>
-                                            <li><a href="index-sports.html">sports</a></li>
-                                        </ul> -->
+                                    <li><a href="index.html">Fashion</a></li>
+                                </ul> -->
                             </li>
                             <li>
                                 <a href="/shop">categories</a>
@@ -75,28 +65,25 @@
                                     </div>
                                 </div> -->
                             </li>
-                            <!-- <li>
-                                <a href="/blog">blog</a>
-                                <ul class="single-dropdown">
-                                    <li><a href="blog.html">blog 3 colunm</a></li>
-                                    <li><a href="blog-2-col.html">blog 2 colunm</a></li>
-                                    <li><a href="blog-sidebar.html">blog sidebar</a></li>
-                                    <li><a href="blog-details.html">blog details</a></li>
-                                    <li><a href="blog-details-sidebar.html">blog details 2</a></li>
-                                </ul>
-                            </li> -->
                             <li><a href="/contact">contact</a></li>
                             <li><a href="/about">about</a></li>
                             <li>
-                                <a href="#">account</a>
+                                <% if (user) { %>
+                                <a href="/profile"><%= user?.firstName %></a>
                                 <ul class="single-dropdown">
-                                    <li><a href="/login">Login</a></li>
-                                    <li><a href="/register">Register</a></li>
                                     <li><a href="/wishlist">Wishlist</a></li>
                                     <li><a href="/profile">Profile</a></li>
                                     <li><a href="/orders">Orders</a></li>
                                     <li><a href="/address">Address</a></li>
+                                    <li><a href="/logout">Logout</a></li>
                                 </ul>
+                                <% } else { %>
+                                <a href="/login">Account</a>
+                                <ul class="single-dropdown">
+                                    <li><a href="/login">Login</a></li>
+                                    <li><a href="/register">Register</a></li>
+                                </ul>
+                                <% } %>
                             </li>
                         </ul>
                     </nav>
@@ -115,10 +102,11 @@
                         </div>
                     </div>
 
+                    <% if (user) { %>
                     <div class="header-cart-4">
                         <a class="icon-cart" href="/cart">
                             <i class="pe-7s-shopbag"></i>
-                            <span class="handicraft-count">02</span>
+                            <span class="handicraft-count">03</span>
                         </a>
                         <ul class="cart-dropdown">
                             <li class="single-product-cart">
@@ -174,6 +162,7 @@
                             </li>
                         </ul>
                     </div>
+                    <% } %>
                 </div>
             </div>
             <div class="row">

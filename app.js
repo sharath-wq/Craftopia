@@ -7,7 +7,7 @@ const session = require("express-session");
 const connectFlash = require("connect-flash");
 const connectMongo = require("connect-mongo");
 const passport = require("passport");
-const { ensureLoggedIn } = require("connect-ensure-login");
+const { default: mongoose } = require("mongoose");
 
 require("dotenv").config();
 
@@ -21,6 +21,8 @@ const PORT = process.env.PORT || 4000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const MongoStore = connectMongo(session);
 
 // Static Files
 app.use(express.static("public"));
@@ -36,12 +38,18 @@ app.use(
             // secure: true
             httpOnly: true,
         },
+        store: new MongoStore({ mongooseConnection: mongoose.connection }),
     })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 require("./utils/passport.auth");
+
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
 
 app.use(connectFlash());
 
@@ -52,7 +60,6 @@ app.set("view engine", "ejs");
 // Routes
 const shopRoute = require("./routes/shop/shopRouter");
 const adminRoute = require("./routes/admin/adminRoutes");
-const { default: mongoose } = require("mongoose");
 
 app.use("/", shopRoute);
 app.use("/admin", adminRoute);

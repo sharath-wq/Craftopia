@@ -25,7 +25,8 @@ exports.logoutUser = asyncHandler(async (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            res.redirect("/");
+            req.flash("success", "Logged Out!");
+            res.redirect("/login");
         });
     } catch (error) {
         throw new Error(error);

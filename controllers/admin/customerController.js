@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const User = require("../../models/userModel");
+const validateMongoDbId = require("../../utils/validateMongodbId");
 
 /**
  * Customer Page Route
@@ -6,19 +8,9 @@ const asyncHandler = require("express-async-handler");
  */
 exports.customerpage = asyncHandler(async (req, res) => {
     try {
-        res.render("admin/pages/customer/customers", { title: "Customer" });
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
- * Edit Customer Page Route
- * Method GET
- */
-exports.editCustomer = asyncHandler(async (req, res) => {
-    try {
-        res.render("admin/pages/customer/edit-customer", { title: "Edit Customer" });
+        const messages = req.flash();
+        const users = await User.find();
+        res.render("admin/pages/customer/customers", { title: "Customer", users, messages });
     } catch (error) {
         throw new Error(error);
     }
