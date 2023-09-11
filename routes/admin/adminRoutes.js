@@ -59,7 +59,7 @@ router.get("/orders", adminAuthMiddleware, isAdmin, orderController.ordersPage);
 router.get("/edit-order", adminAuthMiddleware, isAdmin, orderController.editOrder);
 
 router.get("*", (req, res) => {
-    res.render("admin/pages/404", { title: "404 Page" });
+    res.render("admin/pages/404", { title: "404" });
 });
 
 module.exports = router;
