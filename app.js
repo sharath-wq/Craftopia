@@ -39,6 +39,10 @@ app.use(
     })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+require("./utils/passport.auth");
+
 app.use(connectFlash());
 
 // Template View Engine

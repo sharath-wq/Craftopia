@@ -28,11 +28,38 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            default: "pending",
+            default: "user",
         },
         isBlocked: {
             type: Boolean,
             default: false,
+        },
+        cart: {
+            type: Array,
+            default: [],
+        },
+        role: {
+            type: String,
+            default: "user",
+        },
+        address: {
+            type: Array,
+            default: [],
+        },
+        wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+        refreshToken: {
+            type: String,
+        },
+        passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordRestExpires: Date,
+        createdAt: {
+            type: Date,
+            default: Date.now(),
+        },
+        updatedAt: {
+            type: Date,
+            default: Date.now(),
         },
     },
     { timestamps: true }
@@ -51,4 +78,4 @@ userSchema.methods.isPasswordMatched = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model("Admin", userSchema);
+module.exports = mongoose.model("User", userSchema);

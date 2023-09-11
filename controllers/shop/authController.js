@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const User = require("../../models/userModel");
+const { validationResult } = require("express-validator");
 
 /**
  * Login Page Route
@@ -6,9 +8,63 @@ const asyncHandler = require("express-async-handler");
  */
 exports.loginpage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/auth/login", { title: "Login", page: "login" });
+        const messages = req.flash();
+        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages });
     } catch (error) {
         throw new Error(error);
+    }
+});
+
+/**
+ * Logout Route
+ * Method GET
+ */
+exports.logoutUser = asyncHandler(async (req, res, next) => {
+    try {
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.redirect("/");
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Register a User
+ * Method POST
+ */
+exports.registerUser = asyncHandler(async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            errors.array().forEach((error) => {
+                req.flash("danger", error.msg);
+            });
+            const messages = req.flash();
+            res.render("shop/pages/auth/register", { title: "Register", page: "Login", messages, data: req.body });
+        } else {
+            const email = req.body.email;
+            const existingUser = await User.findOne({ email: email });
+
+            if (!existingUser) {
+                const newUser = await User.create(req.body);
+                req.flash("success", "Admin Registerd Successfully Please Login");
+                res.redirect("/login");
+            } else {
+                req.flash("warning", "Email Alardy Registerd Please login");
+                res.redirect("/login");
+            }
+        }
+    } catch (error) {
+        if (error.keyPattern.mobile === 1) {
+            req.flash("danger", "Mobile number already registered");
+            res.redirect("/register");
+        } else {
+            throw new Error(error);
+        }
     }
 });
 
@@ -18,7 +74,8 @@ exports.loginpage = asyncHandler(async (req, res) => {
  */
 exports.registerpage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/auth/register", { title: "Register", page: "register" });
+        const messages = req.flash();
+        res.render("shop/pages/auth/register", { title: "Register", page: "register", data: "", messages });
     } catch (error) {
         throw new Error(error);
     }

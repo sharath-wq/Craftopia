@@ -6,6 +6,8 @@ const userControler = require("../../controllers/shop/userController");
 const orderController = require("../../controllers/shop/orderController");
 const cartController = require("../../controllers/shop/cartController");
 const router = express.Router();
+const passport = require("passport");
+const { body, validationResult } = require("express-validator");
 
 router.use((req, res, next) => {
     req.app.set("layout", "shop/layout");
@@ -22,10 +24,31 @@ router.get("/product/:id", productController.singleProductpage);
 
 // Auth Routes
 router.get("/login", authController.loginpage);
+router.get("/logout", authController.logoutUser);
 router.get("/register", authController.registerpage);
 router.get("/forgot-password", authController.forgotPasswordpage);
 router.get("/forgot-password-success", authController.forgotPasswordSuccesspage);
 
+router.post(
+    "/login",
+    passport.authenticate("local", { successRedirect: "/", failureRedirect: "/login", failureFlash: true })
+);
+
+router.post(
+    "/register",
+    [
+        body("email").trim().isEmail().withMessage("Email must be valid email").normalizeEmail().toLowerCase(),
+        body("mobile").trim().isMobilePhone().withMessage("Enter a valid mobile number"),
+        body("password").trim().isLength(2).withMessage("Password length short, min 2 characters required"),
+        body("confirm-password").custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("Password do not match");
+            }
+            return true;
+        }),
+    ],
+    authController.registerUser
+);
 // User Routes
 router.get("/wishlist", userControler.wishlistpage);
 router.get("/profile", userControler.profilepage);
