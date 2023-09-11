@@ -9,6 +9,7 @@ const bannerController = require("../../controllers/admin/bannerController");
 const couponController = require("../../controllers/admin/couponController");
 const custoemrController = require("../../controllers/admin/customerController");
 const orderController = require("../../controllers/admin/orderController");
+const { route } = require("../shop/shopRouter");
 
 router.use((req, res, next) => {
     req.app.set("layout", "admin/layout");
@@ -23,7 +24,7 @@ router.get("/sales-report", adminController.salesReportpage);
 
 // Auth Rotues
 router.get("/login", authController.loginpage);
-module.exports = router;
+router.get("/register", authController.registerpage);
 
 // Product Routes
 router.get("/products", productController.productspage);
@@ -51,5 +52,7 @@ router.get("/orders", orderController.ordersPage);
 router.get("/edit-order", orderController.editOrder);
 
 router.get("*", (req, res) => {
-    res.render("admin/pages/404", { title: "404 Page" });
+    res.render("admin/pages/404", { title: "404" });
 });
+
+module.exports = router;

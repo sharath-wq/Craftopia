@@ -25,13 +25,14 @@
             data-sidebar-position="fixed"
             data-header-position="fixed"
         >
-            <% if (title !== "Login") { %> <%- include('./partials/sidebar.ejs') %>
+            <% if (title === "Login" || title === "Register" || title === "404") { %> <%- body %> <% } else { %> <%-
+            include('./partials/sidebar.ejs') %>
             <!--  Main wrapper -->
             <div class="body-wrapper">
                 <%- include('./partials/header.ejs') %>
                 <div class="container-fluid"><%- body %></div>
             </div>
-            <% } else { %> <%- body %> <% } %>
+            <% } %>
 
             <script
                 src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

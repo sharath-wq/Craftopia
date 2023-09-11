@@ -6,7 +6,23 @@ const asyncHandler = require("express-async-handler");
  */
 exports.loginpage = asyncHandler(async (req, res) => {
     try {
-        res.render("admin/pages/auth/login", { title: "Login" });
+        const messages = req.flash();
+        console.log(messages);
+        res.render("admin/pages/auth/login", { title: "Login", messages });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Register Page Route
+ * Method GET
+ */
+exports.registerpage = asyncHandler(async (req, res) => {
+    try {
+        req.flash("success", "Admin Registered Successflly You can login now");
+
+        res.redirect("/admin/login");
     } catch (error) {
         throw new Error(error);
     }
