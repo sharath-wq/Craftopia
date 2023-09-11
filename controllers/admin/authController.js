@@ -56,9 +56,8 @@ exports.logoutAdmin = asyncHandler(async (req, res) => {
                 httpOnly: true,
                 secure: true,
             });
-            req.session.destroy((err) => {
-                res.redirect("/admin/login");
-            });
+            req.session.admin = null;
+            res.redirect("/admin/login");
         } else {
             res.redirect("/admin/login");
         }

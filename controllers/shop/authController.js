@@ -58,9 +58,8 @@ exports.logoutUser = asyncHandler(async (req, res) => {
                 httpOnly: true,
                 secure: true,
             });
-            req.session.destroy((err) => {
-                res.redirect("/login");
-            });
+            req.session.user = null;
+            res.redirect("/login");
         } else {
             res.redirect("/login");
         }
