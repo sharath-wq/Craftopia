@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express();
+const { body, validationResult } = require("express-validator");
 
+// Controllers
 const adminController = require("../../controllers/admin/adminController");
 const authController = require("../../controllers/admin/authController");
 const productController = require("../../controllers/admin/productController");
@@ -9,7 +11,6 @@ const bannerController = require("../../controllers/admin/bannerController");
 const couponController = require("../../controllers/admin/couponController");
 const custoemrController = require("../../controllers/admin/customerController");
 const orderController = require("../../controllers/admin/orderController");
-const { route } = require("../shop/shopRouter");
 
 router.use((req, res, next) => {
     req.app.set("layout", "admin/layout");
@@ -25,6 +26,22 @@ router.get("/sales-report", adminController.salesReportpage);
 // Auth Rotues
 router.get("/login", authController.loginpage);
 router.get("/register", authController.registerpage);
+
+router.post(
+    "/register",
+    [
+        body("email").trim().isEmail().withMessage("Email must be valid email").normalizeEmail().toLowerCase(),
+        body("mobile").trim().isMobilePhone().withMessage("Enter a valid mobile number"),
+        body("password").trim().isLength(2).withMessage("Password length short, min 2 characters required"),
+        body("confirm-password").custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("Password do not match");
+            }
+            return true;
+        }),
+    ],
+    authController.registerAdmin
+);
 
 // Product Routes
 router.get("/products", productController.productspage);
