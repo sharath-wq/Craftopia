@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../../models/userModel");
 const { validationResult } = require("express-validator");
+const validateMongoDbId = require("../../utils/validateMongodbId");
 
 /**
  * Login Page Route
@@ -28,6 +29,21 @@ exports.logoutUser = asyncHandler(async (req, res, next) => {
             req.flash("success", "Logged Out!");
             res.redirect("/login");
         });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Blcoked User page
+ * Method GET
+ */
+exports.blockedUserpage = asyncHandler(async (req, res) => {
+    try {
+        const id = req.params.id;
+        validateMongoDbId(id);
+        const user = await User.findById(id);
+        res.render("admin/pages/auth/blocked", { title: "Blocked", page: "blocked", user });
     } catch (error) {
         throw new Error(error);
     }

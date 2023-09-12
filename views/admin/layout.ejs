@@ -25,8 +25,8 @@
             data-sidebar-position="fixed"
             data-header-position="fixed"
         >
-            <% if (title === "Login" || title === "Register" || title === "404") { %> <%- body %> <% } else { %> <%-
-            include('./partials/sidebar.ejs') %>
+            <% if (title === "Login" || title === "Register" || title === "404" || title === "Blocked") { %> <%- body %> <%
+            } else { %> <%- include('./partials/sidebar.ejs') %>
             <!--  Main wrapper -->
             <div class="body-wrapper">
                 <%- include('./partials/header.ejs') %>

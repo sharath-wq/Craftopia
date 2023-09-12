@@ -1,33 +1,37 @@
-const userAuthMiddleware = (req, res, next) => {
-    if (req.isAuthenticated()) {
+const { roles } = require("../utils/constants");
+
+const ensureSuperAdmin = (req, res, next) => {
+    if (req.user.role === roles.superAdmin) {
         next();
     } else {
-        res.redirect("/login");
-    }
-};
-
-const adminAuthMiddleware = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        next();
-    } else {
-        res.redirect("/admin/login");
-    }
-};
-
-const isUserNotAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        res.redirect("/");
-    } else {
-        next();
-    }
-};
-
-const isAdminNotAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
+        req.flash("warning", "You are not Authorized");
         res.redirect("/admin");
+    }
+};
+
+const ensureAdmin = (req, res, next) => {
+    if (req.user.role === roles.admin || req.user.role === roles.superAdmin) {
+        next();
+    } else {
+        req.flash("warning", "You are not Authorized");
+        res.redirect("/");
+    }
+};
+
+const isBlockedAdmin = (req, res, next) => {
+    if (req.user.isBlocked) {
+        res.redirect(`/admin/blocked/${req.user._id}`);
     } else {
         next();
     }
 };
 
-module.exports = { userAuthMiddleware, adminAuthMiddleware, isUserNotAuthenticated, isAdminNotAuthenticated };
+const isBlockedUser = (req, res, next) => {
+    if (req.user.isBlocked) {
+        res.redirect(`/blocked/${req.user._id}`);
+    } else {
+        next();
+    }
+};
+
+module.exports = { ensureAdmin, ensureSuperAdmin, isBlockedAdmin, isBlockedUser };

@@ -25,6 +25,7 @@
         <script src="/shop/js/vendor/modernizr-3.11.7.min.js"></script>
     </head>
     <body>
+        <% if (page !== "blocked") { %>
         <!-- Header  -->
         <%- include('./partials/header.ejs') %>
         <!-- Header End -->
@@ -46,6 +47,7 @@
         <!-- Model  -->
         <%- include('./partials/modal.ejs') %>
         <!-- Model End -->
+        <% } else { %> <%- body %> <% } %>
 
         <script>
             // Function to hide the flash message after a certain time (e.g., 5 seconds)

@@ -131,6 +131,16 @@
                         <span class="hide-menu">Customers</span>
                     </a>
                 </li>
+                <% if (user.role === "SUPER ADMIN") { %>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="/admin/admins" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-user-exclamation"></i>
+                        </span>
+                        <span class="hide-menu">Admins</span>
+                    </a>
+                </li>
+                <% } %>
 
                 <!-- User End -->
 

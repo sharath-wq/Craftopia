@@ -14,13 +14,14 @@ const { body, validationResult } = require("express-validator");
 
 // Middlewares
 const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
+const { isBlockedUser } = require("../../middlewares/authMiddleware");
 
 router.use((req, res, next) => {
     req.app.set("layout", "shop/layout");
     next();
 });
 
-router.get("/", shopController.shopHomepage);
+router.get("/", isBlockedUser, shopController.shopHomepage);
 router.get("/contact", shopController.contactpage);
 router.get("/about", shopController.aboutpage);
 
@@ -34,6 +35,7 @@ router.get("/logout", ensureLoggedIn({ redirectTo: "/login" }), authController.l
 router.get("/register", ensureLoggedOut({ redirectTo: "/" }), authController.registerpage);
 router.get("/forgot-password", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordpage);
 router.get("/forgot-password-success", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordSuccesspage);
+router.get("/blocked/:id", authController.blockedUserpage);
 
 router.post(
     "/login",

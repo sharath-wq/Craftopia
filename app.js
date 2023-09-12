@@ -8,6 +8,8 @@ const connectFlash = require("connect-flash");
 const connectMongo = require("connect-mongo");
 const passport = require("passport");
 const { default: mongoose } = require("mongoose");
+const methodOverride = require("method-override");
+const nocache = require("nocache");
 
 require("dotenv").config();
 
@@ -19,8 +21,10 @@ require("dotenv");
 // Port
 const PORT = process.env.PORT || 4000;
 
+app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(nocache());
 
 const MongoStore = connectMongo(session);
 app.use(
