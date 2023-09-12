@@ -47,7 +47,7 @@ router.get(
 );
 
 // Auth Rotues
-router.get("/login", ensureLoggedOut({ redirectTo: "/admin/" }), authController.loginpage);
+router.get("/login", ensureLoggedOut({ redirectTo: "/admin/dashboard" }), authController.loginpage);
 router.get(
     "/logout",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
