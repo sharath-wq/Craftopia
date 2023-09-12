@@ -104,6 +104,13 @@ router.get(
     isBlockedAdmin,
     categoryController.addCategorypage
 );
+router.get(
+    "/category/edit/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.editCategorypage
+);
 
 router.post(
     "/category/add",
@@ -127,6 +134,22 @@ router.put(
     ensureAdmin,
     isBlockedAdmin,
     categoryController.list
+);
+
+router.put(
+    "/category/edit/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.editCategory
+);
+
+router.delete(
+    "/category/delete/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.deleteCategory
 );
 
 // Banner Routes

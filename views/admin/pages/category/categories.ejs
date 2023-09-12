@@ -6,6 +6,7 @@
             <div class="card-body p-4">
                 <h5 class="card-title fw-semibold mb-4">Categories</h5>
                 <div class="table-responsive">
+                    <% if (categories.length) { %>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -59,6 +60,7 @@
                             <% }) %>
                         </tbody>
                     </table>
+                    <% } else { %> No Categories <% } %>
                 </div>
             </div>
         </div>
