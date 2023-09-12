@@ -18,7 +18,8 @@ exports.wishlistpage = asyncHandler(async (req, res) => {
  */
 exports.profilepage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/user/profile", { title: "Profile", page: "profile" });
+        const user = req.user;
+        res.render("shop/pages/user/profile", { title: "Profile", page: "profile", user });
     } catch (error) {
         throw new Error(error);
     }

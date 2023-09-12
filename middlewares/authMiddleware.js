@@ -1,80 +1,37 @@
-const User = require("../models/userModel");
-const Admin = require("../models/adminModel");
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("express-async-handler");
+const { roles } = require("../utils/constants");
 
-const userAuthMiddleware = asyncHandler(async (req, res, next) => {
-    if (req?.cookies?.accessToken) {
-        token = req?.cookies?.accessToken;
-        try {
-            if (token) {
-                const decode = jwt.verify(token, process.env.JWT_SECRET);
-                const user = await User.findById(decode.id);
-                req.session.user = user;
-                next();
-            }
-        } catch (error) {
-            throw new Error("Token is not valid!, Please Login agian");
-        }
+const ensureSuperAdmin = (req, res, next) => {
+    if (req.user.role === roles.superAdmin) {
+        next();
     } else {
-        res.redirect("/admin/login");
+        req.flash("warning", "You are not Authorized");
+        res.redirect("/admin");
     }
-});
+};
 
-const adminAuthMiddleware = asyncHandler(async (req, res, next) => {
-    if (req?.cookies?.accessToken) {
-        token = req?.cookies?.accessToken;
-        try {
-            if (token) {
-                const decode = jwt.verify(token, process.env.JWT_SECRET);
-                const admin = await Admin.findById(decode.id);
-                req.session.admin = admin;
-                next();
-            }
-        } catch (error) {
-            throw new Error("Token is not Valid!, Please Login Again");
-        }
+const ensureAdmin = (req, res, next) => {
+    if (req.user.role === roles.admin || req.user.role === roles.superAdmin) {
+        next();
     } else {
-        res.redirect("/admin/login");
+        req.flash("warning", "You are not Authorized");
+        res.redirect("/");
     }
-});
+};
 
-const isAdmin = asyncHandler(async (req, res, next) => {
-    const admin = req?.session?.admin;
-    if (admin) {
-        try {
-            const { email } = admin;
-            const adminUser = await Admin.findOne({ email });
-            if (adminUser.role === "admin" || adminUser.role === "superadmin") {
-                next();
-            } else {
-                throw new Error("You are not an admin");
-            }
-        } catch (error) {
-            throw new Error(error);
-        }
+const isBlockedAdmin = (req, res, next) => {
+    if (req.user.isBlocked) {
+        res.redirect(`/admin/blocked/${req.user._id}`);
     } else {
-        throw new Error("You are not an admin");
+        next();
     }
-});
+};
 
-const isSuperAdmin = asyncHandler(async (req, res, next) => {
-    const superAdmin = req?.session?.admin;
-    if (superAdmin) {
-        try {
-            const { email } = superAdmin;
-            const adminUser = await Admin.findOne({ email });
-            if (adminUser.role !== "superadmin") {
-                throw new Error("You need super admin privilage to do this");
-            } else {
-                next();
-            }
-        } catch (error) {
-            throw new Error(error);
-        }
+const isBlockedUser = (req, res, next) => {
+    if (req?.user?.isBlocked) {
+        res.redirect(`/blocked/${req.user._id}`);
     } else {
-        throw new Error("You are not an admin");
+        next();
     }
-});
+};
 
-module.exports = { userAuthMiddleware, adminAuthMiddleware, isAdmin, isSuperAdmin };
+module.exports = { ensureAdmin, ensureSuperAdmin, isBlockedAdmin, isBlockedUser };

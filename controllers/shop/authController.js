@@ -1,70 +1,87 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../../models/userModel");
-const { generateToken } = require("../../config/jwt");
+const { validationResult } = require("express-validator");
+const validateMongoDbId = require("../../utils/validateMongodbId");
 
 /**
  * Login Page Route
  * Method GET
  */
 exports.loginpage = asyncHandler(async (req, res) => {
-    const user = req?.session?.user;
-    console.log(user);
     try {
-        if (!user) {
-            res.render("shop/pages/auth/login", { title: "Login", page: "login" });
-        } else {
-            res.redirect("/");
-        }
+        const messages = req.flash();
+        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages });
     } catch (error) {
         throw new Error(error);
     }
 });
 
 /**
- * Login User
- * Method POST
- */
-exports.loginUser = asyncHandler(async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        console.log(req.body);
-        const existingUser = await User.findOne({ email });
-        if (existingUser && (await existingUser.isPasswordMatched(password))) {
-            const accessToken = await generateToken(existingUser?._id);
-            res.cookie("accessToken", accessToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 72 * 60 * 60 * 1000,
-            });
-            req.session.user = existingUser;
-            res.redirect("/");
-        } else {
-            throw new Error("Invalid Credentials");
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
- * Logout User Route
+ * Logout Route
  * Method GET
  */
-exports.logoutUser = asyncHandler(async (req, res) => {
-    const accessToken = req?.cookies?.accessToken;
+exports.logoutUser = asyncHandler(async (req, res, next) => {
     try {
-        if (accessToken) {
-            res.clearCookie("accessToken", {
-                httpOnly: true,
-                secure: true,
-            });
-            req.session.user = null;
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+            req.flash("success", "Logged Out!");
             res.redirect("/login");
-        } else {
-            res.redirect("/login");
-        }
+        });
     } catch (error) {
         throw new Error(error);
+    }
+});
+
+/**
+ * Blcoked User page
+ * Method GET
+ */
+exports.blockedUserpage = asyncHandler(async (req, res) => {
+    try {
+        const id = req.params.id;
+        validateMongoDbId(id);
+        const user = await User.findById(id);
+        res.render("admin/pages/auth/blocked", { title: "Blocked", page: "blocked", user });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Register a User
+ * Method POST
+ */
+exports.registerUser = asyncHandler(async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            errors.array().forEach((error) => {
+                req.flash("danger", error.msg);
+            });
+            const messages = req.flash();
+            res.render("shop/pages/auth/register", { title: "Register", page: "Login", messages, data: req.body });
+        } else {
+            const email = req.body.email;
+            const existingUser = await User.findOne({ email: email });
+
+            if (!existingUser) {
+                const newUser = await User.create(req.body);
+                req.flash("success", "User Registerd Successfully Please Login");
+                res.redirect("/login");
+            } else {
+                req.flash("warning", "Email Alardy Registerd Please login");
+                res.redirect("/login");
+            }
+        }
+    } catch (error) {
+        if (error.keyPattern.mobile === 1) {
+            req.flash("danger", "Mobile number already registered");
+            res.redirect("/register");
+        } else {
+            throw new Error(error);
+        }
     }
 });
 
@@ -73,34 +90,9 @@ exports.logoutUser = asyncHandler(async (req, res) => {
  * Method GET
  */
 exports.registerpage = asyncHandler(async (req, res) => {
-    const user = req?.session?.user;
     try {
-        if (user) {
-            res.redirect("/");
-        } else {
-            res.render("shop/pages/auth/register", { title: "Register", page: "register" });
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
- * Register User
- * Method POST
- */
-exports.registerUser = asyncHandler(async (req, res) => {
-    try {
-        const email = req.body.email;
-        const existingUser = await User.findOne({ email: email });
-
-        if (!existingUser) {
-            const newUser = await User.create(req.body);
-            req.session.user = newUser;
-            res.redirect("/");
-        } else {
-            throw new Error("User Already Exists");
-        }
+        const messages = req.flash();
+        res.render("shop/pages/auth/register", { title: "Register", page: "register", data: "", messages });
     } catch (error) {
         throw new Error(error);
     }

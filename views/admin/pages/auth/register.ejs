@@ -2,52 +2,46 @@
     <div class="d-flex align-items-center justify-content-center w-100">
         <div class="row justify-content-center w-100">
             <div class="col-md-8 col-lg-6 col-xxl-3">
+                <%- include('../../partials/flash-message.ejs') %>
                 <div class="card mb-0">
                     <div class="card-body">
                         <h1 class="text-center">Admin</h1>
-                        <form>
+                        <form action="/admin/register" method="post">
                             <div class="mb-3">
                                 <label for="exampleInputFirstName" class="form-label">First Name</label>
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="exampleInputFirstName"
-                                    aria-describedby="firstNameHelp"
-                                />
+                                <input type="text" name="firstName" value="<%= data.firstName ? data.firstName : "" %>"
+                                class="form-control" id="exampleInputFirstName" aria-describedby="firstNameHelp" />
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputLastName" class="form-label">Last Name</label>
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="exampleInputLastName"
-                                    aria-describedby="lastNameHelp"
-                                />
+                                <input type="text" name="lastName" value="<%= data.lastName ? data.lastName : "" %>"
+                                class="form-control" id="exampleInputLastName" aria-describedby="lastNameHelp" />
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputEmail" class="form-label">Email</label>
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="exampleInputEmail"
-                                    aria-describedby="emailHelp"
-                                />
+                                <input type="text" name="email" value="<%= data.email ? data.email : "" %>"
+                                class="form-control" id="exampleInputEmail" aria-describedby="emailHelp" />
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputMobile" class="form-label">Mobile</label>
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    id="exampleInputMobile"
-                                    aria-describedby="mobileHelp"
-                                />
+                                <input type="text" name="mobile" value="<%= data.mobile? data.mobile: "" %>"
+                                class="form-control" id="exampleInputMobile" aria-describedby="mobileHelp" />
                             </div>
                             <div class="mb-4">
                                 <label for="exampleInputPassword1" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1" />
+                                <input type="password" name="password" class="form-control" id="exampleInputPassword1" />
+                            </div>
+                            <div class="mb-4">
+                                <label for="exampleInputPassword1" class="form-label">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    name="confirm-password"
+                                    class="form-control"
+                                    id="exampleInputPassword1"
+                                />
                             </div>
 
-                            <a href="/" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</a>
+                            <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Sign In</button>
                         </form>
                     </div>
                 </div>

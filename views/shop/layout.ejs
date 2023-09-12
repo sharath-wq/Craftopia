@@ -25,6 +25,7 @@
         <script src="/shop/js/vendor/modernizr-3.11.7.min.js"></script>
     </head>
     <body>
+        <% if (page !== "blocked") { %>
         <!-- Header  -->
         <%- include('./partials/header.ejs') %>
         <!-- Header End -->
@@ -46,6 +47,22 @@
         <!-- Model  -->
         <%- include('./partials/modal.ejs') %>
         <!-- Model End -->
+        <% } else { %> <%- body %> <% } %>
+
+        <script>
+            // Function to hide the flash message after a certain time (e.g., 5 seconds)
+            function hideFlashMessage() {
+                const flashMessage = document.getElementById("flash-message");
+                if (flashMessage) {
+                    setTimeout(() => {
+                        flashMessage.style.display = "none";
+                    }, 5000); // 5000 milliseconds (5 seconds)
+                }
+            }
+
+            // Call the function to hide the flash message when the page loads
+            window.addEventListener("load", hideFlashMessage);
+        </script>
 
         <!-- all js here -->
         <script src="/shop/js/vendor/jquery-1.12.4.min.js"></script>

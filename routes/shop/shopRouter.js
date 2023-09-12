@@ -1,19 +1,27 @@
 const express = require("express");
+const router = express.Router();
+
+// Controllers
 const shopController = require("../../controllers/shop/shopController");
 const productController = require("../../controllers/shop/productController");
 const authController = require("../../controllers/shop/authController");
 const userControler = require("../../controllers/shop/userController");
 const orderController = require("../../controllers/shop/orderController");
 const cartController = require("../../controllers/shop/cartController");
-const { userAuthMiddleware } = require("../../middlewares/authMiddleware");
-const router = express.Router();
+
+const passport = require("passport");
+const { body, validationResult } = require("express-validator");
+
+// Middlewares
+const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
+const { isBlockedUser } = require("../../middlewares/authMiddleware");
 
 router.use((req, res, next) => {
     req.app.set("layout", "shop/layout");
     next();
 });
 
-router.get("/", shopController.shopHomepage);
+router.get("/", isBlockedUser, shopController.shopHomepage);
 router.get("/contact", shopController.contactpage);
 router.get("/about", shopController.aboutpage);
 
@@ -22,36 +30,45 @@ router.get("/shop", productController.shoppage);
 router.get("/product/:id", productController.singleProductpage);
 
 // Auth Routes
-router.get("/login", authController.loginpage);
-router.get("/register", authController.registerpage);
-router.get("/logout", authController.logoutUser);
-router.get("/forgot-password", authController.forgotPasswordpage);
-router.get("/forgot-password-success", authController.forgotPasswordSuccesspage);
+router.get("/login", ensureLoggedOut({ redirectTo: "/" }), authController.loginpage);
+router.get("/logout", ensureLoggedIn({ redirectTo: "/login" }), authController.logoutUser);
+router.get("/register", ensureLoggedOut({ redirectTo: "/" }), authController.registerpage);
+router.get("/forgot-password", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordpage);
+router.get("/forgot-password-success", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordSuccesspage);
+router.get("/blocked/:id", authController.blockedUserpage);
 
-router.post("/register", authController.registerUser);
-router.post("/login", authController.loginUser);
+router.post(
+    "/login",
+    passport.authenticate("local", { successRedirect: "/", failureRedirect: "/login", failureFlash: true })
+);
 
+router.post(
+    "/register",
+    [
+        body("email").trim().isEmail().withMessage("Email must be valid email").normalizeEmail().toLowerCase(),
+        body("mobile").trim().isMobilePhone().withMessage("Enter a valid mobile number"),
+        body("password").trim().isLength(2).withMessage("Password length short, min 2 characters required"),
+        body("confirm-password").custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("Password do not match");
+            }
+            return true;
+        }),
+    ],
+    authController.registerUser
+);
 // User Routes
-router.get("/wishlist", userAuthMiddleware, userControler.wishlistpage);
-router.get("/profile", userAuthMiddleware, userControler.profilepage);
-router.get("/address", userAuthMiddleware, userControler.addresspage);
-router.get("/checkout", userAuthMiddleware, userControler.checkoutpage);
-router.get("/add-address", userAuthMiddleware, userControler.addAddresspage);
+router.get("/wishlist", ensureLoggedIn({ redirectTo: "/login" }), userControler.wishlistpage);
+router.get("/profile", ensureLoggedIn({ redirectTo: "/login" }), userControler.profilepage);
+router.get("/address", ensureLoggedIn({ redirectTo: "/login" }), userControler.addresspage);
+router.get("/checkout", ensureLoggedIn({ redirectTo: "/login" }), userControler.checkoutpage);
+router.get("/add-address", ensureLoggedIn({ redirectTo: "/login" }), userControler.addAddresspage);
 
 // Order Routes
-router.get("/orders", userAuthMiddleware, orderController.orderspage);
-router.get("/order-completed", userAuthMiddleware, orderController.orderCompletedpage);
+router.get("/orders", ensureLoggedIn({ redirectTo: "/login" }), orderController.orderspage);
+router.get("/order-completed", ensureLoggedIn({ redirectTo: "/login" }), orderController.orderCompletedpage);
 
 // Cart Routes
-router.get("/cart", userAuthMiddleware, cartController.cartpage);
-
-/**
- * TODO:
- * Fix the 404 page error
- */
-
-// router.get("/*", (req, res) => {
-//     res.render("shop/pages/404", { title: "404 Page", page: "404" });
-// });
+router.get("/cart", ensureLoggedIn({ redirectTo: "/login" }), cartController.cartpage);
 
 module.exports = router;

@@ -25,14 +25,29 @@
             data-sidebar-position="fixed"
             data-header-position="fixed"
         >
-            <% if (title === "Login" || title === "Register" || title === "404") { %> <%- body %> <% } else { %> <%-
-            include('./partials/sidebar.ejs') %>
+            <% if (title === "Login" || title === "Register" || title === "404" || title === "Blocked") { %> <%- body %> <%
+            } else { %> <%- include('./partials/sidebar.ejs') %>
             <!--  Main wrapper -->
             <div class="body-wrapper">
                 <%- include('./partials/header.ejs') %>
                 <div class="container-fluid"><%- body %></div>
             </div>
             <% } %>
+
+            <script>
+                // Function to hide the flash message after a certain time (e.g., 5 seconds)
+                function hideFlashMessage() {
+                    const flashMessage = document.getElementById("flash-message");
+                    if (flashMessage) {
+                        setTimeout(() => {
+                            flashMessage.style.display = "none";
+                        }, 5000); // 5000 milliseconds (5 seconds)
+                    }
+                }
+
+                // Call the function to hide the flash message when the page loads
+                window.addEventListener("load", hideFlashMessage);
+            </script>
 
             <script
                 src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

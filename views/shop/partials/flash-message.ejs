@@ -1,0 +1,5 @@
+<% if (locals.messages) { %> <% Object.keys(messages).forEach((key) => { %> <% messages[key].forEach((message) => { %>
+<div class="alert alert-<%= key !== `error` ? key : `danger` %> fade show" id="flash-message" role="alert">
+    <strong><%= key === "danger" ? "Error" : key %>!</strong> <%= message %>.
+</div>
+<% }) %> <% }) %> <% } %>

@@ -3,16 +3,23 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-12 col-lg-12 col-xl-6 ms-auto me-auto">
+                <%- include('../../partials/flash-message.ejs') %>
                 <h1 class="cart-heading">register</h1>
                 <div class="login">
                     <div class="login-form-container">
                         <div class="login-form">
                             <form action="/register" method="post">
-                                <input type="text" name="firstName" placeholder="First Name" />
-                                <input type="text" name="lastName" placeholder="Last Name" />
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    placeholder="First Name"
+                                    value="<%= data?.firstName %>"
+                                />
+                                <input type="text" name="lastName" placeholder="Last Name" value="<%= data?.lastName %>" />
+                                <input name="email" placeholder="Email" type="email" value="<%= data?.email %>" />
+                                <input type="text" name="mobile" placeholder="Mobile" value="<%= data?.mobile %>" />
                                 <input type="password" name="password" placeholder="Password" />
-                                <input name="email" placeholder="Email" type="email" />
-                                <input type="text" name="mobile" placeholder="Phone" />
+                                <input type="password" name="confirm-password" placeholder="Confirm Password" />
                                 <div class="button-box">
                                     <button type="submit" class="default-btn floatright">Register</button>
                                 </div>

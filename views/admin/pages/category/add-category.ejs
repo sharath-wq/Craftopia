@@ -1,10 +1,11 @@
 <div class="row">
+    <%- include('../../partials/flash-message.ejs') %>
     <div class="col-lg-12 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-body p-4">
                 <h5 class="card-title fw-semibold mb-4">Add Category</h5>
                 <div class="table-responsive">
-                    <form>
+                    <form action="/admin/category/add" method="post">
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Category Name</label>
                             <input
@@ -12,6 +13,7 @@
                                 class="form-control"
                                 id="categoryName"
                                 placeholder="Enter category name"
+                                name="title"
                                 required
                             />
                         </div>
@@ -19,11 +21,24 @@
                             <label for="categoryStatus" class="form-label">Status</label>
                             <div class="form-check">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="categoryStatus" id="list" checked />
+                                    <input
+                                        class="form-check-input"
+                                        type="radio"
+                                        value="true"
+                                        name="isListed"
+                                        checked
+                                        id="list"
+                                    />
                                     <label class="form-check-label" for="list">List</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="categoryStatus" id="unlist" />
+                                    <input
+                                        class="form-check-input"
+                                        type="radio"
+                                        value="false"
+                                        name="isListed"
+                                        id="unlist"
+                                    />
                                     <label class="form-check-label" for="unlist">Unlist</label>
                                 </div>
                             </div>

@@ -1,104 +1,48 @@
 const asyncHandler = require("express-async-handler");
-const Admin = require("../../models/adminModel");
-const { generateToken } = require("../../config/jwt");
-
+const validateMongoDbId = require("../../utils/validateMongodbId");
+const User = require("../../models/userModel");
 /**
  * Login Page Route
  * Method GET
  */
 exports.loginpage = asyncHandler(async (req, res) => {
-    const admin = req?.session?.admin;
     try {
-        if (admin) {
-            res.redirect("/admin/dashboard");
-        } else {
-            res.render("admin/pages/auth/login", { title: "Login" });
-        }
+        const messages = req.flash();
+        console.log(messages);
+        res.render("admin/pages/auth/login", { title: "Login", messages });
     } catch (error) {
         throw new Error(error);
     }
 });
 
 /**
- * Login Admin Route
+ * Blcoked Admin page
  * Method GET
  */
-exports.loginAdmin = asyncHandler(async (req, res) => {
+exports.blockedAdminpage = asyncHandler(async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const existingAdmin = await Admin.findOne({ email });
-        if (existingAdmin && (await existingAdmin.isPasswordMatched(password))) {
-            const accessToken = await generateToken(existingAdmin._id);
-            res.cookie("accessToken", accessToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 72 * 60 * 60 * 1000,
-            });
-            req.session.admin = existingAdmin;
-            res.redirect("/admin/dashboard");
-        } else {
-            throw new Error("Invalid Credentials");
-        }
+        const id = req.params.id;
+        validateMongoDbId(id);
+        const user = await User.findById(id);
+        res.render("admin/pages/auth/blocked", { title: "Blocked", page: "blocked", user });
     } catch (error) {
         throw new Error(error);
     }
 });
 
 /**
- * Logout Admin Route
+ * Logout Admin
  * Method GET
  */
-exports.logoutAdmin = asyncHandler(async (req, res) => {
-    const accessToken = req?.cookies?.accessToken;
+exports.logoutAdmin = asyncHandler(async (req, res, next) => {
     try {
-        if (accessToken) {
-            res.clearCookie("accessToken", {
-                httpOnly: true,
-                secure: true,
-            });
-            req.session.admin = null;
+        req.logout((err) => {
+            if (err) {
+                return next(err);
+            }
+            req.flash("success", "Logged Out!");
             res.redirect("/admin/login");
-        } else {
-            res.redirect("/admin/login");
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
- * Register Page Route
- * Method GET
- */
-exports.registerpage = asyncHandler(async (req, res) => {
-    const admin = req?.session?.admin;
-    try {
-        if (admin) {
-            res.redirect("/admin");
-        } else {
-            res.render("admin/pages/auth/register", { title: "Register" });
-        }
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
- * Register Admin Route
- * Method POST
- */
-exports.registerAdmin = asyncHandler(async (req, res) => {
-    try {
-        const email = req.body.email;
-        const existingAdmin = await Admin.findOne({ email: email });
-
-        if (!existingAdmin) {
-            const newAdmin = await Admin.create(req.body);
-            req.session.admin = newAdmin;
-            res.redirect("/admin");
-        } else {
-            throw new Error("Admin Already Exists");
-        }
+        });
     } catch (error) {
         throw new Error(error);
     }
