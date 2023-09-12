@@ -34,7 +34,7 @@ router.get("/logout", ensureLoggedIn({ redirectTo: "/admin/login" }), authContro
 router.post(
     "/login",
     passport.authenticate("local", {
-        successReturnToOrRedirect: "/admin/dashboard",
+        successReturnToOrRedirect: "/admin/",
         failureRedirect: "/admin/login",
         failureFlash: true,
     })

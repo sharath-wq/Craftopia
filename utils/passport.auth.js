@@ -10,13 +10,14 @@ passport.use(
                 return done(null, false, { message: "Email not registered" });
             }
 
-            if (user && (await user.isPasswordMatched(password))) {
-                return done(null, user);
-            } else {
+            const isPasswordValid = await user.isPasswordMatched(password);
+            if (!isPasswordValid) {
                 return done(null, false, { message: "Invalid Credentials" });
             }
+
+            return done(null, user);
         } catch (error) {
-            done(error);
+            return done(error);
         }
     })
 );
@@ -28,8 +29,10 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await User.findById(id);
-        done(null, user);
+        return done(null, user);
     } catch (err) {
-        done(err, null);
+        return done(err, null);
     }
 });
+
+module.exports = passport;

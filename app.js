@@ -23,12 +23,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const MongoStore = connectMongo(session);
-
-// Static Files
-app.use(express.static("public"));
-app.use("/admin", express.static(__dirname + "public/admin"));
-app.use("/shop", express.static(__dirname + "public/shop"));
-app.use(morgan("dev"));
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
@@ -41,6 +35,12 @@ app.use(
         store: new MongoStore({ mongooseConnection: mongoose.connection }),
     })
 );
+
+// Static Files
+app.use(express.static("public"));
+app.use("/admin", express.static(__dirname + "public/admin"));
+app.use("/shop", express.static(__dirname + "public/shop"));
+app.use(morgan("dev"));
 
 app.use(passport.initialize());
 app.use(passport.session());

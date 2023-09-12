@@ -52,7 +52,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
 
             if (!existingUser) {
                 const newUser = await User.create(req.body);
-                req.flash("success", "Admin Registerd Successfully Please Login");
+                req.flash("success", "User Registerd Successfully Please Login");
                 res.redirect("/login");
             } else {
                 req.flash("warning", "Email Alardy Registerd Please login");
