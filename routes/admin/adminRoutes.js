@@ -98,11 +98,35 @@ router.get(
     categoryController.categoriespage
 );
 router.get(
-    "/add-category",
+    "/category/add",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
     ensureAdmin,
     isBlockedAdmin,
     categoryController.addCategorypage
+);
+
+router.post(
+    "/category/add",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.addCategory
+);
+
+router.put(
+    "/category/unlist/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.unlist
+);
+
+router.put(
+    "/category/list/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.list
 );
 
 // Banner Routes
