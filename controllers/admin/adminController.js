@@ -38,7 +38,7 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
  */
 exports.settingspage = asyncHandler(async (req, res) => {
     try {
-        res.render("admin/pages/admin/settings", { title: "Settings" });
+        res.render("admin/pages/admin/settings", { title: "Settings", user: req.user });
     } catch (error) {
         throw new Error(error);
     }

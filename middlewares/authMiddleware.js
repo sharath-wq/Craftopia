@@ -27,7 +27,7 @@ const isBlockedAdmin = (req, res, next) => {
 };
 
 const isBlockedUser = (req, res, next) => {
-    if (req.user.isBlocked) {
+    if (req?.user?.isBlocked) {
         res.redirect(`/blocked/${req.user._id}`);
     } else {
         next();

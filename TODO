@@ -1,8 +1,8 @@
-01. Fix the connect ensure loging
-02. Fix the block unblock routes
-03. Try adding Loging with google
-04. List the Users and manage the Users
-05. List the Admins and Manage the Admins (Only the Super admin can mange the admins)
+01. Fix the connect ensure loging ✅
+02. Fix the block unblock routes  ✅
+03. Try adding Loging with google 
+04. List the Users and manage the Users ✅
+05. List the Admins and Manage the Admins (Only the Super admin can mange the admins) ✅
 06. List the Products and manage the products 
 07. Try Cloudinary or Firebase to store images
 08. Category Management (Add, Edit, Delete)
