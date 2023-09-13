@@ -3,23 +3,26 @@
         <div class="card">
             <div class="card-body p-4">
                 <h5 class="card-title fw-semibold mb-4">Edit Product</h5>
-                <form>
+                <form action="/admin/product/edit/<%= product._id%>/?_method=PUT" method="post">
                     <div class="form-group">
                         <label for="productName">Product Name:</label>
                         <input
                             type="text"
                             class="form-control"
                             id="productName"
+                            name="title"
+                            value="<%= product.title %>"
                             placeholder="Enter product name"
                             required
                         />
                     </div>
                     <div class="form-group">
                         <label for="category">Category:</label>
-                        <select class="form-control" id="category" required>
-                            <option value="electronics">Electronics</option>
-                            <option value="clothing">Clothing</option>
-                            <option value="furniture">Furniture</option>
+                        <select class="form-select" name="category" id="category" required>
+                            <option selected value="<%= product.category %>"><%= product.category %></option>
+                            <% categories.forEach(category => { %> <% if (category.title !== product.category) { %>
+                            <option value="<%= category.title %>"><%= category.title %></option>
+                            <% } %> <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
@@ -28,9 +31,12 @@
                             class="form-control"
                             id="description"
                             rows="3"
+                            name="description"
                             placeholder="Enter product description"
                             required
-                        ></textarea>
+                        >
+<%= product.description %></textarea
+                        >
                     </div>
                     <div class="form-group">
                         <label for="productPrice">Product Price:</label>
@@ -38,6 +44,8 @@
                             type="number"
                             class="form-control"
                             id="productPrice"
+                            name="productPrice"
+                            value="<%= product.productPrice %>"
                             placeholder="Enter product price"
                             required
                         />
@@ -47,34 +55,34 @@
                         <input
                             type="number"
                             class="form-control"
-                            id="salesPrice"
+                            id="salePrice"
+                            name="salePrice"
+                            value="<%= product.salePrice %>"
                             placeholder="Enter sales price"
                             required
                         />
                     </div>
                     <div class="form-group">
                         <label for="quantity">Quantity:</label>
-                        <input type="number" class="form-control" id="quantity" placeholder="Enter quantity" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="units">Units:</label>
-                        <input type="text" class="form-control" id="units" placeholder="Enter units" required />
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="quantity"
+                            name="quantity"
+                            value="<%= product.quantity %>"
+                            placeholder="Enter quantity"
+                            required
+                        />
                     </div>
                     <div class="form-group">
                         <label for="images">Images:</label>
                         <input
-                            type="file"
+                            type="text"
                             class="form-control-file"
+                            name="images"
                             id="images"
-                            accept="image/*"
-                            multiple
-                            onchange="previewImages()"
+                            value="<%= product.images %>"
                         />
-                        <div id="image-preview"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="tags">Tags:</label>
-                        <input type="text" class="form-control" id="tags" placeholder="Enter product tags" />
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>

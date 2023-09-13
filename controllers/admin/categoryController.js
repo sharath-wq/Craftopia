@@ -30,6 +30,22 @@ exports.addCategorypage = asyncHandler(async (req, res) => {
 });
 
 /**
+ * Edit Category Page Route
+ * Method GET
+ */
+exports.editCategorypage = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
+    try {
+        const messages = req.flash();
+        const category = await Category.findById(id);
+        res.render("admin/pages/category/edit-category", { title: "Add Category", messages, category });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
  * Add Category
  * Method POST
  */
@@ -101,6 +117,38 @@ exports.list = asyncHandler(async (req, res) => {
         } else {
             req.flash("danger", `Can't List ${listedCategory.title}`);
         }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Edit Category
+ * Method PUT
+ */
+exports.editCategory = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
+    try {
+        const editedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
+        req.flash("success", `Category ${editedCategory.title} updated`);
+        res.redirect("/admin/categories");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Delete Category
+ * Method DELETE
+ */
+exports.deleteCategory = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
+    try {
+        const deletedCategory = await Category.findByIdAndDelete(id);
+        req.flash("success", `Category ${deletedCategory.title} deleted`);
+        res.redirect("/admin/categories");
     } catch (error) {
         throw new Error(error);
     }

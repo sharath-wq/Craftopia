@@ -47,7 +47,7 @@ router.get(
 );
 
 // Auth Rotues
-router.get("/login", ensureLoggedOut({ redirectTo: "/admin/" }), authController.loginpage);
+router.get("/login", ensureLoggedOut({ redirectTo: "/admin/dashboard" }), authController.loginpage);
 router.get(
     "/logout",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
@@ -75,18 +75,42 @@ router.get(
     productController.productspage
 );
 router.get(
-    "/add-product",
+    "/product/add",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
     ensureAdmin,
     isBlockedAdmin,
     productController.addProductpage
 );
 router.get(
-    "/edit-product",
+    "/product/edit/:id",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
     ensureAdmin,
     isBlockedAdmin,
     productController.editProductpage
+);
+
+router.post(
+    "/product/add",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    productController.createProduct
+);
+
+router.put(
+    "/product/edit/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    productController.updateProduct
+);
+
+router.delete(
+    "/product/delete/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    productController.deleteProduct
 );
 
 // Category Routes
@@ -103,6 +127,13 @@ router.get(
     ensureAdmin,
     isBlockedAdmin,
     categoryController.addCategorypage
+);
+router.get(
+    "/category/edit/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.editCategorypage
 );
 
 router.post(
@@ -127,6 +158,22 @@ router.put(
     ensureAdmin,
     isBlockedAdmin,
     categoryController.list
+);
+
+router.put(
+    "/category/edit/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.editCategory
+);
+
+router.delete(
+    "/category/delete/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    categoryController.deleteCategory
 );
 
 // Banner Routes

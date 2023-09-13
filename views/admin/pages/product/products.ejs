@@ -1,9 +1,11 @@
 <div class="row">
+    <%- include('../../partials/flash-message.ejs') %>
     <div class="col-lg-12 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-body p-4">
                 <h5 class="card-title fw-semibold mb-4">Products</h5>
                 <!-- Search Bar -->
+                <% if (products.length) { %>
                 <div class="input-group mb-3 gap-2">
                     <input type="text" class="form-control" id="searchInput" placeholder="Search products" />
                     <div class="input-group-append">
@@ -25,9 +27,9 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="filterDropdown">
                         <a class="dropdown-item" href="#" data-category="all">All</a>
-                        <a class="dropdown-item" href="#" data-category="categoryA">Category A</a>
-                        <a class="dropdown-item" href="#" data-category="categoryB">Category B</a>
-                        <!-- Add more categories here -->
+                        <% categories.forEach(category => { %>
+                        <a class="dropdown-item" href="#" data-category="<%= category.title %>"><%= category.title %></a>
+                        <% }) %>
                     </div>
                 </div>
 
@@ -40,41 +42,46 @@
                                 <th>Category</th>
                                 <th>Description</th>
                                 <th>Sales Price</th>
+                                <th>Product Price</th>
                                 <th>Quantity</th>
                                 <th>Image</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <% products.forEach((product, index) => { %>
                             <tr>
-                                <td>1</td>
-                                <td>Product 1</td>
-                                <td>Category A</td>
-                                <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
-                                <td>$49.99</td>
-                                <td>100</td>
-                                <td><img src="/admin/images/products/s1.jpg" alt="Product 1" width="50" /></td>
+                                <td><%= index + 1 %></td>
+                                <td><%= product.title %></td>
+                                <td><%= product.category %></td>
                                 <td>
-                                    <a href="/admin/edit-product"
-                                        ><button class="btn btn-primary btn-sm"><i class="ti ti-pencil"></i></button
-                                    ></a>
-                                    <button class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
+                                    <% if (product.description.length > 10) { %> <%= product.description.substring(0, 10) +
+                                    '...' %> <% } else { %> <%= product.description %> <% } %>
+                                </td>
+                                <td>$<%= product.salePrice %></td>
+                                <td>$<%= product.productPrice %></td>
+                                <td><%= product.quantity %></td>
+                                <td><img src="<%= product.images %>" alt="<%= product.title %>" width="50" /></td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Product Actions">
+                                        <a
+                                            href="/admin/product/edit/<%= product._id%>"
+                                            class="btn btn-primary btn-sm"
+                                            style="margin-right: 10px"
+                                            ><i class="ti ti-pencil"></i
+                                        ></a>
+                                        <form
+                                            method="post"
+                                            action="/admin/product/delete/<%= product._id %>/?_method=DELETE"
+                                        >
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="ti ti-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Product 2</td>
-                                <td>Category B</td>
-                                <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
-                                <td>$59.99</td>
-                                <td>75</td>
-                                <td><img src="/admin/images/products/s4.jpg" alt="Product 2" width="50" /></td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm"><i class="ti ti-pencil"></i></button>
-                                    <button class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Add more rows for additional products here -->
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>
@@ -93,6 +100,7 @@
                         </li>
                     </ul>
                 </nav>
+                <% } else { %> No Products <% } %>
             </div>
         </div>
     </div>
