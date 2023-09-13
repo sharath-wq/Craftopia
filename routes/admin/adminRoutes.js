@@ -75,18 +75,42 @@ router.get(
     productController.productspage
 );
 router.get(
-    "/add-product",
+    "/product/add",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
     ensureAdmin,
     isBlockedAdmin,
     productController.addProductpage
 );
 router.get(
-    "/edit-product",
+    "/product/edit/:id",
     ensureLoggedIn({ redirectTo: "/admin/login" }),
     ensureAdmin,
     isBlockedAdmin,
     productController.editProductpage
+);
+
+router.post(
+    "/product/add",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    productController.createProduct
+);
+
+router.put(
+    "/product/edit/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    productController.updateProduct
+);
+
+router.delete(
+    "/product/delete/:id",
+    ensureLoggedIn({ redirectTo: "/admin/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    productController.deleteProduct
 );
 
 // Category Routes
