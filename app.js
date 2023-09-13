@@ -68,8 +68,8 @@ const adminRoute = require("./routes/admin/adminRoutes");
 app.use("/", shopRoute);
 app.use("/admin", adminRoute);
 
-app.get("*", (req, res) => {
-    res.render("404", { title: "404", page: "404" });
+app.use((req, res) => {
+    res.render("shop/pages/404", { title: "404", page: "404" });
 });
 
 app.listen(PORT, () => console.log(`Server running @ http://localhost:${PORT}`));
