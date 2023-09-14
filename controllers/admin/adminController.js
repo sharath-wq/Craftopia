@@ -10,9 +10,6 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 exports.homepage = asyncHandler(async (req, res) => {
     const admin = req?.session?.admin;
     try {
-        /**
-         * TODO: check the token and redirect to admin page or login page according to token
-         */
         if (admin) {
             res.redirect("/admin/dashboard");
         } else {
