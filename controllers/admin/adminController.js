@@ -16,7 +16,7 @@ exports.homepage = asyncHandler(async (req, res) => {
         if (admin) {
             res.redirect("/admin/dashboard");
         } else {
-            res.redirect("/admin/login");
+            res.redirect("/admin/auth/login");
         }
     } catch (error) {
         throw new Error(error);

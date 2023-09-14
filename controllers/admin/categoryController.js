@@ -85,7 +85,7 @@ exports.unlist = asyncHandler(async (req, res) => {
 
         if (unlistedCategory) {
             req.flash("success", `${unlistedCategory.title} is unlisted`);
-            res.redirect("/admin/categories");
+            res.redirect("/admin/category");
         } else {
             req.flash("danger", `Can't Unlist ${unlistedCategory.title}`);
         }
@@ -113,7 +113,7 @@ exports.list = asyncHandler(async (req, res) => {
         );
         if (listedCategory) {
             req.flash("success", `${listedCategory.title} is listed`);
-            res.redirect("/admin/categories");
+            res.redirect("/admin/category");
         } else {
             req.flash("danger", `Can't List ${listedCategory.title}`);
         }
@@ -132,7 +132,7 @@ exports.editCategory = asyncHandler(async (req, res) => {
     try {
         const editedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
         req.flash("success", `Category ${editedCategory.title} updated`);
-        res.redirect("/admin/categories");
+        res.redirect("/admin/category");
     } catch (error) {
         throw new Error(error);
     }
@@ -148,7 +148,7 @@ exports.deleteCategory = asyncHandler(async (req, res) => {
     try {
         const deletedCategory = await Category.findByIdAndDelete(id);
         req.flash("success", `Category ${deletedCategory.title} deleted`);
-        res.redirect("/admin/categories");
+        res.redirect("/admin/category");
     } catch (error) {
         throw new Error(error);
     }

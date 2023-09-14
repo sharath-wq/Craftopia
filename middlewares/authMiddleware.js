@@ -20,7 +20,7 @@ const ensureAdmin = (req, res, next) => {
 
 const isBlockedAdmin = (req, res, next) => {
     if (req.user.isBlocked) {
-        res.redirect(`/admin/blocked/${req.user._id}`);
+        res.redirect(`/admin/auth/blocked/${req.user._id}`);
     } else {
         next();
     }
@@ -28,7 +28,7 @@ const isBlockedAdmin = (req, res, next) => {
 
 const isBlockedUser = (req, res, next) => {
     if (req?.user?.isBlocked) {
-        res.redirect(`/blocked/${req.user._id}`);
+        res.redirect(`/auth/blocked/${req.user._id}`);
     } else {
         next();
     }
