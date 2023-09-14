@@ -10,7 +10,8 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 exports.loginpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages });
+        const categories = await Category.find({ isListed: true });
+        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages, categories });
     } catch (error) {
         throw new Error(error);
     }

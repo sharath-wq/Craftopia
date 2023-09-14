@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const Category = require("../../models/categoryModel");
+const Product = require("../../models/productModel");
 
 /**
  * Landing Page Route
@@ -6,7 +8,8 @@ const asyncHandler = require("express-async-handler");
  */
 exports.shopHomepage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/index", { title: "Craftopia", page: "home" });
+        const products = await Product.find().limit(5);
+        res.render("shop/pages/index", { title: "Craftopia", page: "home", products });
     } catch (error) {
         throw new Error(error);
     }

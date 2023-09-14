@@ -11,6 +11,8 @@ const mongoose = require("mongoose"); // No need for destructuring
 const methodOverride = require("method-override");
 const nocache = require("nocache");
 
+const Category = require("./models/categoryModel");
+
 // Import authentication and authorization middleware
 const { ensureAdmin, ensureSuperAdmin, isBlockedAdmin } = require("./middlewares/authMiddleware");
 const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
@@ -58,7 +60,9 @@ app.use(passport.session());
 require("./utils/passport.auth");
 
 // Set user data in res.locals for EJS templates
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+    const categories = await Category.find({ isListed: true });
+    res.locals.categories = categories;
     res.locals.user = req.user;
     next();
 });

@@ -20,11 +20,9 @@
                             <li>
                                 <a href="/shop">categories</a>
                                 <ul class="single-dropdown">
-                                    <li><a href="#">Handmade Pot</a></li>
-                                    <li><a href="#">Handicraft</a></li>
-                                    <li><a href="#">Boo Basket</a></li>
-                                    <li><a href="#">Handdy Pottery</a></li>
-                                    <li><a href="#">Boo Lights</a></li>
+                                    <% categories.forEach(category => { %>
+                                    <li><a href="/shop/?category=<%= category.title %>"><%= category.title %></a></li>
+                                    <% }) %>
                                 </ul>
                             </li>
                             <li>

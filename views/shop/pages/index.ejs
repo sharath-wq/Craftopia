@@ -71,10 +71,11 @@
             </div>
             <div class="product-style">
                 <div class="arrival-active owl-carousel">
+                    <% products.forEach(product => { %>
                     <div class="product-wrapper">
                         <div class="product-img">
-                            <a href="#">
-                                <img src="shop/img/product/handicraft/1.jpg" alt="" />
+                            <a href="/product/<%= product._id %>">
+                                <img src="<%= product.images %>" alt="<%= product.title %>" />
                             </a>
                             <span class="new">new</span>
                             <div class="product-action">
@@ -84,136 +85,19 @@
                                 <a class="animate-top" title="Add To Cart" href="#">
                                     <i class="pe-7s-cart"></i>
                                 </a>
-                                <a
-                                    class="animate-right"
-                                    title="Quick View"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    href="#"
-                                >
-                                    <i class="pe-7s-look"></i>
-                                </a>
                             </div>
                         </div>
                         <div class="product-content">
-                            <h4><a href="/product"> Dagger Smart Trousers </a></h4>
-                            <span>₹ 115.00</span>
-                        </div>
-                    </div>
-                    <div class="product-wrapper">
-                        <div class="product-img">
-                            <a href="#">
-                                <img src="shop/img/product/handicraft/2.jpg" alt="" />
-                            </a>
-                            <div class="product-action">
-                                <a class="animate-left" title="Wishlist" href="#">
-                                    <i class="pe-7s-like"></i>
-                                </a>
-                                <a class="animate-top" title="Add To Cart" href="#">
-                                    <i class="pe-7s-cart"></i>
-                                </a>
-                                <a
-                                    class="animate-right"
-                                    title="Quick View"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    href="#"
+                            <h4 class="card-title"><%= product.title %></h4>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-decoration-line-through text-secondary"
+                                    >₹ <%= product.productPrice %></span
                                 >
-                                    <i class="pe-7s-look"></i>
-                                </a>
+                                <span class="card-text">₹ <%= product.salePrice %></span>
                             </div>
                         </div>
-                        <div class="product-content">
-                            <h4><a href="/product">Homme Tapered Smart </a></h4>
-                            <span>₹ 115.00</span>
-                        </div>
                     </div>
-                    <div class="product-wrapper">
-                        <div class="product-img">
-                            <a href="#">
-                                <img src="shop/img/product/handicraft/3.jpg" alt="" />
-                            </a>
-                            <span class="new">new</span>
-                            <div class="product-action">
-                                <a class="animate-left" title="Wishlist" href="#">
-                                    <i class="pe-7s-like"></i>
-                                </a>
-                                <a class="animate-top" title="Add To Cart" href="#">
-                                    <i class="pe-7s-cart"></i>
-                                </a>
-                                <a
-                                    class="animate-right"
-                                    title="Quick View"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    href="#"
-                                >
-                                    <i class="pe-7s-look"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h4><a href="/product">Navy Bird Print </a></h4>
-                            <span>₹ 115.00</span>
-                        </div>
-                    </div>
-                    <div class="product-wrapper">
-                        <div class="product-img">
-                            <a href="#">
-                                <img src="shop/img/product/handicraft/4.jpg" alt="" />
-                            </a>
-                            <div class="product-action">
-                                <a class="animate-left" title="Wishlist" href="#">
-                                    <i class="pe-7s-like"></i>
-                                </a>
-                                <a class="animate-top" title="Add To Cart" href="#">
-                                    <i class="pe-7s-cart"></i>
-                                </a>
-                                <a
-                                    class="animate-right"
-                                    title="Quick View"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    href="#"
-                                >
-                                    <i class="pe-7s-look"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h4><a href="/product">Jacket Stonewash </a></h4>
-                            <span>₹ 115.00</span>
-                        </div>
-                    </div>
-                    <div class="product-wrapper">
-                        <div class="product-img">
-                            <a href="#">
-                                <img src="shop/img/product/handicraft/5.jpg" alt="" />
-                            </a>
-                            <span class="new">new</span>
-                            <div class="product-action">
-                                <a class="animate-left" title="Wishlist" href="#">
-                                    <i class="pe-7s-like"></i>
-                                </a>
-                                <a class="animate-top" title="Add To Cart" href="#">
-                                    <i class="pe-7s-cart"></i>
-                                </a>
-                                <a
-                                    class="animate-right"
-                                    title="Quick View"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    href="#"
-                                >
-                                    <i class="pe-7s-look"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h4><a href="/product">Skinny Jeans Terry </a></h4>
-                            <span>₹ 115.00</span>
-                        </div>
-                    </div>
+                    <% }) %>
                 </div>
             </div>
         </div>
