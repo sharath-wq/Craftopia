@@ -239,6 +239,14 @@ router.put(
     customerController.unblockCustomer
 );
 
+router.put(
+    "/customer/update-role/:id",
+    ensureLoggedIn({ redirectTo: "/auth/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    customerController.updateRole
+);
+
 // Admin Routes
 router.get(
     "/admins",
@@ -268,6 +276,14 @@ router.put(
     ensureSuperAdmin,
     isBlockedAdmin,
     adminController.unblockAdmin
+);
+
+router.put(
+    "/admins/update-role/:id",
+    ensureLoggedIn({ redirectTo: "/auth/login" }),
+    ensureAdmin,
+    isBlockedAdmin,
+    adminController.updateRole
 );
 
 // Order Routes

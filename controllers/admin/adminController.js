@@ -57,7 +57,7 @@ exports.adminpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const admins = await User.find({ role: { $in: [roles.admin, roles.superAdmin] } });
-        res.render("admin/pages/customer/admins", { title: "Admins", admins, messages });
+        res.render("admin/pages/customer/admins", { title: "Admins", admins, messages, roles });
     } catch (error) {
         throw new Error(error);
     }
@@ -144,6 +144,39 @@ exports.viewAdmin = asyncHandler(async (req, res) => {
 exports.salesReportpage = asyncHandler(async (req, res) => {
     try {
         res.render("admin/pages/admin/sales-report", { title: "Sales Report" });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Update Role
+ * Method PUT
+ */
+exports.updateRole = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
+    try {
+        if (req.user.id === id) {
+            req.flash("warning", "Super admin cannot change their role themsleves, ask another super admin");
+            res.redirect("/admin/admins");
+        } else {
+            const updateAdmin = await User.findByIdAndUpdate(
+                id,
+                {
+                    role: req.body.role,
+                },
+                {
+                    new: true,
+                }
+            );
+            if (updateAdmin) {
+                req.flash("success", `${updateAdmin.firstName} updated to ${updateAdmin.role}`);
+                res.redirect("/admin/admins");
+            } else {
+                req.flash("danger", `Can't Update the role`);
+            }
+        }
     } catch (error) {
         throw new Error(error);
     }

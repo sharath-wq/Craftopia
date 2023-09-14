@@ -1,81 +1,121 @@
 <div class="row">
     <%- include('../../partials/flash-message') %>
-    <div class="col-lg-12 d-flex align-items-stretch">
-        <div class="card w-100">
-            <div class="card-body p-4">
-                <h5 class="card-title fw-semibold mb-4">Admins</h5>
+        <div class="col-lg-12 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-semibold mb-4">Admins</h5>
 
-                <!-- Search Bar -->
-                <div class="input-group mb-3 gap-2">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Search admins" />
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" id="searchButton">Search</button>
-                    </div>
+                    <% if (admins.length) { %>
+                        <!-- Search Bar -->
+                        <div class="input-group mb-3 gap-2">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search users" />
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="searchButton">Search</button>
+                            </div>
+                        </div>
+
+                        <!-- Filter Buttons -->
+                        <div class="btn-group mb-3" role="group">
+                            <button type="button" class="btn btn-primary" data-status="all">All</button>
+                            <button type="button" class="btn btn-primary" data-status="active">Active</button>
+                            <button type="button" class="btn btn-primary" data-status="inactive">Blocked</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Role</th>
+                                        <th>Mobile</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% admins.forEach((element, index)=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= index + 1 %>
+                                            </td>
+                                            <td>
+                                                <%= element.firstName %>
+                                            </td>
+                                            <td>
+                                                <%= element.lastName %>
+                                            </td>
+                                            <td><a href="/admin/customer/view/<%= element._id %>">
+                                                    <%= element.email %>
+                                                </a></td>
+                                            <td>
+                                                <% if (element.isBlocked) { %> Blocked <% } else { %> Active <% } %>
+                                            </td>
+                                            <td>
+                                                <form action="/admin/admins/update-role/<%= element._id %>?_method=PUT"
+                                                    method="post">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <select class="form-control" name="role" id="role">
+                                                                    <% Object.keys(roles).forEach(function(key) { %>
+                                                                        <option <%=element.role===roles[key]
+                                                                            ? "selected" : "" %> value="<%= roles[key]
+                                                                                %>"><%= roles[key] %>
+                                                                        </option>
+                                                                        <% }); %>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-primary">Update</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <%= element.mobile %>
+                                            </td>
+                                            <td>
+                                                <% if (element.isBlocked) { %>
+
+                                                    <form method="post"
+                                                        action="/admin/customer/unblock/<%= element._id %>?_method=PUT">
+                                                        <button type="submit" class="btn btn-success">Unblock</button>
+                                                    </form>
+                                                    <% } else { %>
+                                                        <form method="post"
+                                                            action="/admin/customer/block/<%= element._id %>?_method=PUT">
+                                                            <button type="submit" class="btn btn-danger">Block</button>
+                                                        </form>
+                                                        <% } %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-end">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                </li>
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <% } else { %>
+                            No Admins
+                            <% } %>
                 </div>
-
-                <!-- Filter Buttons -->
-                <div class="btn-group mb-3" role="group">
-                    <button type="button" class="btn btn-primary" data-status="all">All</button>
-                    <button type="button" class="btn btn-primary" data-status="active">Active</button>
-                    <button type="button" class="btn btn-primary" data-status="inactive">Blocked</button>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Role</th>
-                                <th>Mobile</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% admins.forEach((element, index) => { %>
-                            <tr>
-                                <td><%= index + 1 %></td>
-                                <td><%= element.firstName %></td>
-                                <td><%= element.lastName %></td>
-                                <td><a href="/admin/admins/view/<%= element._id %>"><%= element.email %></a></td>
-                                <td><% if (element.isBlocked) { %> Blocked <% } else { %> Active <% } %></td>
-                                <td><%= element.role %></td>
-                                <td><%= element.mobile %></td>
-                                <td>
-                                    <% if (element.isBlocked) { %>
-
-                                    <form method="post" action="/admin/admins/unblock/<%= element._id %>?_method=PUT">
-                                        <button type="submit" class="btn btn-success">Unblock</button>
-                                    </form>
-                                    <% } else { %>
-                                    <form method="post" action="/admin/admins/block/<%= element._id %>?_method=PUT">
-                                        <button type="submit" class="btn btn-danger">Block</button>
-                                    </form>
-                                    <% } %>
-                                </td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                        </li>
-                        <li class="page-item active" aria-current="page">
-                            <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
-    </div>
 </div>
