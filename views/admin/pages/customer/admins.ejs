@@ -83,12 +83,12 @@
                                                 <% if (element.isBlocked) { %>
 
                                                     <form method="post"
-                                                        action="/admin/customer/unblock/<%= element._id %>?_method=PUT">
+                                                        action="/admin/admins/unblock/<%= element._id %>?_method=PUT">
                                                         <button type="submit" class="btn btn-success">Unblock</button>
                                                     </form>
                                                     <% } else { %>
                                                         <form method="post"
-                                                            action="/admin/customer/block/<%= element._id %>?_method=PUT">
+                                                            action="/admin/admins/block/<%= element._id %>?_method=PUT">
                                                             <button type="submit" class="btn btn-danger">Block</button>
                                                         </form>
                                                         <% } %>
