@@ -8,7 +8,6 @@ const User = require("../../models/userModel");
 exports.loginpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        console.log(messages);
         res.render("admin/pages/auth/login", { title: "Login", messages });
     } catch (error) {
         throw new Error(error);
