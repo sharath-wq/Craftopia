@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/product/add" aria-expanded="false">
+                    <a class="sidebar-link" href="/admin/products/add" aria-expanded="false">
                         <span>
                             <i class="ti ti-plus"></i>
                         </span>
@@ -55,7 +55,7 @@
                     <span class="hide-menu">Category</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/categories" aria-expanded="false">
+                    <a class="sidebar-link" href="/admin/category" aria-expanded="false">
                         <span>
                             <i class="ti ti-category-2"></i>
                         </span>
@@ -86,7 +86,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/add-banner" aria-expanded="false">
+                    <a class="sidebar-link" href="/admin/banners/add" aria-expanded="false">
                         <span>
                             <i class="ti ti-plus"></i>
                         </span>
@@ -109,7 +109,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/add-coupon" aria-expanded="false">
+                    <a class="sidebar-link" href="/admin/coupons/add" aria-expanded="false">
                         <span>
                             <i class="ti ti-plus"></i>
                         </span>
@@ -131,73 +131,73 @@
                         <span class="hide-menu">Customers</span>
                     </a>
                 </li>
-                <% if (user.role === "SUPER ADMIN") { %>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/admins" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-user-exclamation"></i>
-                        </span>
-                        <span class="hide-menu">Admins</span>
-                    </a>
-                </li>
-                <% } %>
+                <% if (user.role==="SUPER ADMIN" ) { %>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="/admin/admins" aria-expanded="false">
+                            <span>
+                                <i class="ti ti-user-exclamation"></i>
+                            </span>
+                            <span class="hide-menu">Admins</span>
+                        </a>
+                    </li>
+                    <% } %>
 
-                <!-- User End -->
+                        <!-- User End -->
 
-                <!-- Order Start -->
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Orders</span>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/orders" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-package"></i>
-                        </span>
-                        <span class="hide-menu">Orders</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/edit-order" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-edit"></i>
-                        </span>
-                        <span class="hide-menu">Edit Orders</span>
-                    </a>
-                </li>
-                <!-- Order End -->
+                        <!-- Order Start -->
+                        <li class="nav-small-cap">
+                            <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                            <span class="hide-menu">Orders</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="/admin/orders" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-package"></i>
+                                </span>
+                                <span class="hide-menu">Orders</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="/admin/orders/edit" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-edit"></i>
+                                </span>
+                                <span class="hide-menu">Edit Orders</span>
+                            </a>
+                        </li>
+                        <!-- Order End -->
 
-                <!-- Logout Start -->
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Admin</span>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/settings" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-settings"></i>
-                        </span>
-                        <span class="hide-menu">Settings</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/sales-report" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-report-money"></i>
-                        </span>
-                        <span class="hide-menu">Sales Report</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/admin/logout" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-logout"></i>
-                        </span>
-                        <span class="hide-menu">Logout</span>
-                    </a>
-                </li>
+                        <!-- Logout Start -->
+                        <li class="nav-small-cap">
+                            <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                            <span class="hide-menu">Admin</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="/admin/settings" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-settings"></i>
+                                </span>
+                                <span class="hide-menu">Settings</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="/admin/sales-report" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-report-money"></i>
+                                </span>
+                                <span class="hide-menu">Sales Report</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="/admin/auth/logout" aria-expanded="false">
+                                <span>
+                                    <i class="ti ti-logout"></i>
+                                </span>
+                                <span class="hide-menu">Logout</span>
+                            </a>
+                        </li>
 
-                <!-- Logout End -->
+                        <!-- Logout End -->
             </ul>
         </nav>
         <!-- End Sidebar navigation -->

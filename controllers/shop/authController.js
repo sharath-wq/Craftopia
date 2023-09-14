@@ -10,7 +10,8 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 exports.loginpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages });
+        const categories = await Category.find({ isListed: true });
+        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages, categories });
     } catch (error) {
         throw new Error(error);
     }
@@ -27,7 +28,7 @@ exports.logoutUser = asyncHandler(async (req, res, next) => {
                 return next(err);
             }
             req.flash("success", "Logged Out!");
-            res.redirect("/login");
+            res.redirect("/auth/login");
         });
     } catch (error) {
         throw new Error(error);
@@ -43,7 +44,7 @@ exports.blockedUserpage = asyncHandler(async (req, res) => {
         const id = req.params.id;
         validateMongoDbId(id);
         const user = await User.findById(id);
-        res.render("admin/pages/auth/blocked", { title: "Blocked", page: "blocked", user });
+        res.render("shop/pages/auth/blocked", { title: "Blocked", page: "blocked", user });
     } catch (error) {
         throw new Error(error);
     }
@@ -69,16 +70,16 @@ exports.registerUser = asyncHandler(async (req, res) => {
             if (!existingUser) {
                 const newUser = await User.create(req.body);
                 req.flash("success", "User Registerd Successfully Please Login");
-                res.redirect("/login");
+                res.redirect("/auth/login");
             } else {
                 req.flash("warning", "Email Alardy Registerd Please login");
-                res.redirect("/login");
+                res.redirect("/auth/login");
             }
         }
     } catch (error) {
         if (error.keyPattern.mobile === 1) {
             req.flash("danger", "Mobile number already registered");
-            res.redirect("/register");
+            res.redirect("/auth/register");
         } else {
             throw new Error(error);
         }

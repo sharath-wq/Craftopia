@@ -47,7 +47,7 @@
                                             <td>
                                                 <%= element.lastName %>
                                             </td>
-                                            <td><a href="/admin/customer/view/<%= element._id %>">
+                                            <td><a href="/admin/customers/view/<%= element._id %>">
                                                     <%= element.email %>
                                                 </a></td>
                                             <td>
@@ -55,7 +55,7 @@
                                             </td>
                                             <td>
                                                 <form
-                                                    action="/admin/customer/update-role/<%= element._id %>?_method=PUT"
+                                                    action="/admin/customers/update-role/<%= element._id %>?_method=PUT"
                                                     method="post">
                                                     <div class="row">
                                                         <div class="col-md-6">
@@ -84,12 +84,12 @@
                                                 <% if (element.isBlocked) { %>
 
                                                     <form method="post"
-                                                        action="/admin/customer/unblock/<%= element._id %>?_method=PUT">
+                                                        action="/admin/customers/unblock/<%= element._id %>?_method=PUT">
                                                         <button type="submit" class="btn btn-success">Unblock</button>
                                                     </form>
                                                     <% } else { %>
                                                         <form method="post"
-                                                            action="/admin/customer/block/<%= element._id %>?_method=PUT">
+                                                            action="/admin/customers/block/<%= element._id %>?_method=PUT">
                                                             <button type="submit" class="btn btn-danger">Block</button>
                                                         </form>
                                                         <% } %>

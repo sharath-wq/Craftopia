@@ -40,7 +40,7 @@ exports.logoutAdmin = asyncHandler(async (req, res, next) => {
                 return next(err);
             }
             req.flash("success", "Logged Out!");
-            res.redirect("/admin/login");
+            res.redirect("/admin/auth/login");
         });
     } catch (error) {
         throw new Error(error);

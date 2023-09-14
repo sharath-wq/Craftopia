@@ -10,13 +10,10 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 exports.homepage = asyncHandler(async (req, res) => {
     const admin = req?.session?.admin;
     try {
-        /**
-         * TODO: check the token and redirect to admin page or login page according to token
-         */
         if (admin) {
             res.redirect("/admin/dashboard");
         } else {
-            res.redirect("/admin/login");
+            res.redirect("/admin/auth/login");
         }
     } catch (error) {
         throw new Error(error);
@@ -64,27 +61,32 @@ exports.adminpage = asyncHandler(async (req, res) => {
 });
 
 /**
- * Block Customer
+ * Block Admin
  * Method PUT
  */
 exports.blockAdmin = asyncHandler(async (req, res) => {
     const id = req.params.id;
     validateMongoDbId(id);
     try {
-        const blockedCustomer = await User.findByIdAndUpdate(
-            id,
-            {
-                isBlocked: true,
-            },
-            {
-                new: true,
+        if (req.user.id !== id) {
+            const blockedCustomer = await User.findByIdAndUpdate(
+                id,
+                {
+                    isBlocked: true,
+                },
+                {
+                    new: true,
+                }
+            );
+            if (blockedCustomer) {
+                req.flash("success", `${blockedCustomer.email} Blocked Successfully`);
+                res.redirect("/admin/admins");
+            } else {
+                req.flash("danger", `Can't block ${blockedCustomer}`);
+                res.redirect("/admin/admins");
             }
-        );
-        if (blockedCustomer) {
-            req.flash("success", `${blockedCustomer.email} Blocked Successfully`);
-            res.redirect("/admin/admins");
         } else {
-            req.flash("danger", `Can't block ${blockedCustomer}`);
+            req.flash("warning", "You can't block yourslef, ask another admin");
             res.redirect("/admin/admins");
         }
     } catch (error) {
@@ -93,7 +95,7 @@ exports.blockAdmin = asyncHandler(async (req, res) => {
 });
 
 /**
- * Unblock Customer
+ * Unblock Admin
  * Method PUT
  */
 exports.unblockAdmin = asyncHandler(async (req, res) => {

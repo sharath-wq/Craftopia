@@ -12,44 +12,44 @@
                                 role="tab"
                                 aria-selected="true"
                             >
-                                <img src="/shop/img/product-details/s5.jpg" alt="" />
+                                <img src="<%= product.images %>" alt="" />
                             </a>
                             <a class="mb-10" href="#pro-details2" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="/shop/img/product-details/s6.jpg" alt="" />
+                                <img src="<%= product.images %>" alt="" />
                             </a>
                             <a class="mb-10" href="#pro-details3" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="/shop/img/product-details/s7.jpg" alt="" />
+                                <img src="<%= product.images %>" alt="" />
                             </a>
                             <a class="mb-10" href="#pro-details4" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="/shop/img/product-details/s8.jpg" alt="" />
+                                <img src="<%= product.images %>" alt="" />
                             </a>
                         </div>
                         <div class="product-details-large tab-content">
                             <div class="tab-pane active show fade" id="pro-details1" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="/shop/img/product-details/bl1.jpg">
-                                        <img src="/shop/img/product-details/l5-details-2.jpg" alt="" />
+                                    <a href="<%= product.images %>">
+                                        <img src="<%= product.images %>" alt="" />
                                     </a>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pro-details2" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="/shop/img/product-details/bl2.jpg">
-                                        <img src="/shop/img/product-details/l6-details-2.jpg" alt="" />
+                                    <a href="<%= product.images %>">
+                                        <img src="<%= product.images %>" alt="" />
                                     </a>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pro-details3" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="/shop/img/product-details/bl3.jpg">
-                                        <img src="/shop/img/product-details/l7-details-2.jpg" alt="" />
+                                    <a href="<%= product.images %>">
+                                        <img src="<%= product.images %>" alt="" />
                                     </a>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pro-details4" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="/shop/img/product-details/bl4.jpg">
-                                        <img src="/shop/img/product-details/l8-details-2.jpg" alt="" />
+                                    <a href="<%= product.images %>">
+                                        <img src="<%= product.images %>" alt="" />
                                     </a>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
             </div>
             <div class="col-md-12 col-lg-5 col-12">
                 <div class="product-details-content">
-                    <h3>Handcrafted Supper Mug</h3>
+                    <h3><%= product.title %></h3>
                     <div class="rating-number">
                         <div class="quick-view-rating">
                             <i class="pe-7s-star red-star"></i>
@@ -73,13 +73,9 @@
                         </div>
                     </div>
                     <div class="details-price">
-                        <span>₹ 120.00</span>
+                        <span>₹ <%= product.salePrice %></span>
                     </div>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmol tempor incidid ut labore et
-                        dolore magna aliqua. Ut enim ad minim veni quis nostrud exercitation ullamco laboris nisi ut aliquip
-                        ex ea commodo consequat. Duis aute irure dolor in
-                    </p>
+                    <p><%= product.description %></p>
                     <div class="quick-view-select">
                         <!-- <div class="select-option-part">
                             <label>Size*</label>
@@ -192,10 +188,11 @@
         </div>
         <div class="product-style">
             <div class="related-product-active owl-carousel">
+                <% products.forEach(item => { %>
                 <div class="product-wrapper">
                     <div class="product-img">
                         <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/1.jpg" alt="" />
+                            <img src="<%= item.images %>" alt="" />
                         </a>
                         <span>hot</span>
                         <div class="product-action">
@@ -205,193 +202,14 @@
                             <a class="animate-top" title="Add To Cart" href="#">
                                 <i class="pe-7s-cart"></i>
                             </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
                         </div>
                     </div>
                     <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
+                        <h4><a href="#"><%= item.title %></a></h4>
+                        <span>₹ <%= item.salePrice %></span>
                     </div>
                 </div>
-                <div class="product-wrapper">
-                    <div class="product-img">
-                        <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/2.jpg" alt="" />
-                        </a>
-                        <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
-                                <i class="pe-7s-cart"></i>
-                            </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
-                    </div>
-                </div>
-                <div class="product-wrapper">
-                    <div class="product-img">
-                        <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/3.jpg" alt="" />
-                        </a>
-                        <span>hot</span>
-                        <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
-                                <i class="pe-7s-cart"></i>
-                            </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
-                    </div>
-                </div>
-                <div class="product-wrapper">
-                    <div class="product-img">
-                        <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/4.jpg" alt="" />
-                        </a>
-                        <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
-                                <i class="pe-7s-cart"></i>
-                            </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
-                    </div>
-                </div>
-                <div class="product-wrapper">
-                    <div class="product-img">
-                        <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/5.jpg" alt="" />
-                        </a>
-                        <span>hot</span>
-                        <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
-                                <i class="pe-7s-cart"></i>
-                            </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
-                    </div>
-                </div>
-                <div class="product-wrapper">
-                    <div class="product-img">
-                        <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/1.jpg" alt="" />
-                        </a>
-                        <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
-                                <i class="pe-7s-cart"></i>
-                            </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
-                    </div>
-                </div>
-                <div class="product-wrapper">
-                    <div class="product-img">
-                        <a href="#">
-                            <img src="/shop/img/product/fashion-colorful/2.jpg" alt="" />
-                        </a>
-                        <span>hot</span>
-                        <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
-                                <i class="pe-7s-cart"></i>
-                            </a>
-                            <a
-                                class="animate-right"
-                                title="Quick View"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                href="#"
-                            >
-                                <i class="pe-7s-look"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="product-content">
-                        <h4><a href="#">Arifo Stylas Dress</a></h4>
-                        <span>₹ 115.00</span>
-                    </div>
-                </div>
+                <% }) %>
             </div>
         </div>
     </div>

@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const Product = require("../../models/productModel");
+const validateMongoDbId = require("../../utils/validateMongodbId");
 
 /**
  * Shop page Route
@@ -6,7 +8,8 @@ const asyncHandler = require("express-async-handler");
  */
 exports.shoppage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/products/shop", { title: "Shop", page: "shop" });
+        const products = await Product.find();
+        res.render("shop/pages/products/shop", { title: "Shop", page: "shop", products });
     } catch (error) {
         throw new Error(error);
     }
@@ -17,8 +20,12 @@ exports.shoppage = asyncHandler(async (req, res) => {
  * Method GET
  */
 exports.singleProductpage = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
     try {
-        res.render("shop/pages/products/product", { title: "Product", page: "product" });
+        const products = await Product.find().limit(3);
+        const product = await Product.findById(id);
+        res.render("shop/pages/products/product", { title: "Product", page: "product", products, product });
     } catch (error) {
         throw new Error(error);
     }
