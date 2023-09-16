@@ -9,6 +9,14 @@ const ensureSuperAdmin = (req, res, next) => {
     }
 };
 
+const ensureUser = (req, res, next) => {
+    if (req?.user?.role === roles.admin || req?.user?.role === roles.superAdmin) {
+        res.redirect("/admin");
+    } else {
+        next();
+    }
+};
+
 const ensureAdmin = (req, res, next) => {
     if (req.user.role === roles.admin || req.user.role === roles.superAdmin) {
         next();
@@ -34,4 +42,4 @@ const isBlockedUser = (req, res, next) => {
     }
 };
 
-module.exports = { ensureAdmin, ensureSuperAdmin, isBlockedAdmin, isBlockedUser };
+module.exports = { ensureAdmin, ensureSuperAdmin, isBlockedAdmin, isBlockedUser, ensureUser };

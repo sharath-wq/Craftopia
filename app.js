@@ -14,7 +14,7 @@ const nocache = require("nocache");
 const Category = require("./models/categoryModel");
 
 // Import authentication and authorization middleware
-const { ensureAdmin, ensureSuperAdmin, isBlockedAdmin } = require("./middlewares/authMiddleware");
+const { ensureAdmin, ensureSuperAdmin, isBlockedAdmin, ensureUser } = require("./middlewares/authMiddleware");
 const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
 
 // Load environment variables
@@ -74,17 +74,6 @@ app.use(connectFlash());
 app.use(expressLayouts);
 app.set("view engine", "ejs");
 
-// Shop Routes
-const shopRoute = require("./routes/shop/shopRouter");
-const shopAuthRoute = require("./routes/shop/authRoutes");
-const userRoute = require("./routes/shop/userRoutes");
-const userorderRoute = require("./routes/shop/orderRoutes");
-
-app.use("/", shopRoute);
-app.use("/auth", shopAuthRoute);
-app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), userRoute);
-app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), userorderRoute);
-
 // Admin Routes
 const adminRoute = require("./routes/admin/adminRoutes");
 const productRoute = require("./routes/admin/productsRoute");
@@ -117,6 +106,17 @@ app.use(
     superAdminRoute
 );
 app.use("/admin", ensureLoggedIn({ redirectTo: "/admin/auth/login" }), ensureAdmin, isBlockedAdmin, adminRoute);
+
+// Shop Routes
+const shopRoute = require("./routes/shop/shopRouter");
+const shopAuthRoute = require("./routes/shop/authRoutes");
+const userRoute = require("./routes/shop/userRoutes");
+const userorderRoute = require("./routes/shop/orderRoutes");
+
+app.use("/", ensureUser, shopRoute);
+app.use("/auth", shopAuthRoute);
+app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), userRoute);
+app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), userorderRoute);
 
 // Catch-all route for 404 errors
 app.use((req, res) => {
