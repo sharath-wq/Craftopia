@@ -7,7 +7,7 @@
                 <h5 class="card-title fw-semibold mb-4">Categories</h5>
                 <div class="table-responsive">
                     <% if (categories.length) { %>
-                    <table class="table table-bordered">
+                    <table id="categoryTable" class="table table-bordered">
                         <thead>
                             <tr>
                                 <th class="text-center">S.No</th>
@@ -66,3 +66,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#categoryTable").DataTable();
+    });
+</script>
