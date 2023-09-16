@@ -5,7 +5,7 @@
                 <div class="card-body p-4">
                     <h5 class="card-title fw-semibold mb-4">Customers</h5>
 
-                    <% if (users.length) { %>
+                    <% if (customers.length) { %>
                         <div class="table-responsive">
                             <table id="usersTable" class="table table-striped">
                                 <thead>
@@ -21,7 +21,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% users.forEach((element, index)=> { %>
+                                    <% customers.forEach((element, index)=> { %>
                                         <tr>
                                             <td>
                                                 <%= index + 1 %>
@@ -63,7 +63,8 @@
                                                 </form>
                                             </td>
                                             <td>
-                                                <%= element.mobile %>
+                                                <%= element.isMobileVerified ? element.mobile : "N/A" %>
+                                            </td>
                                             </td>
                                             <td>
                                                 <% if (element.isBlocked) { %>

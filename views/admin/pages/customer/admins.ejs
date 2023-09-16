@@ -61,7 +61,7 @@
                                                 </form>
                                             </td>
                                             <td>
-                                                <%= element.mobile %>
+                                                <%= element?.isMobileVerified ? element?.mobile : "N/A" %>
                                             </td>
                                             <td>
                                                 <% if (element.isBlocked) { %>

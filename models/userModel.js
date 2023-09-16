@@ -18,10 +18,18 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        image: {
+            type: String,
+            default: "",
+        },
         mobile: {
             type: String,
-            required: true,
             unique: true,
+            required: true,
+        },
+        isMobileVerified: {
+            type: Boolean,
+            default: false,
         },
         password: {
             type: String,
@@ -49,9 +57,6 @@ const userSchema = new mongoose.Schema(
             default: [],
         },
         wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-        refreshToken: {
-            type: String,
-        },
         passwordChangedAt: Date,
         passwordResetToken: String,
         passwordRestExpires: Date,

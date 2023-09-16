@@ -4,25 +4,31 @@
         <div class="row">
             <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
                 <%- include('../../partials/flash-message.ejs') %>
-                <div class="login">
-                    <h1 class="cart-heading">login</h1>
-                    <div class="login-form-container">
-                        <div class="login-form">
-                            <form action="/auth/login" method="post">
-                                <input type="email" name="email" placeholder="Email" />
-                                <input type="password" name="password" placeholder="Password" />
-                                <div class="button-box">
-                                    <div class="login-toggle-btn">
-                                        <input type="checkbox" />
-                                        <label>Remember me</label>
-                                        <a href="/forgot-password">Forgot Password?</a>
+                    <div class="login">
+                        <h1 class="cart-heading">Login</h1>
+                        <div class="login-form-container">
+                            <div class="login-form">
+                                <form action="/auth/login" method="post">
+                                    <input type="email" name="email" placeholder="Email" />
+                                    <input type="password" name="password" placeholder="Password" />
+                                    <div class="button-box">
+                                        <div class="login-toggle-btn">
+                                            <input type="checkbox" />
+                                            <label>Remember me</label>
+                                            <a href="/forgot-password">Forgot Password?</a>
+                                        </div>
+                                        <button type="submit" class="default-btn floatright">Login</button>
                                     </div>
-                                    <button type="submit" class="default-btn floatright">Login</button>
+                                </form>
+                                <!-- Add spacing and center-align the Google button -->
+                                <div class="text-center mt-3">
+                                    <a href="/auth/google" class="btn btn-danger">
+                                        <i class="ti ti-google"></i> Login with Google
+                                    </a>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>

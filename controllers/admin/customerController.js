@@ -10,8 +10,8 @@ const { roles } = require("../../utils/constants");
 exports.customerpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        const users = await User.find({ role: roles.user });
-        res.render("admin/pages/customer/customers", { title: "Customer", users, messages, roles });
+        const customers = await User.find({ role: roles.user });
+        res.render("admin/pages/customer/customers", { title: "Customer", customers, messages, roles });
     } catch (error) {
         throw new Error(error);
     }
@@ -26,8 +26,8 @@ exports.viewCustomer = asyncHandler(async (req, res) => {
         const messages = req.flash();
         const id = req.params.id;
         validateMongoDbId(id);
-        const user = await User.findById(id);
-        res.render("admin/pages/customer/customer", { title: "Customer", user, messages });
+        const customer = await User.findById(id);
+        res.render("admin/pages/customer/customer", { title: "Customer", customer, messages });
     } catch (error) {
         throw new Error(error);
     }
