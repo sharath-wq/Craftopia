@@ -10,7 +10,7 @@ exports.categoriespage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const categories = await Category.find();
-        res.render("admin/pages/category/categories", { title: "Categories", categories, messages });
+        res.render("admin/pages/category/categories", { title: "category", categories, messages });
     } catch (error) {
         throw new Error(error);
     }

@@ -10,6 +10,17 @@ router.use((req, res, next) => {
     next();
 });
 
+router.get("/google", passport.authenticate("google", { scope: ["email", "profile"] }));
+
+router.get(
+    "/google/callback",
+    passport.authenticate("google", {
+        successRedirect: "/admin",
+        failureRedirect: "/admin/auth/login",
+        failureFlash: true,
+    })
+);
+
 router.get("/login", ensureLoggedOut({ redirectTo: "/admin/dashboard" }), authController.loginpage);
 router.get(
     "/logout",

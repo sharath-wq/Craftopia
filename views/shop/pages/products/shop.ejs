@@ -122,14 +122,14 @@
                                                     <a
                                                         class="animate-left"
                                                         title="Wishlist"
-                                                        href="/wishlist/add/<%= user.id %>"
+                                                        href="/wishlist/add/<%= user?.id %>"
                                                     >
                                                         <i class="pe-7s-like"></i>
                                                     </a>
                                                     <a
                                                         class="animate-top"
                                                         title="Add To Cart"
-                                                        href="/cart/add/<%= user.id %>"
+                                                        href="/cart/add/<%= user?.id %>"
                                                     >
                                                         <i class="pe-7s-cart"></i>
                                                     </a>
@@ -144,6 +144,40 @@
                                     </div>
                                     <% }) %>
                                     <!-- End Product Loop -->
+                                </div>
+                            </div>
+
+                            <div id="grid-sidebar2" class="tab-pane fade">
+                                <div class="row">
+                                    <% products.forEach(product => { %>
+                                    <div class="col-lg-12 col-xl-6">
+                                        <div class="product-wrapper mb-30 single-product-list product-list-right-pr mb-60">
+                                            <div class="product-img list-img-width">
+                                                <a href="/product/<%= product._id %>">
+                                                    <img src="<%= product.images %>" alt="<%= product.title %>" />
+                                                </a>
+                                                <span>hot</span>
+                                            </div>
+                                            <div class="product-content-list">
+                                                <div class="product-list-info">
+                                                    <h4><a href="/product/<%= product._id %>"><%= product.title%></a></h4>
+                                                    <span>₹ <%= product.salePrice %></span>
+                                                    <p><%= product.description %></p>
+                                                </div>
+                                                <div class="product-list-cart-wishlist">
+                                                    <div class="product-list-cart">
+                                                        <a class="btn-hover list-btn-style" href="#">add to cart</a>
+                                                    </div>
+                                                    <div class="product-list-wishlist">
+                                                        <a class="btn-hover list-btn-wishlist" href="#">
+                                                            <i class="pe-7s-like"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
                                 </div>
                             </div>
                         </div>

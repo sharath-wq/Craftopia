@@ -132,8 +132,8 @@ exports.viewAdmin = asyncHandler(async (req, res) => {
         const messages = req.flash();
         const id = req.params.id;
         validateMongoDbId(id);
-        const user = await User.findById(id);
-        res.render("admin/pages/customer/customer", { title: "Admins", user, messages });
+        const customer = await User.findById(id);
+        res.render("admin/pages/customer/customer", { title: "Admins", customer, messages });
     } catch (error) {
         throw new Error(error);
     }

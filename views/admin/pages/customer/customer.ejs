@@ -2,22 +2,18 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card text-center">
-                <img
-                    src="/admin/images/profile/user-1.jpg"
-                    class="card-img-top mx-auto d-block img-fluid rounded-circle"
-                    alt="User Image"
-                    style="max-width: 150px; height: auto"
-                />
-                <div class="card-header"><%= user.firstName %> <%= user.lastName %></div>
+                <img src="<%= customer?.image ? customer?.image : "/admin/images/profile/user-1.jpg" %>" class="card-img-top
+                mx-auto d-block img-fluid rounded-circle" alt="User Image" style="max-width: 150px; height: auto" />
+                <div class="card-header"><%= customer.firstName %> <%= customer.lastName %></div>
                 <div class="card-body">
-                    <h5 class="card-title">First Name: <%= user.firstName %></h5>
-                    <p class="card-text">Last Name: <%= user.lastName %></p>
-                    <p class="card-text">Email: <%= user.email %></p>
-                    <p class="card-text">Mobile: <%= user.mobile %></p>
-                    <p class="card-text">Role: <%= user.role %></p>
-                    <p class="card-text">Status: <% if (user.isBlocked) { %> Blocked <% } else { %> Active <% } %></p>
-                    <p class="card-text">Created At: <%= new Date(user.createdAt).toUTCString() %></p>
-                    <p class="card-text">Updated At: <%= new Date(user.updatedAt).toUTCString() %></p>
+                    <h5 class="card-title">First Name: <%= customer.firstName %></h5>
+                    <p class="card-text">Last Name: <%= customer.lastName %></p>
+                    <p class="card-text">Email: <%= customer.email %></p>
+                    <p class="card-text">Mobile: <%= customer?.isMobileVerified ? customer.mobile : "N/A" %></p>
+                    <p class="card-text">Role: <%= customer.role %></p>
+                    <p class="card-text">Status: <% if (customer.isBlocked) { %> Blocked <% } else { %> Active <% } %></p>
+                    <p class="card-text">Created At: <%= new Date(customer.createdAt).toUTCString() %></p>
+                    <p class="card-text">Updated At: <%= new Date(customer.updatedAt).toUTCString() %></p>
                 </div>
             </div>
         </div>

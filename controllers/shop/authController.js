@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../../models/userModel");
 const { validationResult } = require("express-validator");
 const validateMongoDbId = require("../../utils/validateMongodbId");
+const Category = require("../../models/categoryModel");
 
 /**
  * Login Page Route
