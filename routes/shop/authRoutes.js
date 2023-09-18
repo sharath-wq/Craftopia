@@ -28,6 +28,8 @@ router.get("/register", ensureLoggedOut({ redirectTo: "/" }), authController.reg
 router.get("/forgot-password", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordpage);
 router.get("/blocked/:id", authController.blockedUserpage);
 router.get("/reset-password/:token", ensureLoggedOut({ redirectTo: "/" }), authController.resetPasswordpage);
+router.get("/send-otp", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.sendOtppage);
+router.get("/verify-otp", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.verifyOtppage);
 
 router.post("/register", registerValidator, authController.registerUser);
 router.post(
@@ -36,5 +38,7 @@ router.post(
 );
 router.post("/forgot-password", authController.forgotPassword);
 router.put("/reset-password/:token", authController.resetPassword);
+router.post("/send-otp", ensureLoggedIn({ redirectTo: "/" }), authController.sendOtp);
+router.post("/verify-otp", ensureLoggedIn({ redirectTo: "/" }), authController.verifyOtp);
 
 module.exports = router;

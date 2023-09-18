@@ -1,0 +1,34 @@
+<!-- login-area start -->
+<div class="register-area ptb-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
+                <%- include('../../partials/flash-message.ejs') %>
+                <div class="login">
+                    <h1 class="cart-heading">Login</h1>
+                    <div class="login-form-container">
+                        <div class="login-form">
+                            <form action="/auth/send-otp" method="post" id="verificationForm">
+                                <div class="form-group">
+                                    <label for="mobileNumber">Mobile Number:</label>
+                                    <input
+                                        type="tel"
+                                        class="form-control"
+                                        id="mobileNumber"
+                                        name="mobile"
+                                        placeholder="Enter your mobile number"
+                                        required
+                                    />
+                                </div>
+                                <div class="button-box">
+                                    <button type="submit" class="default-btn floatright">Send OTP</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- login-area end -->
