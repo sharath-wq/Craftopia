@@ -23,6 +23,10 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        isListed: {
+            type: Boolean,
+            default: true,
+        },
         quantity: {
             type: Number,
             required: true,

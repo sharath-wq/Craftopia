@@ -78,6 +78,38 @@ exports.updateProduct = asyncHandler(async (req, res) => {
 });
 
 /**
+ * List Product Route
+ * Method PUT
+ */
+exports.listProduct = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(id, { isListed: true });
+        req.flash("success", `${updatedProduct.title} Listed`);
+        res.redirect("/admin/products");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Unlist Product Route
+ * Method PUT
+ */
+exports.unlistProdcut = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    validateMongoDbId(id);
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(id, { isListed: false });
+        req.flash("success", `${updatedProduct.title} Unllisted`);
+        res.redirect("/admin/products");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
  * Delete Product Route
  * Method DELETE
  */
