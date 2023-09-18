@@ -8,7 +8,7 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
  */
 exports.shoppage = asyncHandler(async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find({ isListed: true });
         res.render("shop/pages/products/shop", { title: "Shop", page: "shop", products });
     } catch (error) {
         throw new Error(error);

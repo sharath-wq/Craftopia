@@ -43,14 +43,19 @@
                                         >
                                             <i class="ti ti-pencil"></i>
                                         </a>
-                                        <form
-                                            method="post"
-                                            action="/admin/products/delete/<%= product._id %>/?_method=DELETE"
-                                        >
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="ti ti-trash"></i>
+                                        <% if (product.isListed) { %>
+                                        <form method="post" action="/admin/products/unlist/<%= product._id %>?_method=PUT">
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="fas fa-check"></i>
                                             </button>
                                         </form>
+                                        <% } else { %>
+                                        <form method="post" action="/admin/products/list/<%= product._id %>?_method=PUT">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                        <% } %>
                                     </div>
                                 </td>
                             </tr>
