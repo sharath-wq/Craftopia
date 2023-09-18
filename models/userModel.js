@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema(
         wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
         passwordChangedAt: Date,
         passwordResetToken: String,
-        passwordRestExpires: Date,
+        passwordResetTokenExpires: Date,
         createdAt: {
             type: Date,
             default: Date.now(),
@@ -86,6 +86,13 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.isPasswordMatched = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.createResetPasswordToken = async function () {
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
+    return resetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);

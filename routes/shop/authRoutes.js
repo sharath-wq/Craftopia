@@ -26,12 +26,15 @@ router.get("/login", ensureLoggedOut({ redirectTo: "/" }), authController.loginp
 router.get("/logout", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.logoutUser);
 router.get("/register", ensureLoggedOut({ redirectTo: "/" }), authController.registerpage);
 router.get("/forgot-password", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordpage);
-router.get("/forgot-password-success", ensureLoggedOut({ redirectTo: "/" }), authController.forgotPasswordSuccesspage);
 router.get("/blocked/:id", authController.blockedUserpage);
+router.get("/reset-password/:token", ensureLoggedOut({ redirectTo: "/" }), authController.resetPasswordpage);
 
 router.post("/register", registerValidator, authController.registerUser);
 router.post(
     "/login",
     passport.authenticate("local", { successRedirect: "/", failureRedirect: "/auth/login", failureFlash: true })
 );
+router.post("/forgot-password", authController.forgotPassword);
+router.put("/reset-password/:token", authController.resetPassword);
+
 module.exports = router;

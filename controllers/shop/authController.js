@@ -3,6 +3,8 @@ const User = require("../../models/userModel");
 const { validationResult } = require("express-validator");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const Category = require("../../models/categoryModel");
+const crypto = require("crypto");
+const sendEmail = require("../../utils/sendEmail");
 
 /**
  * Login Page Route
@@ -106,22 +108,137 @@ exports.registerpage = asyncHandler(async (req, res) => {
  */
 exports.forgotPasswordpage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/auth/forgot-password", { title: "Forgot Password", page: "forgot-password" });
+        const messages = req.flash();
+        res.render("shop/pages/auth/forgot-password", { title: "Forgot Password", page: "forgot-password", messages });
     } catch (error) {
         throw new Error(error);
     }
 });
 
 /**
- * Forgot Password Success Page Route
+ * Forgot Password Route
+ * Method POST
+ */
+exports.forgotPassword = asyncHandler(async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+
+        if (!user) {
+            req.flash("danger", "Email Not Found");
+            return res.redirect("/auth/forgot-password");
+        }
+
+        const resetToken = await user.createResetPasswordToken();
+        await user.save();
+
+        const resetUrl = `${req.protocol}://${req.get("host")}/auth/reset-password/${resetToken}`;
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td>
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
+                    <tr>
+                        <td align="center" bgcolor="#007bff" style="padding: 40px 0;">
+                            <h1 style="color: #ffffff;">Password Reset</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ffffff" style="padding: 40px 30px;">
+                            <p>Dear ${user.firstName},</p>
+                            <p>We have received a request to reset your password. To reset your password, click the button below:</p>
+                            <p style="text-align: center;">
+                                <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
+                            </p>
+                            <p>If you didn't request a password reset, you can ignore this email. Your password will remain unchanged.</p>
+                            <p>Thank you for using our service!</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#f4f4f4" style="text-align: center; padding: 20px 0;">
+                            <p>&copy; 2023 Craftopia</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+`;
+
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: "Password Reset",
+                html: html,
+            });
+
+            req.flash("success", "Reset Link sent to your mail id");
+            return res.redirect("/auth/forgot-password");
+        } catch (error) {
+            user.passwordResetToken = undefined;
+            user.passwordResetTokenExpires = undefined;
+            console.error(error);
+            req.flash("danger", "There was an error sending the password reset email, please try again later");
+            return res.redirect("/auth/forgot-password");
+        }
+    } catch (error) {
+        console.error(error);
+        req.flash("danger", "An error occurred, please try again later");
+        return res.redirect("/auth/forgot-password");
+    }
+});
+
+/**
+ * Reset Password Page Route
  * Method GET
  */
-exports.forgotPasswordSuccesspage = asyncHandler(async (req, res) => {
+exports.resetPasswordpage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/auth/forgot-password-success", {
-            title: "Forgot Password Success",
-            page: "forgot-password-success",
-        });
+        const token = crypto.createHash("sha256").update(req.params.token).digest("hex");
+        const user = await User.findOne({ passwordResetToken: token, passwordResetTokenExpires: { $gt: Date.now() } });
+
+        if (!user) {
+            req.flash("warning", "Token is invalid or has expired");
+            res.redirect("/auth/forgot-password");
+        }
+
+        res.render("shop/pages/auth/reset-password", { title: "Reset Password", page: "Reset-password", token });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Reset Password Route
+ * Method PUT
+ */
+exports.resetPassword = asyncHandler(async (req, res) => {
+    const token = req.params.token;
+    try {
+        const user = await User.findOne({ passwordResetToken: token, passwordResetTokenExpires: { $gt: Date.now() } });
+
+        if (!user) {
+            req.flash("warning", "Token is invalid or has expired");
+            res.redirect("/auth/forgot-password");
+        }
+
+        user.password = req.body.password;
+        user.passwordResetToken = null;
+        user.passwordResetTokenExpires = null;
+        user.passwordChangedAt = Date.now();
+
+        await user.save();
+
+        req.flash("success", "Password changed");
+        res.redirect("/auth/login");
     } catch (error) {
         throw new Error(error);
     }
