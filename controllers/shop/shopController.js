@@ -8,8 +8,9 @@ const Product = require("../../models/productModel");
  */
 exports.shopHomepage = asyncHandler(async (req, res) => {
     try {
+        const messages = req.flash();
         const products = await Product.find().limit(5);
-        res.render("shop/pages/index", { title: "Craftopia", page: "home", products });
+        res.render("shop/pages/index", { title: "Craftopia", page: "home", products, messages });
     } catch (error) {
         throw new Error(error);
     }

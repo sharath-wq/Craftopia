@@ -5,6 +5,8 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 const Category = require("../../models/categoryModel");
 const crypto = require("crypto");
 const sendEmail = require("../../utils/sendEmail");
+const Otp = require("../../models/otpModel");
+const { generateOtp, sendOtp } = require("../../utils/sendOtp");
 
 /**
  * Login Page Route
@@ -239,6 +241,86 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 
         req.flash("success", "Password changed");
         res.redirect("/auth/login");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Send Otp page Route
+ * Method GET
+ */
+exports.sendOtppage = asyncHandler(async (req, res) => {
+    try {
+        const messages = req.flash();
+        res.render("shop/pages/auth/send-otp", { title: "Send Otp", page: "Send Otp", messages });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Verify Otp page Route
+ * Method GET
+ */
+exports.verifyOtppage = asyncHandler(async (req, res) => {
+    try {
+        const messages = req.flash();
+        res.render("shop/pages/auth/verify-otp", { title: "Verify Otp", page: "Verify Otp", messages });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Send Otp Route
+ * Method POST
+ */
+exports.sendOtp = asyncHandler(async (req, res) => {
+    try {
+        const { mobile } = req.body;
+        const otp = await Otp.create({
+            user_id: req.user.id,
+            user_mobile: mobile,
+            otp_code: generateOtp(),
+            expiration_time: Date.now() + 5 * 60 * 1000,
+        });
+
+        try {
+            sendOtp(mobile, otp.otp_code);
+            req.flash("success", "OTP sent successfully");
+            res.redirect("/auth/verify-otp");
+        } catch (error) {
+            req.flash("danger", "Failed to send OTP");
+            res.redirect("/auth/send-otp");
+        }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Verify Otp Route
+ * Method POST
+ */
+exports.verifyOtp = asyncHandler(async (req, res) => {
+    try {
+        const otp = await Otp.findOne({ otp_code: req.body.otp, expiration_time: { $gt: Date.now() }, used: false });
+
+        if (!otp) {
+            req.flash("danger", "Otp is invalid or expired");
+            res.redirect("/auth/verify-otp");
+        }
+
+        await otp.updateOne({ expiration_time: null, used: true });
+
+        const user = await User.findByIdAndUpdate(otp.user_id, {
+            mobile: otp.user_mobile,
+            isMobileVerified: true,
+        });
+
+        req.flash("success", "Mobile number verifed successfully");
+        res.redirect("/");
     } catch (error) {
         throw new Error(error);
     }
