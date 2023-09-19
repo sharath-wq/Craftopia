@@ -26,6 +26,8 @@ const app = express();
 // Connect to the database
 connectDatabase();
 
+// Firebase Initalization
+
 // Set the port
 const PORT = process.env.PORT || 4000;
 
