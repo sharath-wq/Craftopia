@@ -8,7 +8,7 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
  */
 exports.shoppage = asyncHandler(async (req, res) => {
     try {
-        const products = await Product.find({ isListed: true });
+        const products = await Product.find({ isListed: true }).populate("images").exec();
         res.render("shop/pages/products/shop", { title: "Shop", page: "shop", products });
     } catch (error) {
         throw new Error(error);
@@ -23,8 +23,8 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
     const id = req.params.id;
     validateMongoDbId(id);
     try {
-        const products = await Product.find().limit(3);
-        const product = await Product.findById(id);
+        const products = await Product.find().limit(3).populate("images").exec();
+        const product = await Product.findById(id).populate("images").exec();
         res.render("shop/pages/products/product", { title: "Product", page: "product", products, product });
     } catch (error) {
         throw new Error(error);

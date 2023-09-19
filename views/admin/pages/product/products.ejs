@@ -33,7 +33,13 @@
                                 <td>$<%= product.salePrice %></td>
                                 <td>$<%= product.productPrice %></td>
                                 <td><%= product.quantity %></td>
-                                <td><img src="<%= product.images %>" alt="<%= product.title %>" width="50" /></td>
+                                <td>
+                                    <img
+                                        src="<%= product.images[1].thumbnailUrl %>"
+                                        alt="<%= product.title %>"
+                                        width="50"
+                                    />
+                                </td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Product Actions">
                                         <a

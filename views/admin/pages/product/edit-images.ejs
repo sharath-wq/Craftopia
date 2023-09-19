@@ -1,0 +1,88 @@
+<div class="row justify-content-center">
+    <%- include('../../partials/flash-message.ejs') %>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body p-4">
+                <% product.images.forEach((element, index) => { %>
+                <form
+                    action="/admin/products/edit/images/upload/<%= product.images[index]._id%>/?_method=PUT"
+                    method="post"
+                    enctype="multipart/form-data"
+                >
+                    <div class="mb-3 d-flex align-items-center justify-content-between">
+                        <img
+                            src="<%= product.images[index].thumbnailUrl %>"
+                            alt="Image"
+                            id="previewImage<%= index %>"
+                            class="img-thumbnail mr-3"
+                            style="max-width: 150px"
+                        />
+                        <div class="d-flex flex-column">
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="image<%= index %>"
+                                accept="image/*"
+                                style="display: none"
+                                name="file"
+                            />
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-primary mb-2 update-image-button"
+                                data-index="<%= index %>"
+                            >
+                                <i class="fas fa-upload"></i> Select Image
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-success" id="submitImage<%= index %>" disabled>
+                                <i class="fas fa-edit"></i> Update Image
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <% }) %>
+
+                <!-- Save Changes Button -->
+                <div class="text-center">
+                    <a href="/admin/products/edit/<%= product._id %>" type="button" class="btn btn-primary">Save Changes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to handle file input change and update preview
+    const updateImageButtons = document.querySelectorAll(".update-image-button");
+
+    function handleFileInputChange(index) {
+        const fileInput = document.getElementById("image" + index);
+        const previewImage = document.getElementById("previewImage" + index);
+        const submitButton = document.getElementById("submitImage" + index);
+
+        fileInput.addEventListener("change", (event) => {
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+                // Enable the "Update Image" button when a file is selected
+                submitButton.removeAttribute("disabled");
+            } else {
+                // Disable the "Update Image" button if no file is selected
+                submitButton.setAttribute("disabled", "disabled");
+            }
+        });
+
+        // Trigger the hidden file input
+        fileInput.click();
+    }
+
+    // Add event listeners to all update image buttons
+    updateImageButtons.forEach((button, index) => {
+        button.addEventListener("click", (event) => {
+            handleFileInputChange(index);
+        });
+    });
+</script>

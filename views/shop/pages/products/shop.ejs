@@ -115,7 +115,10 @@
                                             <!-- Product Image and Actions -->
                                             <div class="product-img">
                                                 <a href="/product/<%= product._id %>">
-                                                    <img src="<%= product.images %>" alt="<%= product.title %>" />
+                                                    <img
+                                                        src="<%= product.images[0].thumbnailUrl %>"
+                                                        alt="<%= product.title %>"
+                                                    />
                                                 </a>
                                                 <span>hot</span>
                                                 <div class="product-action">
@@ -154,7 +157,10 @@
                                         <div class="product-wrapper mb-30 single-product-list product-list-right-pr mb-60">
                                             <div class="product-img list-img-width">
                                                 <a href="/product/<%= product._id %>">
-                                                    <img src="<%= product.images %>" alt="<%= product.title %>" />
+                                                    <img
+                                                        src="<%= product.images[0].thumbnailUrl %>"
+                                                        alt="<%= product.title %>"
+                                                    />
                                                 </a>
                                                 <span>hot</span>
                                             </div>
