@@ -1,0 +1,113 @@
+<!-- login-area start -->
+<div class="register-area ptb-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
+                <div class="login">
+                    <div class="login-form-container">
+                        <div class="login-form">
+                            <h2>Edit Address</h2>
+                            <form action="/user/address/edit/<%= address._id %>/?_method=PUT" method="post">
+                                <div class="row">
+                                    <!-- Name -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Name</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="name"
+                                                name="title"
+                                                value="<%= address.title %>"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="street">Street</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="street"
+                                                name="street"
+                                                value="<%= address.street %>"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <!-- City and State -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="city">City</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="city"
+                                                name="city"
+                                                value="<%= address.city %>"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="state">State</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="state"
+                                                name="state"
+                                                value="<%= address.state %>"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <!-- Pin Code -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pincode">Pin Code</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="pincode"
+                                                name="pincode"
+                                                value="<%= address.pincode %>"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Information -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="mobile">Mobile Number</label>
+                                            <input
+                                                type="tel"
+                                                class="form-control"
+                                                id="mobile"
+                                                name="mobile"
+                                                value="<%= address.mobile %>"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Add Button -->
+                                <div class="button-box">
+                                    <button type="submit" class="default-btn floatright">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- login-area end -->

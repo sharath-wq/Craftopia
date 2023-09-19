@@ -148,7 +148,7 @@ exports.unlistProdcut = asyncHandler(async (req, res) => {
     validateMongoDbId(id);
     try {
         const updatedProduct = await Product.findByIdAndUpdate(id, { isListed: false });
-        req.flash("success", `${updatedProduct.title} Unllisted`);
+        req.flash("warning", `${updatedProduct.title} Unllisted`);
         res.redirect("/admin/products");
     } catch (error) {
         throw new Error(error);
