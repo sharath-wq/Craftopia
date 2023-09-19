@@ -51,10 +51,7 @@ const userSchema = new mongoose.Schema(
             enum: [roles.user, roles.admin, roles.superAdmin],
             default: roles.user,
         },
-        address: {
-            type: Array,
-            default: [],
-        },
+        address: [{ type: mongoose.Schema.Types.ObjectId, ref: "Address" }],
         wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
         passwordChangedAt: Date,
         passwordResetToken: String,

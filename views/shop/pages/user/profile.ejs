@@ -3,59 +3,104 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
+                <%- include('../../partials/flash-message.ejs') %>
                 <div class="login">
                     <div class="login-form-container">
                         <div class="login-form">
                             <h2 class="text-center">My Details</h2>
-                            <form>
+                            <form action="/user/profile/edit/<%= user?._id %>/?_method=PUT" method="post">
                                 <div class="form-group text-center">
-                                    <img src="<%= user?.image %>" id="user-avatar" class="img-fluid rounded-circle"
-                                        alt="User Avatar" />
+                                    <img src="<%= user?.image ? user?.image : "/shop/img/team/user.png" %>" id="user-avatar"
+                                    class="img-fluid rounded-circle" />
                                     <br />
-                                    <button type="button" class="btn btn-dark mt-2" id="change-avatar">Change
-                                        Image</button>
+                                    <button type="button" class="btn btn-dark mt-2" id="change-avatar">
+                                        <%= user?.image ? "Change Profile Picture" : "Add Profile Picture" %>
+                                    </button>
                                 </div>
                                 <div class="form-group">
                                     <label for="first-name">First Name</label>
-                                    <input type="text" class="form-control" id="first-name"
-                                        placeholder="Enter First Name" value="<%= user?.firstName %>" />
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="firstName"
+                                        id="first-name"
+                                        placeholder="Enter First Name"
+                                        value="<%= user?.firstName %>"
+                                    />
                                 </div>
                                 <div class="form-group">
                                     <label for="last-name">Last Name</label>
-                                    <input type="text" class="form-control" id="last-name" placeholder="Enter Last Name"
-                                        value="<%= user?.lastName %>" />
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="last-name"
+                                        name="lastName"
+                                        placeholder="Enter Last Name"
+                                        value="<%= user?.lastName %>"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="street">Street</label>
+                                    <input
+                                        type="text"
+                                        name="street"
+                                        class="form-control"
+                                        id="street"
+                                        placeholder="Enter street"
+                                        value="<%= user?.address[0]?.street %>"
+                                    />
                                 </div>
                                 <div class="form-group">
                                     <label for="city">City</label>
-                                    <input type="text" class="form-control" id="city" placeholder="Enter City" />
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        class="form-control"
+                                        id="city"
+                                        placeholder="Enter City"
+                                        value="<%= user?.address[0]?.city %>"
+                                    />
                                 </div>
                                 <div class="form-group">
                                     <label for="state">State</label>
-                                    <input type="text" class="form-control" id="state" placeholder="Enter State" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <input type="text" class="form-control" id="address" placeholder="Enter Address" />
+                                    <input
+                                        type="text"
+                                        name="state"
+                                        class="form-control"
+                                        id="state"
+                                        placeholder="Enter State"
+                                        name="state"
+                                        value="<%= user?.address[0]?.state %>"
+                                    />
                                 </div>
                                 <div class="form-group">
                                     <label for="pincode">Pincode</label>
-                                    <input type="text" class="form-control" id="pincode" placeholder="Enter Pincode" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control" id="password"
-                                        placeholder="Enter Password" />
+                                    <input
+                                        type="text"
+                                        name="pincode"
+                                        class="form-control"
+                                        id="pincode"
+                                        placeholder="Enter Pincode"
+                                        value="<%= user?.address[0]?.pincode %>"
+                                    />
                                 </div>
                                 <div class="form-group">
                                     <label for="mobile-number">Mobile Number</label>
-                                    <input type="tel" class="form-control" id="mobile-number"
-                                        placeholder="Enter Mobile Number"
-                                        value="<%= user?.isMobileVerified ? user?.mobile : "" %>" />
+                                    <input type="tel" name="mobile" class="form-control" value="<%= user?.isMobileVerified ?
+                                    user?.mobile : "" %>" id="mobile-number" placeholder="Enter Mobile Number" value="<%=
+                                    user?.address[0]?.mobile %>" />
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter Email"
-                                        value="<%= user?.email %>" />
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        id="email"
+                                        name="email"
+                                        placeholder="Enter Email"
+                                        value="<%= user?.email %>"
+                                        disabled
+                                    />
                                 </div>
                                 <div class="button-box">
                                     <button type="submit" class="default-btn floatright">Save Change</button>

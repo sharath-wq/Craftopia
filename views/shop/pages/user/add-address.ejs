@@ -7,13 +7,20 @@
                     <div class="login-form-container">
                         <div class="login-form">
                             <h2>Add New Address</h2>
-                            <form>
+                            <form action="/user/address/add" method="post">
                                 <div class="row">
                                     <!-- Name -->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="name">Name</label>
-                                            <input type="text" class="form-control" id="name" name="name" required />
+                                            <input type="text" class="form-control" id="name" name="title" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="street">Street</label>
+                                            <input type="text" class="form-control" id="street" name="street" required />
                                         </div>
                                     </div>
 
@@ -32,27 +39,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- Address -->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="address">Address</label>
-                                            <input type="text" class="form-control" id="address" name="ADDRESS" required />
-                                        </div>
-                                    </div>
-
                                     <!-- Pin Code -->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="pincode">Pin Code</label>
                                             <input type="text" class="form-control" id="pincode" name="pincode" required />
-                                        </div>
-                                    </div>
-
-                                    <!-- Landmark -->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="landmark">Landmark</label>
-                                            <input type="text" class="form-control" id="landmark" name="landmark" />
                                         </div>
                                     </div>
 
@@ -63,25 +54,11 @@
                                             <input type="tel" class="form-control" id="mobile" name="mobile" required />
                                         </div>
                                     </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="email">Email ID</label>
-                                            <input type="email" class="form-control" id="email" name="email" required />
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="altMobile">Alternative Mobile Number</label>
-                                            <input type="tel" class="form-control" id="altMobile" name="altMobile" />
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <!-- Add Button -->
                                 <div class="button-box">
-                                    <button type="button" class="default-btn floatright">Add</button>
+                                    <button type="submit" class="default-btn floatright">Add</button>
                                 </div>
                             </form>
                         </div>

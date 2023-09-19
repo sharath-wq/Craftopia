@@ -8,34 +8,24 @@
 
     <!-- Address Cards -->
     <div class="row mt-5">
+        <%- include('../../partials/flash-message.ejs') %>
         <!-- Sample Address Card -->
+        <% if (address.length) { %> <% address.forEach(item => { %>
         <div class="col-md-4 mb-3">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Home</h5>
-                    <p class="card-text">123 Main Street, City, State, Pincode</p>
-                    <p class="card-text">Phone: +1 123-456-7890</p>
-                    <div class="button-box">
-                        <button type="button" class="btn btn-dark">Edit</button>
-                        <button type="button" class="btn btn-outline-dark">Remove</button>
+                    <h5 class="card-title"><%= item.title %></h5>
+                    <p class="card-text"><%= item.street %>, <%= item.city %>, <%= item.state %>, <%= item.pincode %></p>
+                    <p class="card-text">Mobile: +91 <%= item.mobile %></p>
+                    <div class="button-box d-flex gap-2">
+                        <a href="/user/address/edit/<%= item._id %>" type="button" class="btn btn-dark">Edit</a>
+                        <form action="/user/address/delete/<%= item._id %>/?_method=DELETE" method="post">
+                            <button type="submit" class="btn btn-outline-dark">Remove</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Add more address cards here -->
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Default</h5>
-                    <p class="card-text">123 Main Street, City, State, Pincode</p>
-                    <p class="card-text">Phone: +1 123-456-7890</p>
-                    <div class="button-box">
-                        <button type="button" class="btn btn-dark">Edit</button>
-                        <button type="button" class="btn btn-outline-dark">Remove</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <% }) %> <% } else { %> No Address <% } %>
     </div>
 </div>
