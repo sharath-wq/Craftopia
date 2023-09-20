@@ -24,9 +24,13 @@ const userSchema = new mongoose.Schema(
         },
         mobile: {
             type: String,
-            required: true,
+            default: "",
         },
         isMobileVerified: {
+            type: Boolean,
+            default: false,
+        },
+        isEmailVerified: {
             type: Boolean,
             default: false,
         },

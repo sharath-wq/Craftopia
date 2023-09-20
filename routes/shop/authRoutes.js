@@ -30,6 +30,7 @@ router.get("/blocked/:id", authController.blockedUserpage);
 router.get("/reset-password/:token", ensureLoggedOut({ redirectTo: "/" }), authController.resetPasswordpage);
 router.get("/send-otp", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.sendOtppage);
 router.get("/verify-otp", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.verifyOtppage);
+router.get("/verify-email", authController.verifyEmailpage);
 
 router.post("/register", registerValidator, authController.registerUser);
 router.post(
@@ -37,8 +38,9 @@ router.post(
     passport.authenticate("local", { successRedirect: "/", failureRedirect: "/auth/login", failureFlash: true })
 );
 router.post("/forgot-password", authController.forgotPassword);
-router.put("/reset-password/:token", authController.resetPassword);
 router.post("/send-otp", ensureLoggedIn({ redirectTo: "/" }), authController.sendOtp);
 router.post("/verify-otp", ensureLoggedIn({ redirectTo: "/" }), authController.verifyOtp);
+router.post("/verify-email", authController.verifyEmail);
+router.put("/reset-password/:token", authController.resetPassword);
 
 module.exports = router;

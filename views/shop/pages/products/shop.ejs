@@ -8,59 +8,32 @@
                     <div class="sidebar-widget mb-50">
                         <h3 class="sidebar-title">Search Products</h3>
                         <div class="sidebar-search">
-                            <form action="#">
-                                <input placeholder="Search Products..." type="text" />
-                                <button><i class="ti-search"></i></button>
+                            <form action="/shop" method="get">
+                                <input
+                                    id="search"
+                                    name="search"
+                                    placeholder="Search Products..."
+                                    type="text"
+                                    value="<%= search %>"
+                                />
+                                <button type="submit"><i class="ti-search"></i></button>
                             </form>
                         </div>
                     </div>
-                    <!-- Filter by Price Widget -->
-                    <div class="sidebar-widget mb-40">
-                        <h3 class="sidebar-title">Filter by Price</h3>
-                        <div class="price_filter">
-                            <div id="slider-range"></div>
-                            <div class="price_slider_amount">
-                                <div class="label-input">
-                                    <label>Price:</label>
-                                    <input type="text" id="amount" name="price" placeholder="Add Your Price" />
-                                </div>
-                                <button type="button">Filter</button>
-                            </div>
-                        </div>
-                    </div>
+
                     <!-- Categories Widget -->
                     <div class="sidebar-widget mb-45">
                         <h3 class="sidebar-title">Categories</h3>
                         <div class="sidebar-categories">
                             <ul>
+                                <% categories.forEach(element => { %>
                                 <li>
-                                    <a href="#">Accessories <span>4</span></a>
+                                    <a
+                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= element.title %>"
+                                        ><%= element.title %>
+                                    </a>
                                 </li>
-                                <li>
-                                    <a href="#">Book <span>9</span></a>
-                                </li>
-                                <li>
-                                    <a href="#">Clothing <span>5</span></a>
-                                </li>
-                                <li>
-                                    <a href="#">Homelife <span>3</span></a>
-                                </li>
-                                <li>
-                                    <a href="#">Kids & Baby <span>4</span></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- Tag Widget -->
-                    <div class="sidebar-widget mb-40">
-                        <h3 class="sidebar-title">Tag</h3>
-                        <div class="product-tags">
-                            <ul>
-                                <li><a href="#">Clothing</a></li>
-                                <li><a href="#">Bag</a></li>
-                                <li><a href="#">Women</a></li>
-                                <li><a href="#">Tie</a></li>
-                                <li><a href="#">Women</a></li>
+                                <% }) %>
                             </ul>
                         </div>
                     </div>
@@ -73,19 +46,23 @@
                         <div class="shop-bar pb-60">
                             <!-- Product Count and Sort By -->
                             <div class="shop-found-selector">
-                                <div class="shop-found">
-                                    <p><span>23</span> Product Found of <span>50</span></p>
-                                </div>
                                 <div class="shop-selector">
                                     <label>Sort By:</label>
-                                    <select name="select">
-                                        <option value="">Default</option>
-                                        <option value="">A to Z</option>
-                                        <option value="">Z to A</option>
-                                        <option value="">In stock</option>
+                                    <select
+                                        id="sortBySelect"
+                                        name="sortBy"
+                                        data-current-page="<%= currentPage %>"
+                                        data-category="<%= category %>"
+                                    >
+                                        <option <%= sortBy === "default" ? "selected" : "" %> value="default">Default</option>
+                                        <option <%= sortBy === "az" ? "selected" : "" %> value="az">A to Z</option>
+                                        <option <%= sortBy === "za" ? "selected" : "" %> value="za">Z to A</option>
+                                        <option <%= sortBy === "price-asc" ? "selected" : "" %> value="priceasc">Price: Low to High</option>
+                                        <option <%= sortBy === "price-desc" ? "selected" : "" %> value="pricedesc">Price: High to Low</option>
                                     </select>
                                 </div>
                             </div>
+
                             <!-- Grid/List Toggle -->
                             <div class="shop-filter-tab">
                                 <div class="shop-tab nav" role="tablist">
@@ -116,7 +93,7 @@
                                             <div class="product-img">
                                                 <a href="/product/<%= product._id %>">
                                                     <img
-                                                        src="<%= product.images[0].thumbnailUrl %>"
+                                                        src="<%= product.images[0].productImageUrl %>"
                                                         alt="<%= product.title %>"
                                                     />
                                                 </a>
@@ -158,7 +135,7 @@
                                             <div class="product-img list-img-width">
                                                 <a href="/product/<%= product._id %>">
                                                     <img
-                                                        src="<%= product.images[0].thumbnailUrl %>"
+                                                        src="<%= product.images[0].productImageUrl %>"
                                                         alt="<%= product.title %>"
                                                     />
                                                 </a>
@@ -187,24 +164,66 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination-style mt-30 text-center">
+                            <ul>
+                                <% if (currentPage > 1) { %>
+                                <li>
+                                    <a
+                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>"
+                                    >
+                                        <i class="ti ti-arrow-left"></i>
+                                        <!-- Font Awesome icon for "Previous" -->
+                                    </a>
+                                </li>
+                                <% } %> <% for (let i = 1; i <= Math.ceil(totalProductsCount / itemsPerPage); i++) { %>
+                                <li class="<%= currentPage === i ? 'active' : '' %>">
+                                    <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= category %>"><%= i %></a>
+                                </li>
+                                <% } %> <% if (currentPage < Math.ceil(totalProductsCount / itemsPerPage)) { %>
+                                <li>
+                                    <a
+                                        href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>"
+                                    >
+                                        <i class="ti ti-arrow-right"></i>
+                                        <!-- Font Awesome icon for "Next" -->
+                                    </a>
+                                </li>
+                                <% } %>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <!-- Pagination -->
-                <div class="pagination-style mt-30 text-center">
-                    <ul>
-                        <li>
-                            <a href="#"><i class="ti-angle-left"></i></a>
-                        </li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">...</a></li>
-                        <li><a href="#">19</a></li>
-                        <li class="active">
-                            <a href="#"><i class="ti-angle-right"></i></a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const sortBySelect = document.getElementById("sortBySelect");
+    const currentPage = sortBySelect.getAttribute("data-current-page");
+    const category = sortBySelect.getAttribute("data-category");
+    const search = document.getElementById("search").value;
+
+    sortBySelect.addEventListener("change", function () {
+        const selectedValue = this.value;
+
+        // Define a mapping of sort options to URLs
+        const sortOptionsToUrls = {
+            default: "/shop/",
+            az: `/shop/?page=${currentPage - 1}&search=${search}&category=${category}&sortBy=az`,
+            za: `/shop/?page=${currentPage - 1}&search=${search}&category=${category}&sortBy=za`,
+            priceasc: `/shop/?page=${currentPage - 1}&search=${search}&category=${category}&sortBy=price-asc`,
+            pricedesc: `/shop/?page=${currentPage - 1}&search=${search}&category=${category}&sortBy=price-desc`,
+        };
+
+        // Get the corresponding URL for the selected sorting option
+        const url = sortOptionsToUrls[selectedValue];
+
+        if (url) {
+            // Redirect to the selected URL
+            window.location.href = url;
+        }
+    });
+</script>

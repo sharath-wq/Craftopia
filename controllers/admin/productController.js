@@ -55,8 +55,8 @@ exports.createProduct = asyncHandler(async (req, res) => {
             const files = req.files;
             const imageUrls = [];
             for (const file of files) {
-                const thumbnailBuffer = await sharp(file.buffer).resize(200, 200).toBuffer();
-                const productImageBuffer = await sharp(file.buffer).resize(1400, 1200).toBuffer();
+                const thumbnailBuffer = await sharp(file.buffer).resize(300, 300).toBuffer();
+                const productImageBuffer = await sharp(file.buffer).resize(800, 1000).toBuffer();
 
                 const thumbnailFileName = `thumbnails/${Date.now()}_${file.originalname}`;
                 const productImageFileName = `product-images/${Date.now()}_${file.originalname}`;
