@@ -1,14 +1,8 @@
 const express = require("express");
 const router = express();
-const { body, validationResult } = require("express-validator");
-const passport = require("passport");
 
 // Controllers
 const adminController = require("../../controllers/admin/adminController");
-
-// Middlewares
-const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
-const { ensureAdmin, ensureSuperAdmin, isBlockedAdmin } = require("../../middlewares/authMiddleware");
 
 router.use((req, res, next) => {
     req.app.set("layout", "admin/layout");

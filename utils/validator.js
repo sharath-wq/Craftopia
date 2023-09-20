@@ -12,4 +12,13 @@ module.exports = {
             return true;
         }),
     ],
+    profileValidator: [
+        body("firstName").not().isEmpty().withMessage("First Name is required"),
+        body("lastName").not().isEmpty().withMessage("Last Name is required"),
+        body("street").not().isEmpty().withMessage("Street is required"),
+        body("city").not().isEmpty().withMessage("City is required"),
+        body("state").not().isEmpty().withMessage("State is required"),
+        body("pincode").not().isEmpty().withMessage("Pincode is required"),
+        body("mobile").not().isEmpty().isMobilePhone().withMessage("Invalid Mobile Number"),
+    ],
 };

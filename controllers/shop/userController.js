@@ -5,6 +5,7 @@ const User = require("../../models/userModel");
 const Otp = require("../../models/otpModel");
 const { generateOtp } = require("../../utils/sendOtp");
 const sendEmail = require("../../utils/sendEmail");
+const { validationResult } = require("express-validator");
 
 /**
  * Wishlist Page Route
@@ -40,22 +41,30 @@ exports.editProfile = asyncHandler(async (req, res) => {
     const { firstName, lastName, street, city, state, pincode, mobile } = req.body;
     const id = req.params.id;
     try {
-        validateMongoDbId(id);
-        const address = await Address.create({
-            street: street,
-            city: city,
-            state: state,
-            pincode: pincode,
-            mobile: mobile,
-        });
-        const user = await User.findByIdAndUpdate(id, {
-            firstName: firstName,
-            lastName: lastName,
-            $push: { address: address._id },
-        });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            errors.array().forEach((error) => {
+                req.flash("danger", error.msg);
+            });
+            res.redirect("/user/profile");
+        } else {
+            validateMongoDbId(id);
+            const address = await Address.create({
+                street: street,
+                city: city,
+                state: state,
+                pincode: pincode,
+                mobile: mobile,
+            });
+            const user = await User.findByIdAndUpdate(id, {
+                firstName: firstName,
+                lastName: lastName,
+                $push: { address: address._id },
+            });
 
-        req.flash("success", "Profile updated");
-        res.redirect("/user/profile");
+            req.flash("success", "Profile updated");
+            res.redirect("/user/profile");
+        }
     } catch (error) {
         throw new Error(error);
     }
