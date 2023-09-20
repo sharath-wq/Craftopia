@@ -139,12 +139,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
             }
         }
     } catch (error) {
-        if (error.keyPattern.mobile === 1) {
-            req.flash("danger", "Mobile number already registered");
-            res.redirect("/auth/register");
-        } else {
-            throw new Error(error);
-        }
+        throw new Error(error);
     }
 });
 
