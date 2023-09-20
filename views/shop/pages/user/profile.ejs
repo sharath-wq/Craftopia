@@ -101,6 +101,13 @@
                                         value="<%= user?.email %>"
                                         disabled
                                     />
+                                    <% if (!user?.isEmailVerified) { %>
+                                    <small class="text-danger"
+                                        >email not verified click
+                                        <a class="text-primary" href="/user/profile/send-email-otp">here</a> to
+                                        verify</small
+                                    >
+                                    <% } %>
                                 </div>
                                 <div class="button-box">
                                     <button type="submit" class="default-btn floatright">Save Change</button>

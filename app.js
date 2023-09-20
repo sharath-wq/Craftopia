@@ -14,7 +14,13 @@ const nocache = require("nocache");
 const Category = require("./models/categoryModel");
 
 // Import authentication and authorization middleware
-const { ensureAdmin, ensureSuperAdmin, isBlockedAdmin, ensureUser } = require("./middlewares/authMiddleware");
+const {
+    ensureAdmin,
+    ensureSuperAdmin,
+    isBlockedAdmin,
+    ensureUser,
+    isBlockedUser,
+} = require("./middlewares/authMiddleware");
 const { ensureLoggedIn, ensureLoggedOut } = require("connect-ensure-login");
 
 // Load environment variables
@@ -117,8 +123,8 @@ const userorderRoute = require("./routes/shop/orderRoutes");
 
 app.use("/", ensureUser, shopRoute);
 app.use("/auth", shopAuthRoute);
-app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), userRoute);
-app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), userorderRoute);
+app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userRoute);
+app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userorderRoute);
 
 // Catch-all route for 404 errors
 app.use((req, res) => {

@@ -28,6 +28,7 @@ passport.use(
                     email: profile.email,
                     image: profile.picture,
                     mobile: "phone" + uuidv4(),
+                    isEmailVerified: true,
                     password: passwordGenerator(12, false),
                 });
 
