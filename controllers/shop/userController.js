@@ -59,6 +59,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
             const user = await User.findByIdAndUpdate(id, {
                 firstName: firstName,
                 lastName: lastName,
+                mobile: mobile,
                 $push: { address: address._id },
             });
 
