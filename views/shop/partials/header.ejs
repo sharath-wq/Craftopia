@@ -21,7 +21,7 @@
                                 <a href="/shop">categories</a>
                                 <ul class="single-dropdown">
                                     <% categories.forEach(category => { %>
-                                    <li><a href="/shop/?category=<%= category.title %>"><%= category.title %></a></li>
+                                    <li><a href="/shop?category=<%= category._id %>"><%= category.title %></a></li>
                                     <% }) %>
                                 </ul>
                             </li>

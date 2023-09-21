@@ -82,9 +82,14 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
     const id = req.params.id;
     validateMongoDbId(id);
     try {
-        const products = await Product.find().limit(3).populate("images").exec();
         const product = await Product.findById(id).populate("images").exec();
-        res.render("shop/pages/products/product", { title: "Product", page: "product", products, product });
+        const relatedProducts = await Product.find({
+            category: product.category,
+            _id: { $ne: product._id },
+        })
+            .populate("images")
+            .exec();
+        res.render("shop/pages/products/product", { title: "Product", page: "product", relatedProducts, product });
     } catch (error) {
         throw new Error(error);
     }

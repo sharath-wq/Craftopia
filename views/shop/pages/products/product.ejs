@@ -91,7 +91,7 @@
                     <div class="details-price">
                         <span>₹ <%= product.salePrice %></span>
                     </div>
-                    <p><%= product.description %></p>
+                    <p></p>
                     <div class="quick-view-select">
                         <!-- <div class="select-option-part">
                             <label>Size*</label>
@@ -113,38 +113,22 @@
                             </select>
                         </div> -->
                     </div>
-                    <div class="quickview-plus-minus">
-                        <div class="cart-plus-minus">
-                            <input type="text" value="02" name="qtybutton" class="cart-plus-minus-box" />
-                        </div>
-                        <div class="quickview-btn-cart">
-                            <a class="btn-hover-black" href="#">add to cart</a>
-                        </div>
-                        <div class="quickview-btn-wishlist">
-                            <a class="btn-hover" href="#"><i class="pe-7s-like"></i></a>
-                        </div>
+                    <div class="product-details-delivery-tag mt-35">
+                        <i class="ti ti-truck"></i> <span> FREE RETURNS + FREE SHIPPING</span>
                     </div>
-                    <div class="product-details-cati-tag mt-35">
-                        <ul>
-                            <li class="categories-title">Categories :</li>
-                            <li><a href="#">fashion</a></li>
-                            <li><a href="#">electronics</a></li>
-                            <li><a href="#">toys</a></li>
-                            <li><a href="#">food</a></li>
-                            <li><a href="#">jewellery</a></li>
-                        </ul>
+                    <div class="product-details-color-tag mt-1">
+                        <i class="ti ti-palette"></i> <span> Color: <%= product.color ?? "N/A" %></span>
                     </div>
-                    <div class="product-details-cati-tag mtb-10">
-                        <ul>
-                            <li class="categories-title">Tags :</li>
-                            <li><a href="#">fashion</a></li>
-                            <li><a href="#">electronics</a></li>
-                            <li><a href="#">toys</a></li>
-                            <li><a href="#">food</a></li>
-                            <li><a href="#">jewellery</a></li>
-                        </ul>
+                    <div class="product-details-material-tag mt-1">
+                        <i class="ti ti-shopping-cart-full"></i> <span> Material: <%= product.material ?? "N/A" %></span>
                     </div>
-                    <div class="product-share">
+                    <div class="product-details-art-tag mt-1">
+                        <i class="ti ti-shopping-cart-full"></i> <span> Art Form: <%= product.artForm ?? "N/A" %></span>
+                    </div>
+                    <div class="product-details-origin-tag mt-1">
+                        <i class="ti ti-check-box"></i> <span> Made in India</span>
+                    </div>
+                    <div class="product-share mt-5">
                         <ul>
                             <li class="categories-title">Share :</li>
                             <li>
@@ -169,6 +153,17 @@
                             </li>
                         </ul>
                     </div>
+                    <div class="quickview-plus-minus">
+                        <div class="cart-plus-minus">
+                            <input type="text" value="02" name="qtybutton" class="cart-plus-minus-box" />
+                        </div>
+                        <div class="quickview-btn-cart">
+                            <a class="btn-hover-black" href="#">add to cart</a>
+                        </div>
+                        <div class="quickview-btn-wishlist">
+                            <a class="btn-hover" href="#"><i class="pe-7s-like"></i></a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -181,14 +176,37 @@
                 <a class="active" href="#pro-dec" data-bs-toggle="tab" role="tab" aria-selected="true"> Description </a>
                 <a href="#pro-review" data-bs-toggle="tab" role="tab" aria-selected="false"> Reviews (0) </a>
             </div>
-            <div class="description-review-text tab-content">
+            <div class="description-review-text tab-content mt-5">
                 <div class="tab-pane active show fade" id="pro-dec" role="tabpanel">
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    </p>
+                    <div class="product-specification">
+                        <% const sections = product.description.split('\n\n'); %> <% sections.forEach((section, index) => {
+                        %>
+                        <div class="card mb-4">
+                            <div
+                                class="card-header text-white"
+                                data-toggle="collapse"
+                                data-target="#collapse<%- index %>"
+                                aria-expanded="false"
+                            >
+                                <% const lines = section.split('\n'); %> <% const heading = lines[0]; %>
+                                <h5 class="card-title"><%- heading %></h5>
+                            </div>
+                            <div id="collapse<%- index %>" class="collapse">
+                                <div class="card-body text-start">
+                                    <% for (let i = 1; i < lines.length; i++) { %> <% if (i === 1) { %>
+                                    <div class="spec-line">
+                                        <span class="spec-title"><%- lines[i] %></span>
+                                    </div>
+                                    <% } else { %>
+                                    <p class="card-text"><%- lines[i] %></p>
+                                    <% } %> <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
                 </div>
+
                 <div class="tab-pane fade" id="pro-review" role="tabpanel">
                     <a href="#">Be the first to write your review!</a>
                 </div>
@@ -204,11 +222,11 @@
         </div>
         <div class="product-style">
             <div class="related-product-active owl-carousel">
-                <% products.forEach(item => { %>
+                <% relatedProducts.forEach(item => { %>
                 <div class="product-wrapper">
                     <div class="product-img">
                         <a href="#">
-                            <img src="<%= item.images[0].productImageUrl %>" alt="" />
+                            <img src="<%= item.images[0].thumbnailUrl %>" alt="" />
                         </a>
                         <span>hot</span>
                         <div class="product-action">

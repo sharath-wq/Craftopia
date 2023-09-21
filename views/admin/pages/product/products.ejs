@@ -24,8 +24,11 @@
                             <% products.forEach((product, index) => { %>
                             <tr>
                                 <td><%= index + 1 %></td>
-                                <td><%= product.title %></td>
-                                <td><%= product.category %></td>
+                                <td>
+                                    <% if (product.title.length > 10) { %> <%= product.title.substring(0, 10) + "..." %> <%
+                                    } else { %> <%= product.title %> <% } %>
+                                </td>
+                                <td><%= product.category.title %></td>
                                 <td>
                                     <% if (product.description.length > 10) { %> <%= product.description.substring(0, 10) +
                                     '...' %> <% } else { %> <%= product.description %> <% } %>

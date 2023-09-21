@@ -12,47 +12,112 @@
                 <form action="/admin/products/edit/<%= product._id%>/?_method=PUT" method="post">
                     <div class="form-group">
                         <label for="productName">Product Name:</label>
-                        <input type="text" class="form-control" id="productName" name="title"
-                            value="<%= product.title %>" placeholder="Enter product name" required />
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="productName"
+                            name="title"
+                            value="<%= product.title %>"
+                            placeholder="Enter product name"
+                            required
+                        />
                     </div>
                     <div class="form-group">
                         <label for="category">Category:</label>
                         <select class="form-select" name="category" id="category" required>
-                            <option selected value="<%= product.category %>">
-                                <%= product.category %>
-                            </option>
-                            <% categories.forEach(category=> { %> <% if (category.title !==product.category) { %>
-                                    <option value="<%= category.title %>">
-                                        <%= category.title %>
-                                    </option>
-                                    <% } %>
-                                        <% }) %>
+                            <option selected value="<%= product.category._id %>"><%= product.category.title %></option>
+                            <% categories.forEach(category=> { %> <% if (category.title !== product.category.title) { %>
+                            <option value="<%= category._id %>"><%= category.title %></option>
+                            <% } %> <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="description">Description:</label>
-                        <textarea class="form-control" id="description" rows="3" name="description"
-                            placeholder="Enter product description" required><%= product.description %></textarea>
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            rows="3"
+                            name="description"
+                            placeholder="Enter product description"
+                            required
+                        >
+<%- product.description %></textarea
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="productColor">Product Color:</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="productColor"
+                            name="color"
+                            value="<%= product.color %>"
+                            placeholder="Enter product color"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="productMaterial">Product Material:</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="productMaterial"
+                            name="material"
+                            value="<%= product.material %>"
+                            placeholder="Enter product material"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="productArtForm">Product Art Form:</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="productArtForm"
+                            name="artForm"
+                            value="<%= product.artForm %>"
+                            placeholder="Enter product Art Form"
+                            required
+                        />
                     </div>
                     <div class="form-group">
                         <label for="productPrice">Product Price:</label>
-                        <input type="number" class="form-control" id="productPrice" name="productPrice"
-                            value="<%= product.productPrice %>" placeholder="Enter product price" required />
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="productPrice"
+                            name="productPrice"
+                            value="<%= product.productPrice %>"
+                            placeholder="Enter product price"
+                            required
+                        />
                     </div>
                     <div class="form-group">
                         <label for="salesPrice">Sales Price:</label>
-                        <input type="number" class="form-control" id="salePrice" name="salePrice"
-                            value="<%= product.salePrice %>" placeholder="Enter sales price" required />
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="salePrice"
+                            name="salePrice"
+                            value="<%= product.salePrice %>"
+                            placeholder="Enter sales price"
+                            required
+                        />
                     </div>
                     <div class="form-group">
                         <label for="quantity">Quantity:</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity"
-                            value="<%= product.quantity %>" placeholder="Enter quantity" required />
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="quantity"
+                            name="quantity"
+                            value="<%= product.quantity %>"
+                            placeholder="Enter quantity"
+                            required
+                        />
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
-
-
             </div>
         </div>
     </div>
