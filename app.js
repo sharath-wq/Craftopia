@@ -12,6 +12,7 @@ const methodOverride = require("method-override");
 const nocache = require("nocache");
 
 const Category = require("./models/categoryModel");
+const Cart = require("./models/cartModeal");
 
 // Import authentication and authorization middleware
 const {
@@ -70,6 +71,15 @@ require("./utils/passport.auth");
 // Set user data in res.locals for EJS templates
 app.use(async (req, res, next) => {
     const categories = await Category.find({ isListed: true });
+    if (req?.user?.role === roles.user) {
+        const cart = await Cart.find({ user: req.user.id });
+        if (cart.length > 0 && cart[0].products) {
+            res.locals.cartCount = cart[0].products.reduce((sum, product) => sum + product.quantity, 0);
+        } else {
+            res.locals.cartCount = 0;
+        }
+    }
+
     res.locals.categories = categories;
     res.locals.user = req.user;
     next();
@@ -120,11 +130,14 @@ const shopRoute = require("./routes/shop/shopRouter");
 const shopAuthRoute = require("./routes/shop/authRoutes");
 const userRoute = require("./routes/shop/userRoutes");
 const userorderRoute = require("./routes/shop/orderRoutes");
+const cartRoute = require("./routes/shop/cartRoute");
+const { roles } = require("./utils/constants");
 
 app.use("/", ensureUser, shopRoute);
 app.use("/auth", shopAuthRoute);
 app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userRoute);
 app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userorderRoute);
+app.use("/cart", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, cartRoute);
 
 // Catch-all route for 404 errors
 app.use((req, res) => {

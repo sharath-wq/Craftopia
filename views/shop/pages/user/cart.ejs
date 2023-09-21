@@ -3,66 +3,93 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <%- include('../../partials/flash-message.ejs') %>
                 <h1 class="cart-heading">Cart</h1>
-                <form action="#">
+                <form action="/checkout" method="post">
                     <div class="table-content table-responsive">
-                        <table>
-                            <thead>
+                        <table class="table-striped">
+                            <thead class="bg-dark">
                                 <tr>
-                                    <th>remove</th>
-                                    <th>images</th>
-                                    <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
+                                    <th class="text-white">remove</th>
+                                    <th class="text-white">images</th>
+                                    <th class="text-white">Product</th>
+                                    <th class="text-white">Price</th>
+                                    <th class="text-white">Quantity</th>
+                                    <th class="text-white">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <% if (cartItems) { %> <% cartItems.products.forEach((product, index) => { %>
                                 <tr>
                                     <td class="product-remove">
-                                        <a href="#"><i class="pe-7s-close text-bg-danger"></i></a>
+                                        <a href="/cart/remove/<%= product.product._id %>"
+                                            ><i class="pe-7s-close text-bg-danger"></i
+                                        ></a>
                                     </td>
                                     <td class="product-thumbnail">
-                                        <a href="/product"><img src="/shop/img/cart/1.jpg" alt="" /></a>
+                                        <a href="/product/<%= product.product._id %>">
+                                            <% if (product.product && product.product.images && product.product.images[0] &&
+                                            product.product.images[0].thumbnailUrl) { %>
+                                            <img
+                                                src="<%= product.product.images[0].thumbnailUrl %>"
+                                                alt="Thumbnail"
+                                                class="img-thumbnail"
+                                            />
+                                            <% } else { %>
+                                            <!-- Handle the case where thumbnailUrl is not available -->
+                                            <img
+                                                src="placeholder-thumbnail-url.jpg"
+                                                alt="Placeholder"
+                                                class="img-thumbnail"
+                                            />
+                                            <% } %>
+                                        </a>
                                     </td>
-                                    <td class="product-name"><a href="#">Wooden Furniture </a></td>
-                                    <td class="product-price-cart"><span class="amount">$165.00</span></td>
-                                    <td class="product-quantity">
-                                        <input value="1" min="1" type="number" />
+
+                                    <td class="product-name">
+                                        <a href="/product/<%= product.product._id %>"><%= product.product.title %></a>
                                     </td>
-                                    <td class="product-subtotal">$165.00</td>
+                                    <td class="product-price-cart">
+                                        <span class="amount"
+                                            >₹ <% const productPrice = parseFloat(product.product.salePrice) %> <%=
+                                            productPrice.toFixed(2) %></span
+                                        >
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group" aria-label="Quantity">
+                                            <a
+                                                href="/cart/dec/<%= product._id %>"
+                                                class="btn btn-danger h-auto"
+                                                id="minusBtn"
+                                            >
+                                                <i class="ti ti-minus"></i>
+                                            </a>
+                                            <span id="quantity" class="btn btn-light h-auto"><%= product.quantity %></span>
+                                            <a
+                                                href="/cart/inc/<%= product._id %>"
+                                                class="btn btn-primary h-auto"
+                                                id="plusBtn"
+                                            >
+                                                <i class="ti ti-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                    <td class="product-subtotal">
+                                        <% if (product.product) { %> <% const productTotal =
+                                        parseFloat(product.product.salePrice); %> <% const productQuantity =
+                                        parseInt(product.quantity, 10); %> <% const totalProductPrice = productTotal *
+                                        productQuantity; %> ₹<%= totalProductPrice.toFixed(2) %> <% } else { %>
+                                        <!-- Handle the case where product information is not available -->
+                                        ₹0.00 <% } %>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td class="product-remove">
-                                        <a href="#"><i class="pe-7s-close text-bg-danger"></i></a>
-                                    </td>
-                                    <td class="product-thumbnail">
-                                        <a href="/product"><img src="/shop/img/cart/2.jpg" alt="" /></a>
-                                    </td>
-                                    <td class="product-name"><a href="#">Vestibulum dictum</a></td>
-                                    <td class="product-price-cart"><span class="amount">$150.00</span></td>
-                                    <td class="product-quantity">
-                                        <input value="1" min="1" type="number" />
-                                    </td>
-                                    <td class="product-subtotal">$150.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="product-remove">
-                                        <a href="#"><i class="pe-7s-close text-bg-danger"></i></a>
-                                    </td>
-                                    <td class="product-thumbnail">
-                                        <a href="/product"><img src="/shop/img/cart/3.jpg" alt="" /></a>
-                                    </td>
-                                    <td class="product-name"><a href="#">Vestibulum dictum</a></td>
-                                    <td class="product-price-cart"><span class="amount">$150.00</span></td>
-                                    <td class="product-quantity">
-                                        <input value="1" min="1" type="number" />
-                                    </td>
-                                    <td class="product-subtotal">$150.00</td>
-                                </tr>
+                                <% }) %> <% } %>
                             </tbody>
                         </table>
                     </div>
+                    <% if (cartItems && cartItems.products.length) { %>
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="coupon-all">
@@ -88,13 +115,28 @@
                             <div class="cart-page-total">
                                 <h2>Cart totals</h2>
                                 <ul>
-                                    <li>Subtotal<span>100.00</span></li>
-                                    <li>Total<span>100.00</span></li>
+                                    <li>Subtotal<span>₹ <%= subtotal.toFixed(2) %></span></li>
+                                    <li>Tax<span> ₹ <%= tax.toFixed(2) %></span></li>
+                                    <li>
+                                        Shipping Fee <% if (subtotal < 2000) { %>
+                                        <sup class="text-bg-warning"
+                                            >Add Item worth <%= 2000 - subtotal %> to get free delivery</sup
+                                        >
+                                        <% } %><span> ₹ <%= shippingFee.toFixed(2) %></span>
+                                    </li>
+                                    <li>Total<span>₹ <%= total.toFixed(2) %></span></li>
                                 </ul>
-                                <a href="/checkout">Proceed to checkout</a>
+
+                                <button class="button btn-dark" type="submit">Proceed to checkout</button>
                             </div>
                         </div>
                     </div>
+                    <% } else { %>
+                    <div class="text-center">
+                        <p>No Items in the cart</p>
+                        <a href="/shop" class="btn btn-dark h-auto">Shop Now</a>
+                    </div>
+                    <% } %>
                 </form>
             </div>
         </div>
