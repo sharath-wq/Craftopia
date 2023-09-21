@@ -1,5 +1,6 @@
 <div class="product-details ptb-100 pb-90">
     <div class="container">
+        <%- include('../../partials/flash-message.ejs') %>
         <div class="row">
             <div class="col-md-12 col-lg-7 col-12">
                 <div class="product-details-img-content">
@@ -116,16 +117,16 @@
                     <div class="product-details-delivery-tag mt-35">
                         <i class="ti ti-truck"></i> <span> FREE RETURNS + FREE SHIPPING</span>
                     </div>
-                    <div class="product-details-color-tag mt-1">
-                        <i class="ti ti-palette"></i> <span> Color: <%= product.color ?? "N/A" %></span>
+                    <div class="product-details-color-tag mt-2">
+                        <i class="ti ti-paint-bucket"></i> <span> Color: <%= product.color ?? "N/A" %></span>
                     </div>
-                    <div class="product-details-material-tag mt-1">
+                    <div class="product-details-material-tag mt-2">
                         <i class="ti ti-shopping-cart-full"></i> <span> Material: <%= product.material ?? "N/A" %></span>
                     </div>
-                    <div class="product-details-art-tag mt-1">
-                        <i class="ti ti-shopping-cart-full"></i> <span> Art Form: <%= product.artForm ?? "N/A" %></span>
+                    <div class="product-details-art-tag mt-2">
+                        <i class="ti ti-palette"></i> <span> Art Form: <%= product.artForm ?? "N/A" %></span>
                     </div>
-                    <div class="product-details-origin-tag mt-1">
+                    <div class="product-details-origin-tag mt-2">
                         <i class="ti ti-check-box"></i> <span> Made in India</span>
                     </div>
                     <div class="product-share mt-5">
@@ -154,11 +155,11 @@
                         </ul>
                     </div>
                     <div class="quickview-plus-minus">
-                        <div class="cart-plus-minus">
+                        <!-- <div class="cart-plus-minus">
                             <input type="text" value="02" name="qtybutton" class="cart-plus-minus-box" />
-                        </div>
+                        </div> -->
                         <div class="quickview-btn-cart">
-                            <a class="btn-hover-black" href="#">add to cart</a>
+                            <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>
                         </div>
                         <div class="quickview-btn-wishlist">
                             <a class="btn-hover" href="#"><i class="pe-7s-like"></i></a>
@@ -233,7 +234,7 @@
                             <a class="animate-left" title="Wishlist" href="#">
                                 <i class="pe-7s-like"></i>
                             </a>
-                            <a class="animate-top" title="Add To Cart" href="#">
+                            <a class="animate-top" title="Add To Cart" href="/cart/add/<%= item._id %>">
                                 <i class="pe-7s-cart"></i>
                             </a>
                         </div>
