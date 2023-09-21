@@ -11,6 +11,7 @@ router.use((req, res, next) => {
 router.get("/", categoryController.categoriespage);
 router.get("/add", categoryController.addCategorypage);
 router.get("/edit/:id", categoryController.editCategorypage);
+
 router.post("/add", categoryController.addCategory);
 router.put("/unlist/:id", categoryController.unlist);
 router.put("/list/:id", categoryController.list);

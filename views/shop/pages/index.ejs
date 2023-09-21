@@ -78,13 +78,17 @@
             <div class="product-style">
                 <div class="arrival-active owl-carousel">
                     <% products.forEach(product => { %>
-                    <div class="product-wrapper">
-                        <div class="product-img">
+                    <div class="product-wrapper card mb-4" style="width: 250px">
+                        <div class="product-img position-relative">
                             <a href="/product/<%= product._id %>">
-                                <img src="<%= product.images[0].productImageUrl %>" alt="<%= product.title %>" />
+                                <img
+                                    src="<%= product.images[0].thumbnailUrl %>"
+                                    alt="<%= product.title %>"
+                                    class="card-img-top"
+                                />
                             </a>
-                            <span class="new">new</span>
-                            <div class="product-action">
+                            <span class="new bg-danger">New</span>
+                            <div class="product-action position-absolute start-0 bottom-0">
                                 <a class="animate-left" title="Wishlist" href="#">
                                     <i class="pe-7s-like"></i>
                                 </a>
@@ -93,16 +97,25 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="product-content">
-                            <h4 class="card-title"><%= product.title %></h4>
+                        <div class="product-content card-body" style="height: 100px">
+                            <!-- Adjust the height as needed -->
                             <div class="d-flex justify-content-between">
-                                <span class="text-decoration-line-through text-secondary"
-                                    >₹ <%= product.productPrice %></span
+                                <small
+                                    class="card-title"
+                                    style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                                 >
-                                <span class="card-text">₹ <%= product.salePrice %></span>
+                                    <%= product.title %>
+                                </small>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-decoration-line-through text-secondary">
+                                    ₹ <%= product.productPrice %>
+                                </span>
+                                <span class="card-text h4">₹ <%= product.salePrice %></span>
                             </div>
                         </div>
                     </div>
+
                     <% }) %>
                 </div>
             </div>
