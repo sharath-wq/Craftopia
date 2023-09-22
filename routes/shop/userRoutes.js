@@ -9,7 +9,6 @@ router.use((req, res, next) => {
 });
 
 // User Routes
-router.get("/wishlist", userControler.wishlistpage);
 router.get("/profile", userControler.profilepage);
 router.get("/address", userControler.addresspage);
 router.get("/checkout", userControler.checkoutpage);

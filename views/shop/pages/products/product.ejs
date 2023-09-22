@@ -162,7 +162,15 @@
                             <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>
                         </div>
                         <div class="quickview-btn-wishlist">
-                            <a class="btn-hover" href="#"><i class="pe-7s-like"></i></a>
+                            <% if (user.wishlist.includes(product._id)) { %>
+                            <a class="btn-hover" href="/wishlist/remove/<%= product._id %>">
+                                <i class="pe-7s-like text-danger"></i>
+                            </a>
+                            <% } else { %>
+                            <a class="btn-hover" href="/wishlist/add/<%= product._id %>">
+                                <i class="pe-7s-like"></i>
+                            </a>
+                            <% } %>
                         </div>
                     </div>
                 </div>

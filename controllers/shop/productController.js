@@ -71,6 +71,7 @@ exports.shoppage = asyncHandler(async (req, res) => {
  */
 exports.singleProductpage = asyncHandler(async (req, res) => {
     const id = req.params.id;
+    const user = req.user;
     validateMongoDbId(id);
     try {
         const messages = req.flash();
@@ -87,6 +88,7 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
             relatedProducts,
             product,
             messages,
+            user,
         });
     } catch (error) {
         throw new Error(error);
