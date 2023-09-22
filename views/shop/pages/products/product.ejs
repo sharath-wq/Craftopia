@@ -13,24 +13,24 @@
                                 role="tab"
                                 aria-selected="true"
                             >
-                                <img src="<%= product.images[0].thumbnailUrl %>" alt="" />
+                                <img src="<%= product?.images[0]?.thumbnailUrl %>" alt="" />
                             </a>
                             <a class="mb-10" href="#pro-details2" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="<%= product.images[1].thumbnailUrl %>" alt="" />
+                                <img src="<%= product?.images[1]?.thumbnailUrl %>" alt="" />
                             </a>
                             <a class="mb-10" href="#pro-details3" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="<%= product.images[2].thumbnailUrl %>" alt="" />
+                                <img src="<%= product?.images[2]?.thumbnailUrl %>" alt="" />
                             </a>
                             <a class="mb-10" href="#pro-details4" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="<%= product.images[3].thumbnailUrl %>" alt="" />
+                                <img src="<%= product?.images[3]?.thumbnailUrl %>" alt="" />
                             </a>
                         </div>
                         <div class="product-details-large tab-content">
                             <div class="tab-pane active show fade" id="pro-details1" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product.images[0].productImageUrl %>">
+                                    <a href="<%= product?.images[0]?.productImageUrl %>">
                                         <img
-                                            src="<%= product.images[0].productImageUrl %>"
+                                            src="<%= product?.images[0]?.productImageUrl %>"
                                             class="img-fluid border border-dark"
                                             alt=""
                                         />
@@ -39,9 +39,9 @@
                             </div>
                             <div class="tab-pane fade" id="pro-details2" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product.images[1].productImageUrl %>">
+                                    <a href="<%= product?.images[1]?.productImageUrl %>">
                                         <img
-                                            src="<%= product.images[1].productImageUrl %>"
+                                            src="<%= product?.images[1]?.productImageUrl %>"
                                             class="img-fluid border border-dark"
                                             alt=""
                                         />
@@ -50,9 +50,9 @@
                             </div>
                             <div class="tab-pane fade" id="pro-details3" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product.images[2].productImageUrl %>">
+                                    <a href="<%= product?.images[2]?.productImageUrl %>">
                                         <img
-                                            src="<%= product.images[2].productImageUrl %>"
+                                            src="<%= product?.images[2]?.productImageUrl %>"
                                             class="img-fluid border border-dark"
                                             alt=""
                                         />
@@ -61,9 +61,9 @@
                             </div>
                             <div class="tab-pane fade" id="pro-details4" role="tabpanel">
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product.images[3].productImageUrl %>">
+                                    <a href="<%= product?.images[3]?.productImageUrl %>">
                                         <img
-                                            src="<%= product.images[3].productImageUrl %>"
+                                            src="<%= product?.images[3]?.productImageUrl %>"
                                             class="img-fluid border border-dark"
                                             alt=""
                                         />
@@ -162,7 +162,7 @@
                             <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>
                         </div>
                         <div class="quickview-btn-wishlist">
-                            <% if (user.wishlist.includes(product._id)) { %>
+                            <% if (user?.wishlist?.includes(product._id)) { %>
                             <a class="btn-hover" href="/wishlist/remove/<%= product._id %>">
                                 <i class="pe-7s-like text-danger"></i>
                             </a>

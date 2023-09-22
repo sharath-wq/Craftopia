@@ -38,7 +38,7 @@
                                 <td><%= product.quantity %></td>
                                 <td>
                                     <img
-                                        src="<%= product.images[1].thumbnailUrl %>"
+                                        src="<%= product?.images[0]?.thumbnailUrl %>"
                                         alt="<%= product.title %>"
                                         width="50"
                                     />
