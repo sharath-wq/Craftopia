@@ -4,9 +4,14 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-widget mb-30">
-                        <a href="#"><img src="/shop/img/logo/logo-4.png" alt="" /></a>
+                        <a href="/" class="navbar-brand">
+                            <span class="font-weight-bold text-uppercase text-dark display-7">Craftopia</span>
+                        </a>
                         <div class="footer-about">
-                            <p>Ezone is a Multipurpose Powerful Design for your eCommerce Business</p>
+                            <p>
+                                Discover the artisans behind our handcrafted treasures. Learn about our mission and the
+                                dedication that goes into every product we offer.
+                            </p>
                             <ul>
                                 <li>
                                     <a href="#"><i class="icofont icofont-social-facebook"></i></a>
@@ -30,10 +35,9 @@
                         <div class="footer-widget-content-4">
                             <ul>
                                 <li><a href="/products?category=handmade%20pot">Handmade Pot</a></li>
-                                <li><a href="/products?category=handicraft">Handicraft</a></li>
-                                <li><a href="/products?catagory=boo%20basket">Boo Basket</a></li>
-                                <li><a href="/products?catagory=handdy%20pottery">Handdy Pottery</a></li>
-                                <li><a href="/products?catagory=boo%20lights">Boo Lights</a></li>
+                                <% categories.forEach(category => { %>
+                                <li><a href="/shop?category=<%= category._id %>"><%= category.title %></a></li>
+                                <% }) %>
                             </ul>
                         </div>
                     </div>
@@ -71,7 +75,7 @@
             <div class="row">
                 <div class="col-12 text-center">
                     <div class="copyright-handicraft">
-                        <p>Copyright © <a href="hastech.company/">HasTech</a> 2022 . All Right Reserved.</p>
+                        <p>Copyright © <a href="#">Craftopia</a> 2023 . All Right Reserved.</p>
                     </div>
                 </div>
             </div>

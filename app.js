@@ -131,6 +131,8 @@ const shopAuthRoute = require("./routes/shop/authRoutes");
 const userRoute = require("./routes/shop/userRoutes");
 const userorderRoute = require("./routes/shop/orderRoutes");
 const cartRoute = require("./routes/shop/cartRoute");
+const wishlistRoute = require("./routes/shop/wishlistRoute");
+
 const { roles } = require("./utils/constants");
 
 app.use("/", ensureUser, shopRoute);
@@ -138,6 +140,7 @@ app.use("/auth", shopAuthRoute);
 app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userRoute);
 app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userorderRoute);
 app.use("/cart", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, cartRoute);
+app.use("/wishlist", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, wishlistRoute);
 
 // Catch-all route for 404 errors
 app.use((req, res) => {

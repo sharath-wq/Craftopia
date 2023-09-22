@@ -17,7 +17,7 @@ exports.cartpage = asyncHandler(async (req, res) => {
                 path: "products.product",
                 populate: {
                     path: "images",
-                    model: "Images", // Replace with the actual name of your Image model
+                    model: "Images",
                 },
             })
             .exec();

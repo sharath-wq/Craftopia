@@ -8,18 +8,6 @@ const sendEmail = require("../../utils/sendEmail");
 const { validationResult } = require("express-validator");
 
 /**
- * Wishlist Page Route
- * Method GET
- */
-exports.wishlistpage = asyncHandler(async (req, res) => {
-    try {
-        res.render("shop/pages/user/wishlist", { title: "Wishlist", page: "wishlist" });
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
  * Profile Page Route
  * Method GET
  */
