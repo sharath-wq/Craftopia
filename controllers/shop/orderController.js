@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const Order = require("../../models/orderModel");
+const Product = require("../../models/productModel");
 
 /**
  * Orders Page Route
@@ -6,19 +8,29 @@ const asyncHandler = require("express-async-handler");
  */
 exports.orderspage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/user/orders", { title: "Orders", page: "orders" });
-    } catch (error) {
-        throw new Error(error);
-    }
-});
+        const { page, perPage } = req.query;
+        const userId = req.user._id;
 
-/**
- * Orders Completed Page Route
- * Method GET
- */
-exports.orderCompletedpage = asyncHandler(async (req, res) => {
-    try {
-        res.render("shop/pages/user/order-completed", { title: "Orders Placed", page: "orders-completed" });
+        const orderItems = await Order.find({ customer: userId })
+            .select("orderNumber createdAt products.product status")
+            .populate({
+                path: "products.product",
+                model: "Product",
+                populate: {
+                    path: "images",
+                    model: "Images",
+                },
+            })
+            .populate({
+                path: "address",
+                model: "Address",
+            });
+
+        res.render("shop/pages/user/orders", {
+            title: "Orders",
+            page: "orders",
+            orderItems,
+        });
     } catch (error) {
         throw new Error(error);
     }

@@ -7,18 +7,29 @@
                     <div class="order-details mt-4">
                         <p class="lead"><strong class="text-success">Order Details:</strong></p>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><strong>Order ID:</strong> <span class="text-primary">#12345</span></li>
-                            <li class="mb-2"><strong>Total Amount:</strong> <span class="text-primary">$215.00</span></li>
+                            <li class="mb-2">
+                                <strong>Order ID:</strong> <span class="text-primary"><%= order.orderNumber %></span>
+                            </li>
+                            <li class="mb-2">
+                                <strong>Total Amount:</strong> <span class="text-primary">₹ <%= order.totalAmount %></span>
+                            </li>
                             <li class="mb-2">
                                 <strong>Delivery Address:</strong>
-                                <span class="text-primary">123 Main St, Cityville, Country</span>
+                                <span class="text-primary"
+                                    ><%= address.street %>, <%= address.city %>, <%= address.state %></span
+                                >
                             </li>
                             <li class="mb-2">
                                 <strong>Estimated Arrival Date:</strong>
-                                <span class="text-primary">September 10, 2023</span>
+                                <span class="text-primary">
+                                    <% const inputDate = order.estimatedDelivery; %> <% const dateObject = new
+                                    Date(inputDate); %> <% const options = { year: 'numeric', month: 'long', day: 'numeric'
+                                    }; %> <%= new Intl.DateTimeFormat('en-US', options).format(dateObject) %>
+                                </span>
                             </li>
                             <li class="mb-2">
-                                <strong>Payment Method:</strong> <span class="text-primary">Credit Card</span>
+                                <strong>Payment Method:</strong>
+                                <span class="text-primary"><%= order.paymentMethod %></span>
                             </li>
                         </ul>
                     </div>

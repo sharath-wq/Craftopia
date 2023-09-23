@@ -9,6 +9,5 @@ router.use((req, res, next) => {
 
 // Order Routes
 router.get("/", orderController.orderspage);
-router.get("/completed", orderController.orderCompletedpage);
 
 module.exports = router;

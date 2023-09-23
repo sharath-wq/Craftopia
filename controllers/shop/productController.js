@@ -11,7 +11,7 @@ exports.shoppage = asyncHandler(async (req, res) => {
     try {
         const queryOptions = { isListed: true };
         const messages = req.flash();
-        const { search, category, page, perPage, minPrice, maxPrice, sortBy } = req.query;
+        const { search, category, page, perPage, sortBy } = req.query;
 
         if (search) {
             queryOptions.title = { $regex: new RegExp(search, "i") };
