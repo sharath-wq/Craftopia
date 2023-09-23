@@ -108,9 +108,11 @@
                                     </select>
                                 </div>
 
+                                <% if (address && address.length) { %>
                                 <div class="order-button-payment">
                                     <input type="submit" value="Place order" />
                                 </div>
+                                <% } else { %> <span class="text-danger">Please Add an Address</span> <% } %>
                             </div>
                         </div>
                     </div>

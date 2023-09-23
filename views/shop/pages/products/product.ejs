@@ -79,9 +79,9 @@
                     <h3><%= product.title %></h3>
                     <div class="rating-number">
                         <div class="quick-view-rating">
-                            <i class="pe-7s-star red-star"></i>
-                            <i class="pe-7s-star red-star"></i>
-                            <i class="pe-7s-star"></i>
+                            <i class="pe-7s-star text-warning"></i>
+                            <i class="pe-7s-star text-warning"></i>
+                            <i class="pe-7s-star text-warning"></i>
                             <i class="pe-7s-star"></i>
                             <i class="pe-7s-star"></i>
                         </div>
@@ -234,7 +234,7 @@
                 <% relatedProducts.forEach(item => { %>
                 <div class="product-wrapper">
                     <div class="product-img">
-                        <a href="#">
+                        <a href="/product/<%= item._id %>">
                             <img src="<%= item.images[0].thumbnailUrl %>" alt="" />
                         </a>
                         <span>hot</span>
