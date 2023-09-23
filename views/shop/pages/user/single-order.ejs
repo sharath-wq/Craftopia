@@ -1,0 +1,61 @@
+<!-- login-area start -->
+<div class="register-area ptb-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
+                <div class="card shadow p-3">
+                    <div class="row no-gutters">
+                        <!-- Product Image -->
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <img
+                                src="<%= order.products[0].product.images[0].productImageUrl %>"
+                                class="card-img"
+                                alt="Product Image"
+                            />
+                        </div>
+                        <!-- Product Details -->
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <!-- Product Name -->
+                                <h5 class="card-title">
+                                    <strong>Product Name:</strong> <%= order.products[0].product.title %>
+                                </h5>
+                                <!-- Ordered Date -->
+                                <p class="card-text">
+                                    <strong>Ordered Date:</strong> <% const inputDate = order.createdAt; %> <% const
+                                    dateObject = new Date(inputDate); %> <% const options = { year: 'numeric', month:
+                                    'long', day: 'numeric' }; %> <%= new Intl.DateTimeFormat('en-US',
+                                    options).format(dateObject) %>
+                                </p>
+                                <!-- Ship To Name -->
+                                <p class="card-text"><strong>Ship To Name:</strong> <%= order.address.title %></p>
+                                <!-- Order Status -->
+                                <p class="card-text">
+                                    <strong>Order Status:</strong>
+                                    <span
+                                        class="<% if (order.status === 'Pending') { %> text-warning <% } else if (order.status === 'Shipped') { %> text-primary <% } else if (order.status === 'Cancelled') { %> text-danger <% } else if (order.status === 'Delivered') { %> text-success <% } %>"
+                                    >
+                                        <%= order.status %>
+                                    </span>
+                                </p>
+                                <!-- Product Price -->
+                                <p class="card-text">
+                                    <strong>Product Price:</strong> ₹<%= order.products[0].product.salePrice %>
+                                </p>
+                                <!-- Quantity -->
+                                <p class="card-text"><strong>Quantity:</strong> <%= order.products[0].quantity %></p>
+
+                                <!-- Cancel Button -->
+                                <form action="/orders/<%= order.orderNumber %>?_method=PUT" method="post">
+                                    <button class="btn btn-danger h-auto" <%= order.status === 'Cancelled' ? 'disabled' : '' %>
+                                    >Cancel Order</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- login-area end -->

@@ -8,6 +8,7 @@ router.use((req, res, next) => {
 });
 
 router.get("/", orderController.ordersPage);
-router.get("/edit", orderController.editOrder);
+router.get("/:id", orderController.editOrder);
+router.put("/update/:id", orderController.updateOrderStatus);
 
 module.exports = router;

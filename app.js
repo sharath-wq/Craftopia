@@ -1,4 +1,3 @@
-// Import required modules and libraries
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const morgan = require("morgan");
@@ -7,7 +6,7 @@ const session = require("express-session");
 const connectFlash = require("connect-flash");
 const connectMongo = require("connect-mongo");
 const passport = require("passport");
-const mongoose = require("mongoose"); // No need for destructuring
+const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const nocache = require("nocache");
 
@@ -93,15 +92,15 @@ app.use(expressLayouts);
 app.set("view engine", "ejs");
 
 // Admin Routes
-const adminRoute = require("./routes/admin/adminRoutes");
-const productRoute = require("./routes/admin/productsRoute");
-const categoryRoute = require("./routes/admin/categoryRoute");
-const bannerRoute = require("./routes/admin/bannerRoutes");
-const customerRoute = require("./routes/admin/customerRoutes");
-const couponRoute = require("./routes/admin/couponRoutes");
-const adminAuthRoute = require("./routes/admin/authRoute");
-const orderRoute = require("./routes/admin/ordersRoute");
-const superAdminRoute = require("./routes/admin/superAdminRoute");
+const adminRoute = require("./routes/admin/admin.route");
+const productRoute = require("./routes/admin/products.route");
+const categoryRoute = require("./routes/admin/category.route");
+const bannerRoute = require("./routes/admin/banner.route");
+const customerRoute = require("./routes/admin/customer.route");
+const couponRoute = require("./routes/admin/coupon.rotue");
+const adminAuthRoute = require("./routes/admin/auth.route");
+const orderRoute = require("./routes/admin/orders.route");
+const superAdminRoute = require("./routes/admin/superAdmin.route");
 
 app.use("/admin/auth", adminAuthRoute);
 app.use("/admin/products", ensureLoggedIn({ redirectTo: "/admin/auth/login" }), ensureAdmin, isBlockedAdmin, productRoute);
@@ -126,12 +125,13 @@ app.use(
 app.use("/admin", ensureLoggedIn({ redirectTo: "/admin/auth/login" }), ensureAdmin, isBlockedAdmin, adminRoute);
 
 // Shop Routes
-const shopRoute = require("./routes/shop/shopRouter");
-const shopAuthRoute = require("./routes/shop/authRoutes");
-const userRoute = require("./routes/shop/userRoutes");
-const userorderRoute = require("./routes/shop/orderRoutes");
-const cartRoute = require("./routes/shop/cartRoute");
-const wishlistRoute = require("./routes/shop/wishlistRoute");
+const shopRoute = require("./routes/shop/shop.route");
+const shopAuthRoute = require("./routes/shop/auth.route");
+const userRoute = require("./routes/shop/user.route");
+const userorderRoute = require("./routes/shop/order.route");
+const cartRoute = require("./routes/shop/cart.route");
+const wishlistRoute = require("./routes/shop/wishlist.route");
+const checkoutRoute = require("./routes/shop/checkout.route");
 
 const { roles } = require("./utils/constants");
 
@@ -141,6 +141,7 @@ app.use("/user", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, u
 app.use("/orders", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, userorderRoute);
 app.use("/cart", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, cartRoute);
 app.use("/wishlist", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, wishlistRoute);
+app.use("/checkout", ensureLoggedIn({ redirectTo: "/auth/login" }), isBlockedUser, checkoutRoute);
 
 // Catch-all route for 404 errors
 app.use((req, res) => {

@@ -7,36 +7,71 @@
                     <table id="ordersTable" class="table table-striped">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Order ID</th>
-                                <th>Reference No</th>
-                                <th>Amount</th>
-                                <th>Payment Type</th>
-                                <th>Order Status</th>
+                                <th>Product</th>
+                                <th>Address</th>
+                                <th>Date</th>
+                                <th>Price</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <% if (orderItems && orderItems.length) { %> <% orderItems.forEach((order, index) => { %>
                             <tr>
-                                <td>1</td>
-                                <td>ORD12345</td>
-                                <td>$100.00</td>
-                                <td>Credit Card</td>
-                                <td><span class="rounded bg-warning p-2 text-white">Processing</span></td>
+                                <td class="align-middle"><%= index + 1 %></td>
+                                <td class="align-middle">
+                                    <a href="/admin/orders/<%= order.orderNumber %>">
+                                        <% const orderNumber = order.orderNumber ? order.orderNumber.toString() : ''; %> <%=
+                                        orderNumber.length > 14 ? orderNumber.substring(0, 14) + "..." : orderNumber %>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <% if (order.products && order.products.length > 0) { %> <% const product =
+                                        order.products[0].product; %>
+                                        <img
+                                            src="<%= product.images && product.images.length > 0 ? product.images[0].thumbnailUrl : '' %>"
+                                            alt="Image"
+                                            width="50"
+                                        />
+                                        <span class="ml-2">
+                                            <% const productTitle = product.title ? product.title.toString() : ''; %> <%=
+                                            productTitle.length > 10 ? productTitle.substring(0, 10) + "..." : productTitle
+                                            %>
+                                        </span>
+                                        <% } else { %>
+                                        <!-- Handle missing product data here -->
+                                        <span>Product Data Missing</span>
+                                        <% } %>
+                                    </div>
+                                </td>
+                                <td class="align-middle">
+                                    <%= order.address ? (order.address.street + ', ' + order.address.city + ', ' +
+                                    order.address.state) : '' %>
+                                </td>
+                                <td class="align-middle">
+                                    <%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month:
+                                    'long', day: 'numeric' }) %>
+                                </td>
+                                <td class="align-middle">
+                                    <% if (order.products && order.products.length > 0) { %> <% const product =
+                                    order.products[0].product; %> <%= product.salePrice ? '₹ ' + product.salePrice : '' %>
+                                    <% } else { %>
+                                    <!-- Handle missing product data here -->
+                                    <span>Price Data Missing</span>
+                                    <% } %>
+                                </td>
+
+                                <td class="align-middle">
+                                    <span
+                                        class="rounded <% if (order.status === 'Pending') { %> bg-warning <% } else if (order.status === 'Shipped') { %> bg-primary <% } else if (order.status === 'Cancelled') { %> bg-danger <% } else if (order.status === 'Delivered') { %> bg-success <% } %> p-2 text-white"
+                                    >
+                                        <%= order.status %>
+                                    </span>
+                                </td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>ORD67890</td>
-                                <td>$75.50</td>
-                                <td>PayPal</td>
-                                <td><span class="rounded bg-primary p-2 text-white">Shipped</span></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>ORD83560</td>
-                                <td>$80.50</td>
-                                <td>Upi</td>
-                                <td><span class="rounded bg-success p-2 text-white">Delivered</span></td>
-                            </tr>
-                            <!-- Add more rows for additional orders here -->
+                            <% }) %> <% } %>
                         </tbody>
                     </table>
                 </div>
@@ -47,6 +82,6 @@
 
 <script>
     $(document).ready(function () {
-        $('#ordersTable').DataTable();
+        $("#ordersTable").DataTable();
     });
 </script>

@@ -9,6 +9,7 @@ router.use((req, res, next) => {
 
 // Order Routes
 router.get("/", orderController.orderspage);
-router.get("/completed", orderController.orderCompletedpage);
+router.get("/:id", orderController.singleOrder);
+router.put("/:id", orderController.chancelOrder);
 
 module.exports = router;

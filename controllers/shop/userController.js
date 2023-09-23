@@ -65,9 +65,10 @@ exports.editProfile = asyncHandler(async (req, res) => {
  */
 exports.addresspage = asyncHandler(async (req, res) => {
     try {
-        const address = await Address.find();
+        const userid = req.user._id;
+        const userAddres = await User.findOne(userid).populate("address");
         const messages = req.flash();
-        res.render("shop/pages/user/address", { title: "Address", page: "address", address, messages });
+        res.render("shop/pages/user/address", { title: "Address", page: "address", address: userAddres.address, messages });
     } catch (error) {
         throw new Error(error);
     }
@@ -91,7 +92,9 @@ exports.addAddresspage = asyncHandler(async (req, res) => {
  */
 exports.addAddress = asyncHandler(async (req, res) => {
     try {
+        const userid = req.user._id;
         const newAddress = await Address.create(req.body);
+        await User.findByIdAndUpdate(userid, { $push: { address: newAddress._id } });
         req.flash("success", "Address Added");
         res.redirect("/user/address");
     } catch (error) {
@@ -141,18 +144,6 @@ exports.deleteAddress = asyncHandler(async (req, res) => {
         const address = await Address.findByIdAndDelete(id);
         req.flash("warning", `${address.title} deleted`);
         res.redirect("/user/address");
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-/**
- * Checkout Page Route
- * Method GET
- */
-exports.checkoutpage = asyncHandler(async (req, res) => {
-    try {
-        res.render("shop/pages/user/checkout", { title: "Checkout", page: "checkout" });
     } catch (error) {
         throw new Error(error);
     }

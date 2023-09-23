@@ -1,119 +1,64 @@
 <div class="row justify-content-center">
     <div class="col-lg-8">
+        <form action="/admin/orders/update/<%= order[0].orderNumber %>?_method=PUT" method="post">
         <div class="card">
-            <div class="card-body p-4">
-                <h5 class="card-title fw-semibold mb-4">Edit Orders</h5>
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="referenceNo" class="form-label">Reference No</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="referenceNo"
-                                    placeholder="Enter reference no"
-                                    required
-                                />
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><%= order[0].products && order[0].products[0] && order[0].products[0].product ? order[0].products[0].product.title : 'N/A' %></h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h5 class="mb-3">Order ID:</h5>
+                        <p class="font-weight-bold"><%= order[0].orderNumber %></p>
+                        <h5 class="mb-3">Customer Name:</h5> <p><%= order[0].address ? order[0].address.title : 'N/A' %></p>
+                        <h5 class="mb-3">Customer Address:</h5>
+                        <p><%= order[0].address ? `${order[0].address.street}, ${order[0].address.city}, ${order[0].address.state}` : 'N/A' %></p>
+                        <h5 class="mb-3">Order Status:</h5>
+                        <select name="status" class="form-control mb-3">
+                            <option value="Pending" <%= order[0].status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                            <option value="Shipped" <%= order[0].status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                            <option value="Delivered" <%= order[0].status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                            <option value="Cancelled" <%= order[0].status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        </select>
+                        <h5 class="mb-3">Product Details:</h5>
+                        <div class="row d-flex justify-content-between">
+                            <div class="col-md-6 ">
+                                <div class="mb-2 d-flex flex-column justify-content-between align-middle">
+                                    <h6>Quantity: </h6>
+                                    <p><%= order[0].products && order[0].products[0] ? order[0].products[0].quantity : 'N/A' %></p>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="paymentMethod" class="form-label">Payment Method</label>
-                                <select class="form-select" id="paymentMethod" required>
-                                    <option value="credit_card">Credit Card</option>
-                                    <option value="paypal">PayPal</option>
-                                    <option value="cash_on_delivery">Cash on Delivery</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customerName" class="form-label">Customer Name</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="customerName"
-                                    placeholder="Enter customer name"
-                                    required
-                                />
-                            </div>
-                            <div class="mb-3">
-                                <label for="mobile" class="form-label">Mobile</label>
-                                <input
-                                    type="tel"
-                                    class="form-control"
-                                    id="mobile"
-                                    placeholder="Enter mobile number"
-                                    required
-                                />
-                            </div>
-                            <div class="mb-3">
-                                <label for="shippingAddress" class="form-label">Shipping Address</label>
-                                <textarea
-                                    class="form-control"
-                                    id="shippingAddress"
-                                    rows="3"
-                                    placeholder="Enter shipping address"
-                                    required
-                                ></textarea>
+                            <div class="col-md-6 ">
+                                <div class="d-flex flex-column justify-content-between align-middle mb-2">
+                                    <h6>Total Amount:</h6>
+                                    <p class="font-weight-bold">$ <%= order[0].totalAmount %></p>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="shippingCost" class="form-label">Shipping Cost</label>
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    id="shippingCost"
-                                    placeholder="Enter shipping cost"
-                                    required
-                                />
+                        <div class="row d-flex justify-content-between">
+                            <div class="col-md-6">
+                                <div class="d-flex flex-column justify-content-around mb-3">
+                                    <h6>Payment Method:</h6>
+                                    <p><%= order[0].paymentMethod %></p>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="deliveryDate" class="form-label">Delivery Date</label>
-                                <input type="date" class="form-control" id="deliveryDate" required />
-                            </div>
-                            <div class="mb-3">
-                                <label for="totalAmount" class="form-label">Total Amount</label>
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    id="totalAmount"
-                                    placeholder="Enter total amount"
-                                    required
-                                />
-                            </div>
-                            <div class="mb-3">
-                                <label for="discount" class="form-label">Discount</label>
-                                <input
-                                    type="number"
-                                    class="form-control"
-                                    id="discount"
-                                    placeholder="Enter discount amount"
-                                    required
-                                />
-                            </div>
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" required>
-                                    <option value="pending">Pending</option>
-                                    <option value="processing">Processing</option>
-                                    <option value="shipped">Shipped</option>
-                                    <option value="delivered">Delivered</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="items" class="form-label">Items</label>
-                                <textarea
-                                    class="form-control"
-                                    id="items"
-                                    rows="3"
-                                    placeholder="Enter order items"
-                                    required
-                                ></textarea>
+                            <div class="col-md-6">
+                                <div class="d-flex flex-column justify-content-between mb-3">
+                                    <h6>Ordered Date:</h6>
+                                    <p><%= order[0].createdAt ? new Date(order[0].createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Order</button>
-                </form>
+                    <div class="col-md-4">
+                        <img src="<%= order[0].products && order[0].products[0] && order[0].products[0].product ? order[0].products[0].product.images[0].productImageUrl : '' %>" alt="Product Image" class="img-fluid rounded" />
+                    </div>
+                </div>
+                <div class="col" >
+                    <button type="submit" class="btn btn-primary" >Update Status</button>
+                </div>
             </div>
         </div>
+        </form>
     </div>
 </div>

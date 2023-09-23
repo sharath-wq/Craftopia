@@ -10,7 +10,7 @@
     <div class="row mt-5">
         <%- include('../../partials/flash-message.ejs') %>
         <!-- Sample Address Card -->
-        <% if (address.length) { %> <% address.forEach(item => { %>
+        <% if (address && address.length) { %> <% address.forEach(item => { %>
         <div class="col-md-4 mb-3">
             <div class="card">
                 <div class="card-body">
@@ -18,9 +18,9 @@
                     <p class="card-text"><%= item.street %>, <%= item.city %>, <%= item.state %>, <%= item.pincode %></p>
                     <p class="card-text">Mobile: +91 <%= item.mobile %></p>
                     <div class="button-box d-flex gap-2">
-                        <a href="/user/address/edit/<%= item._id %>" type="button" class="btn btn-dark">Edit</a>
+                        <a href="/user/address/edit/<%= item._id %>" type="button" class="btn btn-dark h-auto">Edit</a>
                         <form action="/user/address/delete/<%= item._id %>/?_method=DELETE" method="post">
-                            <button type="submit" class="btn btn-outline-dark">Remove</button>
+                            <button type="submit" class="btn btn-outline-dark h-auto">Remove</button>
                         </form>
                     </div>
                 </div>
