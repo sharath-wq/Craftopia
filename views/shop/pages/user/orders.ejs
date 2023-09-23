@@ -17,7 +17,7 @@
                     <a href="/product/<%= product.product._id %>">
                         <img
                             class="img-fluid img-thumbnail"
-                            src=" <%= product.product.images[0].thumbnailUrl %> "
+                            src="<%= product.product.images[0].thumbnailUrl %>"
                             alt="Card image cap"
                         />
                     </a>
@@ -34,18 +34,26 @@
                         <p class="card-text">
                             Ship To Name: <strong class="text-primary"><%= order.address.title %></strong>
                         </p>
-                        <p class="card-text">Order Status: <strong class="text-success"><%= order.status %></strong></p>
+                        <p class="card-text">
+                            Order Status:
+                            <strong
+                                class="<% if (order.status === 'Pending') { %> text-warning <% } else if (order.status === 'Shipped') { %> text-primary <% } else if (order.status === 'Cancelled') { %> text-danger <% } else if (order.status === 'Delivered') { %> text-success <% } %>"
+                            >
+                                <%= order.status %>
+                            </strong>
+                        </p>
                         <p class="card-text">
                             Product Price: <strong class="text-info">₹ <%= product.product.salePrice %></strong>
                         </p>
                         <p class="card-text">
-                            Product Name: <strong class="text-danger"><%= product.product.title %></strong>
+                            Product Name: <strong class="text-dark"><%= product.product.title %></strong>
                         </p>
-                        <a href="/product/<%= product.product._id %>" class="btn btn-dark h-auto">View Product</a>
+                        <a href="/orders/<%= order.orderNumber %>" class="btn btn-dark h-auto">View Order</a>
                     </div>
                 </div>
             </div>
         </li>
+
         <% }) %> <% }) %> <% } else { %> No Orders <% } %>
 
         <!-- Order End -->

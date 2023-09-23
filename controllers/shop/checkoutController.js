@@ -52,34 +52,39 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
 exports.placeOrder = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        const cartItmes = await Cart.findOne({ user: userId }).populate("products.product");
-        if (cartItmes) {
-            let subtotal = 0;
-            for (const product of cartItmes.products) {
-                const productTotal = parseFloat(product.product.salePrice) * product.quantity;
-                subtotal += productTotal;
-            }
-            const tax = (subtotal * 12) / 100;
-            let shippingFee = 60;
-            if (subtotal > 2000) {
-                shippingFee = 0;
+        const cartItems = await Cart.findOne({ user: userId }).populate("products.product");
+
+        if (cartItems) {
+            const orders = [];
+
+            for (const cartItem of cartItems.products) {
+                const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
+                const tax = (productTotal * 12) / 100;
+                let shippingFee = 60;
+                if (productTotal > 2000) {
+                    shippingFee = 0;
+                }
+
+                const total = productTotal + tax + shippingFee;
+
+                const order = await Order.create({
+                    customer: userId,
+                    products: [{ product: cartItem.product._id, quantity: cartItem.quantity }],
+                    totalAmount: total,
+                    address: req.body.addressId,
+                    paymentMethod: req.body.payment_method,
+                });
+
+                orders.push(order);
             }
 
-            const total = subtotal + tax + shippingFee;
-            const order = await Order.create({
-                customer: userId,
-                products: cartItmes.products,
-                totalAmount: total,
-                address: req.body.addressId,
-                paymentMethod: req.body.payment_method,
-            });
-            const address = await Order.findById(order._id).populate("address");
             await Cart.findOneAndDelete({ user: userId });
+            const address = await Address.findById(req.body.addressId);
             res.render("shop/pages/user/order-placed.ejs", {
                 title: "Order Placed",
                 page: "Order Placed",
-                order,
-                address: address.address,
+                orders: orders,
+                address: address,
             });
         }
     } catch (error) {
