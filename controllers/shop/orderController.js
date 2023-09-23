@@ -24,7 +24,8 @@ exports.orderspage = asyncHandler(async (req, res) => {
             .populate({
                 path: "address",
                 model: "Address",
-            });
+            })
+            .sort({ createdAt: -1 });
 
         res.render("shop/pages/user/orders", {
             title: "Orders",

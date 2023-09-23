@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Product = require("../../models/productModel");
 const Category = require("../../models/categoryModel");
 const validateMongoDbId = require("../../utils/validateMongodbId");
+const shuffleArray = require("../../utils/shuffleProducts");
 
 /**
  * Shop page Route
@@ -14,7 +15,12 @@ exports.shoppage = asyncHandler(async (req, res) => {
         const { search, category, page, perPage, sortBy } = req.query;
 
         if (search) {
-            queryOptions.title = { $regex: new RegExp(search, "i") };
+            queryOptions.$or = [
+                { title: { $regex: new RegExp(search, "i") } },
+                { color: { $regex: new RegExp(search, "i") } },
+                { material: { $regex: new RegExp(search, "i") } },
+                { artForm: { $regex: new RegExp(search, "i") } },
+            ];
         }
 
         if (category) {
@@ -23,8 +29,16 @@ exports.shoppage = asyncHandler(async (req, res) => {
 
         const currentPage = parseInt(page) || 1;
         const itemsPerPage = parseInt(perPage) || 8;
-        const skip = (currentPage - 1) * itemsPerPage;
+        const allProducts = await Product.find(queryOptions).populate("images").exec();
 
+        // Shuffle all products randomly
+        shuffleArray(allProducts);
+
+        // Apply pagination to the shuffled products
+        const skip = (currentPage - 1) * itemsPerPage;
+        const products = allProducts.slice(skip, skip + itemsPerPage);
+
+        // Apply sorting to the paginated products
         const sortOptions = {};
         if (sortBy === "az") {
             sortOptions.title = 1;
@@ -36,21 +50,23 @@ exports.shoppage = asyncHandler(async (req, res) => {
             sortOptions.salePrice = -1;
         }
 
-        const productsQuery = Product.find(queryOptions)
-            .populate("images")
-            .skip(skip)
-            .limit(itemsPerPage)
-            .sort(sortOptions)
-            .exec();
+        products.sort((a, b) => {
+            if (sortOptions.title) {
+                return a.title.localeCompare(b.title) * sortOptions.title;
+            } else if (sortOptions.salePrice) {
+                return (a.salePrice - b.salePrice) * sortOptions.salePrice;
+            }
+            return 0;
+        });
 
-        const totalProductsCount = await Product.countDocuments(queryOptions);
+        const totalProductsCount = allProducts.length;
 
         const categories = await Category.find({ isListed: true });
 
         res.render("shop/pages/products/shop", {
             title: "Shop",
             page: "shop",
-            products: await productsQuery,
+            products,
             categories,
             search,
             category,
