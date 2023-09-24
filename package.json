@@ -38,6 +38,7 @@
     "firebase-admin": "^11.10.1",
     "http-errors": "^2.0.0",
     "method-override": "^3.0.0",
+    "moment": "^2.29.4",
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",

@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Category = require("../../models/categoryModel");
 const Product = require("../../models/productModel");
+const shuffleArray = require("../../utils/shuffleProducts");
 
 /**
  * Landing Page Route
@@ -10,6 +11,7 @@ exports.shopHomepage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const products = await Product.find({ isListed: true }).populate("images").exec();
+        shuffleArray(products);
         res.render("shop/pages/index", { title: "Craftopia", page: "home", products, messages });
     } catch (error) {
         throw new Error(error);

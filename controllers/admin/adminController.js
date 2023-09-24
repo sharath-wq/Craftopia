@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const User = require("../../models/userModel");
 const { roles } = require("../../utils/constants");
 const validateMongoDbId = require("../../utils/validateMongodbId");
+const Order = require("../../models/orderModel");
+const moment = require("moment");
 
 /**
  * Home Page Route
@@ -28,7 +30,34 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const user = req?.user;
-        res.render("admin/pages/admin/dashboard", { title: "Dashboard", user, messages });
+        const recentOrders = await Order.find()
+            .limit(5)
+            .populate({
+                path: "customer",
+                select: "firstName lastName image",
+            })
+            .select("totalAmount createdAt")
+            .sort({ createdAt: -1 });
+
+        const totalSalesAmount = recentOrders.reduce((total, order) => total + order.totalAmount, 0);
+
+        // Format timestamps using moment.js
+        recentOrders.forEach((order) => {
+            order.createdAtFormatted = moment(order.createdAt).fromNow();
+        });
+
+        const totalOrderCount = await Order.countDocuments();
+        const totalActiveUserCount = await User.countDocuments({ isBlocked: false });
+
+        res.render("admin/pages/admin/dashboard", {
+            title: "Dashboard",
+            user,
+            messages,
+            recentOrders,
+            totalOrderCount,
+            totalActiveUserCount,
+            totalSalesAmount,
+        });
     } catch (error) {
         throw new Error(error);
     }

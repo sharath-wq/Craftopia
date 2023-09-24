@@ -70,7 +70,10 @@
                                                 href="/cart/inc/<%= product._id %>"
                                                 class="btn btn-primary h-auto"
                                                 id="plusBtn"
-                                            >
+                                                <%
+                                                if
+                                                (product.quantity
+                                                >= product.product.quantity ) { %> style="pointer-events: none" <% } %> >
                                                 <i class="ti ti-plus"></i>
                                             </a>
                                         </div>

@@ -3,7 +3,7 @@
         <div class="card bg-info text-white">
             <div class="card-body">
                 <h5 class="card-title">Total Sales</h5>
-                <p class="card-text">Total Sales Amount: $5,000</p>
+                <p class="card-text">Total Sales Amount: ₹ <%= totalSalesAmount %></p>
             </div>
         </div>
     </div>
@@ -19,7 +19,7 @@
         <div class="card bg-warning text-dark">
             <div class="card-body">
                 <h5 class="card-title">Total Orders</h5>
-                <p class="card-text">Total Orders Count: 500</p>
+                <p class="card-text">Total Orders Count: <%= totalOrderCount %></p>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
         <div class="card bg-primary text-white">
             <div class="card-body">
                 <h5 class="card-title">Users</h5>
-                <p class="card-text">Users Count: 1,200</p>
+                <p class="card-text">Users Count: <%= totalActiveUserCount %></p>
             </div>
         </div>
     </div>
@@ -59,75 +59,24 @@
             <div class="card-body p-4">
                 <div class="mb-4 d-flex justify-content-between">
                     <h5 class="mb-0">Recent Sales</h5>
-                    <a href="#" class="">View All</a>
+                    <a href="/admin/orders" class="">View All</a>
                 </div>
                 <div class="card-body">
+                    <% recentOrders.forEach(order => { %>
                     <div class="media mb-3">
                         <img
-                            src="/admin/images/profile/user-1.jpg"
+                            src="<%= order.customer.image || '/admin/images/profile/user-1.jpg' %>"
                             class="mr-3 rounded-circle"
                             alt="User Image"
                             style="width: 60px"
                         />
                         <div class="media-body">
-                            <h5 class="mt-0">User Name</h5>
-                            <p>2 hours ago</p>
+                            <h5 class="mt-0"><%= order.customer.firstName %></h5>
+                            <p><%= order.createdAtFormatted %></p>
                         </div>
-                        <p class="mb-0">$50.00</p>
+                        <p class="mb-0 text-success">₹ <%= order.totalAmount %></p>
                     </div>
-                    <div class="media mb-3">
-                        <img
-                            src="/admin/images/profile/user-1.jpg"
-                            class="mr-3 rounded-circle"
-                            alt="User Image"
-                            style="width: 60px"
-                        />
-                        <div class="media-body">
-                            <h5 class="mt-0">User Name</h5>
-                            <p>4 hours ago</p>
-                        </div>
-                        <p class="mb-0">$30.00</p>
-                    </div>
-                    <div class="media mb-3">
-                        <img
-                            src="/admin/images/profile/user-1.jpg"
-                            class="mr-3 rounded-circle"
-                            alt="User Image"
-                            style="width: 60px"
-                        />
-                        <div class="media-body">
-                            <h5 class="mt-0">User Name</h5>
-                            <p>4 hours ago</p>
-                        </div>
-                        <p class="mb-0">$30.00</p>
-                    </div>
-                    <div class="media mb-3">
-                        <img
-                            src="/admin/images/profile/user-1.jpg"
-                            class="mr-3 rounded-circle"
-                            alt="User Image"
-                            style="width: 60px"
-                        />
-                        <div class="media-body">
-                            <h5 class="mt-0">User Name</h5>
-                            <p>4 hours ago</p>
-                        </div>
-                        <p class="mb-0">$30.00</p>
-                    </div>
-                    <div class="media mb-3">
-                        <img
-                            src="/admin/images/profile/user-1.jpg"
-                            class="mr-3 rounded-circle"
-                            alt="User Image"
-                            style="width: 60px"
-                        />
-                        <div class="media-body">
-                            <h5 class="mt-0">User Name</h5>
-                            <p>4 hours ago</p>
-                        </div>
-                        <p class="mb-0">$30.00</p>
-                    </div>
-                    <!-- Add more transaction entries as needed -->
+                    <% }) %>
                 </div>
             </div>
         </div>
