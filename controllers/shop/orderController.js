@@ -87,6 +87,7 @@ exports.chancelOrder = asyncHandler(async (req, res) => {
 
         const product = await Product.findById(cancelledProductId);
         product.quantity += cancelledQuantity;
+        product.sold -= cancelledQuantity;
         await product.save();
 
         res.redirect("back");

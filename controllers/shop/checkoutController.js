@@ -80,6 +80,7 @@ exports.placeOrder = asyncHandler(async (req, res) => {
 
                 const updateProduct = await Product.findById(cartItem.product._id);
                 updateProduct.quantity -= cartItem.quantity;
+                updateProduct.sold += cartItem.quantity;
                 await updateProduct.save();
             }
 

@@ -94,11 +94,11 @@
                         <!-- <span>₹ <%= product.productPrice %> </span> -->
                     </div>
                     <% if (product.quantity === 0) { %>
-                    <smal class="text-danger">Out Of Stock!😓</smal>
+                    <smal class="text-danger h3">Out Of Stock!😓</smal>
                     <% } else if (product.quantity < 5) { %>
-                    <smal class="text-warning">Hurry, Only <%= product.quantity %> more left!</smal>
+                    <smal class="text-warning h3">Hurry, Only <%= product.quantity %> more left!</smal>
                     <% } else { %>
-                    <smal class="text-success">In Stock</smal>
+                    <smal class="text-success h3">In Stock</smal>
                     <% } %>
                     <div class="product-details-delivery-tag mt-35">
                         <i class="ti ti-truck"></i> <span> FREE RETURNS + FREE SHIPPING</span>
@@ -229,9 +229,11 @@
                             <a class="animate-left" title="Wishlist" href="#">
                                 <i class="pe-7s-like"></i>
                             </a>
-                            <a class="animate-top" title="Add To Cart" href="/cart/add/<%= item._id %>">
+                            <% if (item.quantity) { %>
+                            <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
                                 <i class="pe-7s-cart"></i>
                             </a>
+                            <% } %>
                         </div>
                     </div>
                     <div class="product-content">

@@ -1,33 +1,45 @@
 <div class="row">
     <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
+        <div class="card text-white">
             <div class="card-body">
                 <h5 class="card-title">Total Sales</h5>
-                <p class="card-text">Total Sales Amount: ₹ <%= totalSalesAmount %></p>
+                <p class="card-text text-dark">
+                    Total Sales Amount: <br />
+                    <span class="text-success h3">₹ <%= totalSalesAmount.toFixed(2) %></span>
+                </p>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
+        <div class="card text-white">
             <div class="card-body">
-                <h5 class="card-title">Visitors</h5>
-                <p class="card-text">Visitors Count: 1,000</p>
+                <h5 class="card-title">Total Products Sold</h5>
+                <p class="card-text text-dark">
+                    Sold Count: <br />
+                    <span class="text-primary h3"><%= totalSoldProducts %></span>
+                </p>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-dark">
-            <div class="card-body">
-                <h5 class="card-title">Total Orders</h5>
-                <p class="card-text">Total Orders Count: <%= totalOrderCount %></p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
+        <div class="card text-white">
             <div class="card-body">
                 <h5 class="card-title">Users</h5>
-                <p class="card-text">Users Count: <%= totalActiveUserCount %></p>
+                <p class="card-text text-dark">
+                    Users Count: <br />
+                    <span class="text-primary h3"><%= totalActiveUserCount %></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-dark">
+            <div class="card-body">
+                <h5 class="card-title">Total Orders</h5>
+                <p class="card-text text-dark">
+                    Total Orders Count: <br />
+                    <span class="text-success h3"><%= totalOrderCount %></span>
+                </p>
             </div>
         </div>
     </div>

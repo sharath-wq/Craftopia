@@ -4,6 +4,7 @@ const { roles } = require("../../utils/constants");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const Order = require("../../models/orderModel");
 const moment = require("moment");
+const Product = require("../../models/productModel");
 
 /**
  * Home Page Route
@@ -45,7 +46,16 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
         recentOrders.forEach((order) => {
             order.createdAtFormatted = moment(order.createdAt).fromNow();
         });
-
+        const totalSoldProducts = await Product.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    total_sold_count: {
+                        $sum: "$sold",
+                    },
+                },
+            },
+        ]);
         const totalOrderCount = await Order.countDocuments();
         const totalActiveUserCount = await User.countDocuments({ isBlocked: false });
 
@@ -57,6 +67,7 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
             totalOrderCount,
             totalActiveUserCount,
             totalSalesAmount,
+            totalSoldProducts: totalSoldProducts[0].total_sold_count,
         });
     } catch (error) {
         throw new Error(error);

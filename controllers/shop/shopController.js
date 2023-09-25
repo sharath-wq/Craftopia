@@ -10,9 +10,10 @@ const shuffleArray = require("../../utils/shuffleProducts");
 exports.shopHomepage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        const products = await Product.find({ isListed: true }).populate("images").exec();
+        const products = await Product.find({ isListed: true }).populate("images").limit(10).exec();
         shuffleArray(products);
-        res.render("shop/pages/index", { title: "Craftopia", page: "home", products, messages });
+        const PopularProducts = await Product.find().sort({ sold: -1 }).populate("images").limit(10).exec();
+        res.render("shop/pages/index", { title: "Craftopia", page: "home", products, messages, PopularProducts });
     } catch (error) {
         throw new Error(error);
     }
