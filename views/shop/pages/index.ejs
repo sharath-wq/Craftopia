@@ -92,9 +92,11 @@
                                 <a class="animate-left" title="Wishlist" href="/wishlist/add/<%= product._id %>">
                                     <i class="pe-7s-like"></i>
                                 </a>
+                                <% if (product.quantity) { %>
                                 <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
                                     <i class="pe-7s-cart"></i>
                                 </a>
+                                <% } %>
                             </div>
                         </div>
                         <div class="product-content card-body" style="height: 100px">
@@ -120,6 +122,62 @@
                 </div>
             </div>
         </div>
+
+        <!-- Popular Products -->
+
+        <div class="container-fluid mt-5">
+            <div class="section-title text-center mb-60">
+                <h2>Popular Products</h2>
+            </div>
+            <div class="product-style">
+                <div class="arrival-active owl-carousel">
+                    <% PopularProducts.forEach(product => { %>
+                    <div class="product-wrapper card mb-4" style="width: 250px">
+                        <div class="product-img position-relative">
+                            <a href="/product/<%= product._id %>">
+                                <img
+                                    src="<%= product.images[0].thumbnailUrl %>"
+                                    alt="<%= product.title %>"
+                                    class="card-img-top"
+                                />
+                            </a>
+                            <span class="new bg-danger">New</span>
+                            <div class="product-action position-absolute start-0 bottom-0">
+                                <a class="animate-left" title="Wishlist" href="/wishlist/add/<%= product._id %>">
+                                    <i class="pe-7s-like"></i>
+                                </a>
+                                <% if (product.quantity) { %>
+                                <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
+                                    <i class="pe-7s-cart"></i>
+                                </a>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="product-content card-body" style="height: 100px">
+                            <!-- Adjust the height as needed -->
+                            <div class="d-flex justify-content-between">
+                                <small
+                                    class="card-title"
+                                    style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+                                >
+                                    <%= product.title %>
+                                </small>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-decoration-line-through text-secondary">
+                                    ₹ <%= product.productPrice %>
+                                </span>
+                                <span class="card-text h4">₹ <%= product.salePrice %></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Products -->
     </div>
 </div>
 <!-- product area end -->

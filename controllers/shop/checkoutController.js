@@ -4,6 +4,7 @@ const Address = require("../../models/addressModel");
 const User = require("../../models/userModel");
 const Cart = require("../../models/cartModeal");
 const Order = require("../../models/orderModel");
+const Product = require("../../models/productModel");
 
 /**
  * Checkout Page Route
@@ -76,6 +77,11 @@ exports.placeOrder = asyncHandler(async (req, res) => {
                 });
 
                 orders.push(order);
+
+                const updateProduct = await Product.findById(cartItem.product._id);
+                updateProduct.quantity -= cartItem.quantity;
+                updateProduct.sold += cartItem.quantity;
+                await updateProduct.save();
             }
 
             await Cart.findOneAndDelete({ user: userId });

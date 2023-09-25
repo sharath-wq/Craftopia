@@ -91,29 +91,15 @@
                     </div>
                     <div class="details-price">
                         <span>₹ <%= product.salePrice %></span>
+                        <!-- <span>₹ <%= product.productPrice %> </span> -->
                     </div>
-                    <p></p>
-                    <div class="quick-view-select">
-                        <!-- <div class="select-option-part">
-                            <label>Size*</label>
-                            <select class="select">
-                                <option value="">- Please Select -</option>
-                                <option value="">xl</option>
-                                <option value="">ml</option>
-                                <option value="">m</option>
-                                <option value="">sl</option>
-                            </select>
-                        </div> -->
-                        <!-- <div class="select-option-part">
-                            <label>Color*</label>
-                            <select class="select">
-                                <option value="">- Please Select -</option>
-                                <option value="">orange</option>
-                                <option value="">pink</option>
-                                <option value="">yellow</option>
-                            </select>
-                        </div> -->
-                    </div>
+                    <% if (product.quantity === 0) { %>
+                    <smal class="text-danger h3">Out Of Stock!😓</smal>
+                    <% } else if (product.quantity < 5) { %>
+                    <smal class="text-warning h3">Hurry, Only <%= product.quantity %> more left!</smal>
+                    <% } else { %>
+                    <smal class="text-success h3">In Stock</smal>
+                    <% } %>
                     <div class="product-details-delivery-tag mt-35">
                         <i class="ti ti-truck"></i> <span> FREE RETURNS + FREE SHIPPING</span>
                     </div>
@@ -155,11 +141,12 @@
                         </ul>
                     </div>
                     <div class="quickview-plus-minus">
-                        <!-- <div class="cart-plus-minus">
-                            <input type="text" value="02" name="qtybutton" class="cart-plus-minus-box" />
-                        </div> -->
                         <div class="quickview-btn-cart">
+                            <% if (product.quantity === 0) { %>
+                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
+                            <% } else { %>
                             <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>
+                            <% } %>
                         </div>
                         <div class="quickview-btn-wishlist">
                             <% if (user?.wishlist?.includes(product._id)) { %>
@@ -242,9 +229,11 @@
                             <a class="animate-left" title="Wishlist" href="#">
                                 <i class="pe-7s-like"></i>
                             </a>
-                            <a class="animate-top" title="Add To Cart" href="/cart/add/<%= item._id %>">
+                            <% if (item.quantity) { %>
+                            <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
                                 <i class="pe-7s-cart"></i>
                             </a>
+                            <% } %>
                         </div>
                     </div>
                     <div class="product-content">

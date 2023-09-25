@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../../models/orderModel");
+const status = require("../../utils/status");
+const Product = require("../../models/productModel");
 
 /**
  * Manage Orders Page Route
@@ -72,6 +74,11 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
                 status: req.body.status,
             }
         );
+        if (req.body.status === status.status.cancelled) {
+            const product = await Product.findById(order.products[0].product);
+            product.sold -= order.products[0].quantity;
+            await product.save();
+        }
         res.redirect("/admin/orders");
     } catch (error) {
         throw new Error(error);

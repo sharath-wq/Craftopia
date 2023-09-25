@@ -80,6 +80,16 @@ exports.chancelOrder = asyncHandler(async (req, res) => {
                 status: status.cancelled,
             }
         );
+
+        const cancelledProduct = updatedOrder.products[0];
+        const cancelledProductId = cancelledProduct.product;
+        const cancelledQuantity = cancelledProduct.quantity;
+
+        const product = await Product.findById(cancelledProductId);
+        product.quantity += cancelledQuantity;
+        product.sold -= cancelledQuantity;
+        await product.save();
+
         res.redirect("back");
     } catch (error) {
         throw new Error(error);
