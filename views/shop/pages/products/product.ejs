@@ -79,12 +79,9 @@
                     <h3><%= product.title %></h3>
                     <div class="rating-number">
                         <div class="quick-view-rating">
-                            <div class="quick-view-rating">
-                                <% for (let filledStars = 0; filledStars < avgRating; filledStars++) { %>
-                                <i class="pe-7s-star text-warning"></i>
-                                <% } %> <% for (let emptyStars = 1; emptyStars < 5 - avgRating; emptyStars++) { %>
-                                <i class="pe-7s-star"></i>
-                                <% } %>
+                            <div class="quick-view-rating d-flex justify-content-between">
+                                <img src="/shop/img/icon-img/star.svg" style="height: 40px; width: 40px" alt="star" />
+                                <span class="text-secondary"><%= `(${avgRating})` %></span>
                             </div>
                         </div>
                         <div class="quick-view-number">

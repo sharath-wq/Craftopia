@@ -108,7 +108,7 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
                 totalRating += Math.ceil(parseFloat(review.rating));
             }
             const averageRating = totalRating / reviews.length;
-            avgRating = averageRating;
+            avgRating = averageRating.toFixed(2);
         } else {
             avgRating = 0;
         }
