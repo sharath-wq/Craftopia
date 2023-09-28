@@ -140,7 +140,9 @@ exports.editAddress = asyncHandler(async (req, res) => {
 exports.deleteAddress = asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
+        const userId = req.user._id;
         validateMongoDbId(id);
+        await User.findByIdAndUpdate(userId, { $pull: { address: id } });
         const address = await Address.findByIdAndDelete(id);
         req.flash("warning", `${address.title} deleted`);
         res.redirect("/user/address");
