@@ -79,14 +79,16 @@
                     <h3><%= product.title %></h3>
                     <div class="rating-number">
                         <div class="quick-view-rating">
-                            <i class="pe-7s-star text-warning"></i>
-                            <i class="pe-7s-star text-warning"></i>
-                            <i class="pe-7s-star text-warning"></i>
-                            <i class="pe-7s-star"></i>
-                            <i class="pe-7s-star"></i>
+                            <div class="quick-view-rating">
+                                <% for (let filledStars = 0; filledStars < avgRating; filledStars++) { %>
+                                <i class="pe-7s-star text-warning"></i>
+                                <% } %> <% for (let emptyStars = 0; emptyStars < 5 - avgRating; emptyStars++) { %>
+                                <i class="pe-7s-star"></i>
+                                <% } %>
+                            </div>
                         </div>
                         <div class="quick-view-number">
-                            <span>2 Ratting (S)</span>
+                            <span><%= reviews.length %> Ratting (S)</span>
                         </div>
                     </div>
                     <div class="details-price">
@@ -170,7 +172,9 @@
         <div class="product-description-review text-center">
             <div class="description-review-title nav" role="tablist">
                 <a class="active" href="#pro-dec" data-bs-toggle="tab" role="tab" aria-selected="true"> Description </a>
-                <a href="#pro-review" data-bs-toggle="tab" role="tab" aria-selected="false"> Reviews (0) </a>
+                <a href="#pro-review" data-bs-toggle="tab" role="tab" aria-selected="false">
+                    Reviews <%= reviews ? reviews.length : 0 %>
+                </a>
             </div>
             <div class="description-review-text tab-content mt-5">
                 <div class="tab-pane active show fade" id="pro-dec" role="tabpanel">
@@ -204,7 +208,21 @@
                 </div>
 
                 <div class="tab-pane fade" id="pro-review" role="tabpanel">
-                    <a href="#">Be the first to write your review!</a>
+                    <% if (!reviews && reviews.length) { %>
+                    <p class="text-dark">No reviews</p>
+                    <% } else { %> <% reviews.forEach(review => { %>
+                    <div class="col">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= review.rating %> Stars</h5>
+                                <p class="card-text"><%= review.review %></p>
+                                <p class="card-text">
+                                    <small class="text-muted">Posted by <%= review.user.firstName %></small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %> <% } %>
                 </div>
             </div>
         </div>

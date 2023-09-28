@@ -53,6 +53,36 @@
                             </div>
                         </div>
                     </div>
+                    <hr class="border-2 border-secondary" />
+                    <!-- Review Section -->
+                    <div class="container mt-5">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h3>Write a Review</h3>
+                                <form action="/user/review/add/<%= order.products[0].product._id %>" method="post">
+                                    <!-- Review Rating -->
+                                    <div class="form-group">
+                                        <label for="rating">Rating:</label>
+                                        <select class="form-control" id="rating" name="rating">
+                                            <option value="5">5 stars</option>
+                                            <option value="4">4 stars</option>
+                                            <option value="3">3 stars</option>
+                                            <option value="2">2 stars</option>
+                                            <option value="1">1 star</option>
+                                        </select>
+                                    </div>
+                                    <!-- Review Text -->
+                                    <div class="form-group">
+                                        <label for="reviewText">Review:</label>
+                                        <textarea class="form-control" id="reviewText" name="review" rows="4"></textarea>
+                                    </div>
+                                    <!-- Submit Button -->
+                                    <button type="submit" class="btn btn-primary h-auto">Submit Review</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Review End -->
                 </div>
             </div>
         </div>

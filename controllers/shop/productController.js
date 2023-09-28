@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Product = require("../../models/productModel");
 const Category = require("../../models/categoryModel");
+const Review = require("../../models/reviewModel");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const shuffleArray = require("../../utils/shuffleProducts");
 
@@ -92,12 +93,25 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const product = await Product.findById(id).populate("images").exec();
+        const reviews = await Review.find().populate("user");
         const relatedProducts = await Product.find({
             category: product.category,
             _id: { $ne: product._id },
         })
             .populate("images")
             .exec();
+
+        let totalRating = 0;
+        let avgRating = 0;
+        if (reviews.length > 0) {
+            for (const review of reviews) {
+                totalRating += Math.ceil(parseFloat(review.rating));
+            }
+            const averageRating = totalRating / reviews.length;
+            avgRating = averageRating;
+        } else {
+            avgRating = 0;
+        }
         res.render("shop/pages/products/product", {
             title: "Product",
             page: "product",
@@ -105,6 +119,8 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
             product,
             messages,
             user,
+            reviews,
+            avgRating,
         });
     } catch (error) {
         throw new Error(error);
