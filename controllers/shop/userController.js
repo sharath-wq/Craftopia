@@ -7,6 +7,8 @@ const Otp = require("../../models/otpModel");
 const { generateOtp } = require("../../utils/sendOtp");
 const sendEmail = require("../../utils/sendEmail");
 const { validationResult } = require("express-validator");
+const sharp = require("sharp");
+const { admin } = require("../../utils/firebase");
 
 /**
  * Profile Page Route
@@ -27,10 +29,17 @@ exports.profilepage = asyncHandler(async (req, res) => {
  * Method PUT
  */
 exports.editProfile = asyncHandler(async (req, res) => {
-    const { firstName, lastName, street, city, state, pincode, mobile } = req.body;
     const id = req.params.id;
     try {
         const errors = validationResult(req);
+        const { firstName, lastName, street, city, state, pincode, mobile } = req.body;
+        const file = req.file;
+
+        const avatharBuffer = await sharp(file.buffer).resize(200, 200).toBuffer();
+        const avatharFileName = `avathars/${Date.now()}_${file.originalname}`;
+        await admin.storage().bucket().file(avatharFileName).save(avatharBuffer);
+        const avatharUrl = `${process.env.FIREBASE_URL}${avatharFileName}`;
+
         if (!errors.isEmpty()) {
             errors.array().forEach((error) => {
                 req.flash("danger", error.msg);
@@ -48,6 +57,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
             const user = await User.findByIdAndUpdate(id, {
                 firstName: firstName,
                 lastName: lastName,
+                image: avatharUrl,
                 mobile: mobile,
                 $push: { address: address._id },
             });

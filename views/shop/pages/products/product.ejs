@@ -207,19 +207,23 @@
                 <div class="tab-pane fade" id="pro-review" role="tabpanel">
                     <% if (!reviews && reviews.length) { %>
                     <p class="text-dark">No reviews</p>
-                    <% } else { %> <% reviews.forEach(review => { %>
-                    <div class="col">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= review.rating %> Stars</h5>
-                                <p class="card-text"><%= review.review %></p>
-                                <p class="card-text">
-                                    <small class="text-muted">Posted by <%= review.user.firstName %></small>
-                                </p>
+                    <% } else { %>
+                    <div class="testimonials-area bg-img" style="background-image: url(shop/img/bg/7.jpg)">
+                        <div class="container">
+                            <div class="testimonials-active owl-carousel">
+                                <% reviews.forEach(review => { %>
+                                <div class="single-testimonial-2 text-center">
+                                    <img style="width: 100px; height: 100px;" class="rounded-circle" src="<%=
+                                    review.user.image || "/shop/img/team/user.png" %>" alt="user" />
+                                    <p><%= review.review %></p>
+                                    <h4>Posted By <%= review.user.firstName %></h4>
+                                    <span><%= review.rating %> Stars </span>
+                                </div>
+                                <% }) %>
                             </div>
                         </div>
                     </div>
-                    <% }) %> <% } %>
+                    <% } %>
                 </div>
             </div>
         </div>

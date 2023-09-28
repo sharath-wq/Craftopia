@@ -4,13 +4,7 @@ const Category = require("../../models/categoryModel");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const sharp = require("sharp");
 const Images = require("../../models/imageModel");
-const admin = require("firebase-admin");
-const serviceAccount = require("../../config/craftopia-c8c47-firebase-adminsdk-yanr7-1eefc24806.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-});
+const { admin } = require("../../utils/firebase");
 
 /**
  * Manage Product Page Route
