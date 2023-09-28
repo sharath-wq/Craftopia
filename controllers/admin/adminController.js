@@ -5,6 +5,8 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 const Order = require("../../models/orderModel");
 const moment = require("moment");
 const Product = require("../../models/productModel");
+const numeral = require("numeral");
+const status = require("../../utils/status");
 
 /**
  * Home Page Route
@@ -40,7 +42,11 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
             .select("totalAmount createdAt")
             .sort({ createdAt: -1 });
 
-        const totalSalesAmount = recentOrders.reduce((total, order) => total + order.totalAmount, 0);
+        let totalSalesAmount = (await Order.find({ status: { $ne: "Cancelled" } })).reduce(
+            (total, order) => total + order.totalAmount,
+            0
+        );
+        totalSalesAmount = numeral(totalSalesAmount).format("0.0a");
 
         // Format timestamps using moment.js
         recentOrders.forEach((order) => {
@@ -56,6 +62,7 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
                 },
             },
         ]);
+
         const totalOrderCount = await Order.countDocuments();
         const totalActiveUserCount = await User.countDocuments({ isBlocked: false });
 

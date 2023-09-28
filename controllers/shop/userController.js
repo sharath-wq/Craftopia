@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const Address = require("../../models/addressModel");
 const User = require("../../models/userModel");
+const Review = require("../../models/reviewModel");
 const Otp = require("../../models/otpModel");
 const { generateOtp } = require("../../utils/sendOtp");
 const sendEmail = require("../../utils/sendEmail");
@@ -140,7 +141,9 @@ exports.editAddress = asyncHandler(async (req, res) => {
 exports.deleteAddress = asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
+        const userId = req.user._id;
         validateMongoDbId(id);
+        await User.findByIdAndUpdate(userId, { $pull: { address: id } });
         const address = await Address.findByIdAndDelete(id);
         req.flash("warning", `${address.title} deleted`);
         res.redirect("/user/address");
@@ -215,6 +218,28 @@ exports.sendEmail = asyncHandler(async (req, res) => {
         }
         req.flash("success", "Email Verified");
         res.redirect("/user/profile");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Add Review
+ * Method POST
+ */
+exports.addReview = asyncHandler(async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const userId = req.user._id;
+
+        const newReview = await Review.create({
+            user: userId,
+            product: productId,
+            review: req.body.review,
+            rating: req.body.rating,
+        });
+
+        res.redirect("back");
     } catch (error) {
         throw new Error(error);
     }
