@@ -35,35 +35,61 @@ exports.editProfile = asyncHandler(async (req, res) => {
         const { firstName, lastName, street, city, state, pincode, mobile } = req.body;
         const file = req.file;
 
-        const avatharBuffer = await sharp(file.buffer).resize(200, 200).toBuffer();
-        const avatharFileName = `avathars/${Date.now()}_${file.originalname}`;
-        await admin.storage().bucket().file(avatharFileName).save(avatharBuffer);
-        const avatharUrl = `${process.env.FIREBASE_URL}${avatharFileName}`;
+        if (file) {
+            const avatharBuffer = await sharp(file.buffer).resize(200, 200).toBuffer();
+            const avatharFileName = `avathars/${Date.now()}_${file.originalname}`;
+            await admin.storage().bucket().file(avatharFileName).save(avatharBuffer);
+            const avatharUrl = `${process.env.FIREBASE_URL}${avatharFileName}`;
+            if (!errors.isEmpty()) {
+                errors.array().forEach((error) => {
+                    req.flash("danger", error.msg);
+                });
+                res.redirect("/user/profile");
+            } else {
+                validateMongoDbId(id);
+                const address = await Address.create({
+                    street: street,
+                    city: city,
+                    state: state,
+                    pincode: pincode,
+                    mobile: mobile,
+                });
+                const user = await User.findByIdAndUpdate(id, {
+                    firstName: firstName,
+                    lastName: lastName,
+                    image: avatharUrl,
+                    mobile: mobile,
+                    $push: { address: address._id },
+                });
 
-        if (!errors.isEmpty()) {
-            errors.array().forEach((error) => {
-                req.flash("danger", error.msg);
-            });
-            res.redirect("/user/profile");
+                req.flash("success", "Profile updated");
+                res.redirect("/user/profile");
+            }
         } else {
-            validateMongoDbId(id);
-            const address = await Address.create({
-                street: street,
-                city: city,
-                state: state,
-                pincode: pincode,
-                mobile: mobile,
-            });
-            const user = await User.findByIdAndUpdate(id, {
-                firstName: firstName,
-                lastName: lastName,
-                image: avatharUrl,
-                mobile: mobile,
-                $push: { address: address._id },
-            });
+            if (!errors.isEmpty()) {
+                errors.array().forEach((error) => {
+                    req.flash("danger", error.msg);
+                });
+                res.redirect("/user/profile");
+            } else {
+                validateMongoDbId(id);
+                const address = await Address.create({
+                    street: street,
+                    city: city,
+                    state: state,
+                    pincode: pincode,
+                    mobile: mobile,
+                });
+                const user = await User.findByIdAndUpdate(id, {
+                    firstName: firstName,
+                    lastName: lastName,
+                    mobile: mobile,
+                    $push: { address: address._id },
+                });
 
-            req.flash("success", "Profile updated");
-            res.redirect("/user/profile");
+                req.flash("success", "Profile updated");
+                res.redirect("/user/profile");
+            }
         }
     } catch (error) {
         throw new Error(error);

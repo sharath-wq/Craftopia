@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Category = require("../../models/categoryModel");
 const validateMongoDbId = require("../../utils/validateMongodbId");
+const { validationResult } = require("express-validator");
 
 /**
  * Manage Category Page Route
@@ -51,14 +52,22 @@ exports.editCategorypage = asyncHandler(async (req, res) => {
  */
 exports.addCategory = asyncHandler(async (req, res) => {
     try {
-        const existingCategory = await Category.findOne({ title: req.body.title });
-        if (existingCategory) {
-            req.flash("warning", "Category Alrady Exists");
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            errors.array().forEach((error) => {
+                req.flash("danger", error.msg);
+            });
+            res.redirect("back");
+        } else {
+            const existingCategory = await Category.findOne({ title: req.body.title });
+            if (existingCategory) {
+                req.flash("warning", "Category Alrady Exists");
+                res.redirect("/admin/category/add");
+            }
+            const newCategory = await Category.create(req.body);
+            req.flash("success", `${newCategory.title} added Successfully`);
             res.redirect("/admin/category/add");
         }
-        const newCategory = await Category.create(req.body);
-        req.flash("success", `${newCategory.title} added Successfully`);
-        res.redirect("/admin/category/add");
     } catch (error) {
         throw new Error(error);
     }

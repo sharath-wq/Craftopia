@@ -13,12 +13,36 @@ module.exports = {
         }),
     ],
     profileValidator: [
-        body("firstName").not().isEmpty().withMessage("First Name is required"),
-        body("lastName").not().isEmpty().withMessage("Last Name is required"),
-        body("street").not().isEmpty().withMessage("Street is required"),
-        body("city").not().isEmpty().withMessage("City is required"),
-        body("state").not().isEmpty().withMessage("State is required"),
-        body("pincode").not().isEmpty().withMessage("Pincode is required"),
-        body("mobile").not().isEmpty().isMobilePhone().withMessage("Invalid Mobile Number"),
+        body("firstName").isEmpty().withMessage("First Name is required"),
+        body("lastName").isEmpty().withMessage("Last Name is required"),
+        body("street").isEmpty().withMessage("Street is required"),
+        body("city").isEmpty().withMessage("City is required"),
+        body("state").isEmpty().withMessage("State is required"),
+        body("pincode").isEmpty().withMessage("Pincode is required"),
+        // body("mobile").isEmpty().isMobilePhone().withMessage("Invalid Mobile Number"),
+    ],
+    productValidator: [
+        body("title").trim().notEmpty().withMessage("Title is required"),
+        body("description").trim().notEmpty().withMessage("Description is required"),
+        body("productPrice").isNumeric().withMessage("Product price must be a number"),
+        body("salePrice").isNumeric().withMessage("Sale price must be a number"),
+        body("category").isMongoId().withMessage("Invalid category ID"),
+        body("quantity").isNumeric().withMessage("Quantity must be a number"),
+    ],
+    productEditValidator: [
+        body("title").trim().notEmpty().withMessage("Title is required"),
+        body("description").trim().notEmpty().withMessage("Description is required"),
+        body("productPrice").isNumeric().withMessage("Product price must be a number"),
+        body("salePrice").isNumeric().withMessage("Sale price must be a number"),
+        body("category").isMongoId().withMessage("Invalid category ID"),
+        body("quantity").isNumeric().withMessage("Quantity must be a number"),
+    ],
+    validateCategory: [
+        body("title")
+            .trim()
+            .notEmpty()
+            .withMessage("Category title is required")
+            .isLength({ min: 3 })
+            .withMessage("Enter a valid title"),
     ],
 };

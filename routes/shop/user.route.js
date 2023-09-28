@@ -19,7 +19,7 @@ router.get("/profile/send-email-otp", userControler.sendEmail);
 router.post("/address/add", userControler.addAddress);
 router.post("/review/add/:id", userControler.addReview);
 
-router.put("/profile/edit/:id", upload.single("file"), userControler.editProfile);
+router.put("/profile/edit/:id", profileValidator, upload.single("file"), userControler.editProfile);
 router.put("/address/edit/:id", userControler.editAddress);
 
 router.delete("/address/delete/:id", userControler.deleteAddress);
