@@ -239,7 +239,7 @@ exports.addReview = asyncHandler(async (req, res) => {
             rating: req.body.rating,
         });
 
-        res.json(newReview);
+        res.redirect("back");
     } catch (error) {
         throw new Error(error);
     }

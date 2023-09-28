@@ -93,7 +93,7 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const product = await Product.findById(id).populate("images").exec();
-        const reviews = await Review.find().populate("user");
+        const reviews = await Review.find({ product: id }).populate("user");
         const relatedProducts = await Product.find({
             category: product.category,
             _id: { $ne: product._id },
