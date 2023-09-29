@@ -39,7 +39,7 @@ exports.editOrder = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
         const order = await Order.find({ orderNumber: orderId })
-            .select("orderNumber createdAt products.product products.quantity totalAmount paymentMethod status")
+            .select("orderNumber createdAt products.product products.quantity totalAmount paymentMethod status customer")
             .populate({
                 path: "products.product",
                 model: "Product",
@@ -51,6 +51,10 @@ exports.editOrder = asyncHandler(async (req, res) => {
             .populate({
                 path: "address",
                 model: "Address",
+            })
+            .populate({
+                path: "customer",
+                model: "User",
             })
             .sort({ createdAt: -1 });
         // res.json(order);
@@ -80,6 +84,25 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
             await product.save();
         }
         res.redirect("/admin/orders");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Search Order
+ * Method POST
+ */
+exports.searchOrder = asyncHandler(async (req, res) => {
+    try {
+        const search = req.body.search;
+        const order = await Order.findOne({ orderNumber: search });
+        if (order) {
+            res.redirect(`/admin/orders/${search}`);
+        } else {
+            req.flash("danger", "Can't find Order!");
+            res.redirect("/admin/dashboard");
+        }
     } catch (error) {
         throw new Error(error);
     }

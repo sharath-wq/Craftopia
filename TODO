@@ -1,14 +1,14 @@
 1.  Fix the connect ensure loging ✅
 2.  Fix the block unblock routes ✅
-3.  Try adding Loging with google
+3.  Try adding Loging with google ✅
 4.  List the Users and manage the Users ✅
 5.  List the Admins and Manage the Admins (Only the Super admin can mange the admins) ✅
-6.  List the Products and manage the products
-7.  Try Cloudinary or Firebase to store images
-8.  Category Management (Add, Edit, Delete)
-9.  Category Listing in the Home page (Mega menu)
-10. Product Management (Add, Edit, Delete)
-11. Prodcut Listing
-12. Pagination Search Sort Filters
-13. Fix the ejs issue in the edit category page
+6.  List the Products and manage the products ✅
+7.  Try Cloudinary or Firebase to store images ✅
+8.  Category Management (Add, Edit, Delete) ✅
+9.  Category Listing in the Home page (Mega menu) ✅
+10. Product Management (Add, Edit, Delete) ✅
+11. Prodcut Listing ✅
+12. Pagination Search Sort Filters ✅
+13. Fix the ejs issue in the edit category page ✅
 14. Change the user profile page insted of form show a card along with a edit button (add new edit user profile page)

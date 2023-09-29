@@ -4,13 +4,8 @@ const Category = require("../../models/categoryModel");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const sharp = require("sharp");
 const Images = require("../../models/imageModel");
-const admin = require("firebase-admin");
-const serviceAccount = require("../../config/craftopia-c8c47-firebase-adminsdk-yanr7-1eefc24806.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-});
+const { admin } = require("../../utils/firebase");
+const { validationResult } = require("express-validator");
 
 /**
  * Manage Product Page Route
@@ -47,40 +42,49 @@ exports.createProduct = asyncHandler(async (req, res) => {
     try {
         const files = req.files;
         const imageUrls = [];
-        for (const file of files) {
-            const thumbnailBuffer = await sharp(file.buffer).resize(300, 300).toBuffer();
-            const productImageBuffer = await sharp(file.buffer).resize(800, 1000).toBuffer();
+        const errors = validationResult(req);
 
-            const thumbnailFileName = `thumbnails/${Date.now()}_${file.originalname}`;
-            const productImageFileName = `product-images/${Date.now()}_${file.originalname}`;
+        if (!errors.isEmpty()) {
+            errors.array().forEach((error) => {
+                req.flash("danger", error.msg);
+            });
+            res.redirect("/admin/products/add");
+        } else {
+            for (const file of files) {
+                const thumbnailBuffer = await sharp(file.buffer).resize(300, 300).toBuffer();
+                const productImageBuffer = await sharp(file.buffer).resize(800, 1000).toBuffer();
 
-            await admin.storage().bucket().file(thumbnailFileName).save(thumbnailBuffer);
-            await admin.storage().bucket().file(productImageFileName).save(productImageBuffer);
+                const thumbnailFileName = `thumbnails/${Date.now()}_${file.originalname}`;
+                const productImageFileName = `product-images/${Date.now()}_${file.originalname}`;
 
-            // Get the download URLs for the uploaded images
-            const thumbnailUrl = `${process.env.FIREBASE_URL}${thumbnailFileName}`;
-            const productImageUrl = `${process.env.FIREBASE_URL}${productImageFileName}`;
+                await admin.storage().bucket().file(thumbnailFileName).save(thumbnailBuffer);
+                await admin.storage().bucket().file(productImageFileName).save(productImageBuffer);
 
-            imageUrls.push({ thumbnailUrl, productImageUrl });
+                // Get the download URLs for the uploaded images
+                const thumbnailUrl = `${process.env.FIREBASE_URL}${thumbnailFileName}`;
+                const productImageUrl = `${process.env.FIREBASE_URL}${productImageFileName}`;
+
+                imageUrls.push({ thumbnailUrl, productImageUrl });
+            }
+            const images = await Images.create(imageUrls);
+            const ids = images.map((image) => image._id);
+
+            const newProduct = await Product.create({
+                title: req.body.title,
+                category: req.body.category,
+                description: req.body.description,
+                productPrice: req.body.productPrice,
+                salePrice: req.body.salePrice,
+                quantity: req.body.quantity,
+                color: req.body.color,
+                material: req.body.material,
+                artForm: req.body.artForm,
+                images: ids,
+            });
+
+            req.flash("success", `${newProduct.title} added`);
+            res.redirect("/admin/products");
         }
-        const images = await Images.create(imageUrls);
-        const ids = images.map((image) => image._id);
-
-        const newProduct = await Product.create({
-            title: req.body.title,
-            category: req.body.category,
-            description: req.body.description,
-            productPrice: req.body.productPrice,
-            salePrice: req.body.salePrice,
-            quantity: req.body.quantity,
-            color: req.body.color,
-            material: req.body.material,
-            artForm: req.body.artForm,
-            images: ids,
-        });
-
-        req.flash("success", `${newProduct.title} added`);
-        res.redirect("/admin/products");
     } catch (error) {
         throw new Error(error);
     }
@@ -110,9 +114,17 @@ exports.updateProduct = asyncHandler(async (req, res) => {
     const id = req.params.id;
     validateMongoDbId(id);
     try {
-        const editedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
-        req.flash("success", `Product ${editedProduct.title} updated`);
-        res.redirect("/admin/products");
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            errors.array().forEach((error) => {
+                req.flash("danger", error.msg);
+            });
+            res.redirect("back");
+        } else {
+            const editedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
+            req.flash("success", `Product ${editedProduct.title} updated`);
+            res.redirect("/admin/products");
+        }
     } catch (error) {
         throw new Error(error);
     }

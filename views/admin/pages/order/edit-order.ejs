@@ -1,37 +1,41 @@
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <form action="/admin/orders/update/<%= order[0].orderNumber %>?_method=PUT" method="post">
+        <form action="/admin/orders/update/<%= order[0]?.orderNumber %>?_method=PUT" method="post">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><%= order[0].products && order[0].products[0] && order[0].products[0].product ? order[0].products[0].product.title : 'N/A' %></h4>
+                <h4 class="mb-0"><%= order[0]?.products && order[0]?.products[0] && order[0]?.products[0]?.product ? order[0]?.products[0]?.product.title : 'N/A' %></h4>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-8">
                         <h5 class="mb-3">Order ID:</h5>
-                        <p class="font-weight-bold"><%= order[0].orderNumber %></p>
-                        <h5 class="mb-3">Customer Name:</h5> <p><%= order[0].address ? order[0].address.title : 'N/A' %></p>
+                        <p class="font-weight-bold"><%= order[0]?.orderNumber %></p>
+                        <h5 class="mb-3">Customer Name:</h5>
+                        <div class="d-flex gap-9">
+                            <p><%= order[0]?.address ? order[0]?.address.title : 'N/A' %></p>
+                            <a href="/admin/customers/view/<%= order[0]?.customer._id %>"><%= order[0]?.customer.email %></a>
+                        </div>
                         <h5 class="mb-3">Customer Address:</h5>
-                        <p><%= order[0].address ? `${order[0].address.street}, ${order[0].address.city}, ${order[0].address.state}` : 'N/A' %></p>
+                        <p><%= order[0]?.address ? `${order[0]?.address.street}, ${order[0]?.address.city}, ${order[0]?.address.state}` : 'N/A' %></p>
                         <h5 class="mb-3">Order Status:</h5>
                         <select name="status" class="form-control mb-3">
-                            <option value="Pending" <%= order[0].status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                            <option value="Shipped" <%= order[0].status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                            <option value="Delivered" <%= order[0].status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                            <option value="Cancelled" <%= order[0].status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            <option value="Pending" <%= order[0]?.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                            <option value="Shipped" <%= order[0]?.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                            <option value="Delivered" <%= order[0]?.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                            <option value="Cancelled" <%= order[0]?.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                         </select>
                         <h5 class="mb-3">Product Details:</h5>
                         <div class="row d-flex justify-content-between">
                             <div class="col-md-6 ">
                                 <div class="mb-2 d-flex flex-column justify-content-between align-middle">
                                     <h6>Quantity: </h6>
-                                    <p><%= order[0].products && order[0].products[0] ? order[0].products[0].quantity : 'N/A' %></p>
+                                    <p><%= order[0]?.products && order[0]?.products[0] ? order[0]?.products[0].quantity : 'N/A' %></p>
                                 </div>
                             </div>
                             <div class="col-md-6 ">
                                 <div class="d-flex flex-column justify-content-between align-middle mb-2">
                                     <h6>Total Amount:</h6>
-                                    <p class="font-weight-bold">$ <%= order[0].totalAmount %></p>
+                                    <p class="font-weight-bold">$ <%= order[0]?.totalAmount %></p>
                                 </div>
                             </div>
                         </div>
@@ -39,19 +43,19 @@
                             <div class="col-md-6">
                                 <div class="d-flex flex-column justify-content-around mb-3">
                                     <h6>Payment Method:</h6>
-                                    <p><%= order[0].paymentMethod %></p>
+                                    <p><%= order[0]?.paymentMethod %></p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="d-flex flex-column justify-content-between mb-3">
                                     <h6>Ordered Date:</h6>
-                                    <p><%= order[0].createdAt ? new Date(order[0].createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></p>
+                                    <p><%= order[0]?.createdAt ? new Date(order[0]?.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <img src="<%= order[0].products && order[0].products[0] && order[0].products[0].product ? order[0].products[0].product.images[0].productImageUrl : '' %>" alt="Product Image" class="img-fluid rounded" />
+                        <img src="<%= order[0]?.products && order[0]?.products[0] && order[0]?.products[0].product ? order[0]?.products[0].product.images[0].productImageUrl : '' %>" alt="Product Image" class="img-fluid rounded" />
                     </div>
                 </div>
                 <div class="col" >

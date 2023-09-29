@@ -183,29 +183,30 @@
                             <ul>
                                 <% if (currentPage > 1) { %>
                                 <li>
-                                    <a
-                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>"
-                                    >
+                                    <a href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>">
                                         <i class="ti ti-arrow-left"></i>
-                                        <!-- Font Awesome icon for "Previous" -->
                                     </a>
                                 </li>
-                                <% } %> <% for (let i = 1; i <= Math.ceil(totalProductsCount / itemsPerPage); i++) { %>
-                                <li class="<%= currentPage === i ? 'active' : '' %>">
-                                    <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= category %>"><%= i %></a>
-                                </li>
-                                <% } %> <% if (currentPage < Math.ceil(totalProductsCount / itemsPerPage)) { %>
+                                <% } %>
+                                <% for (let i = 1; i <= Math.ceil(totalProductsCount / itemsPerPage); i++) { %>
+                                    <% if (i === 1 || i === currentPage - 1 || i === currentPage || i === currentPage + 1 || i === Math.ceil(totalProductsCount / itemsPerPage)) { %>
+                                        <li class="<%= currentPage === i ? 'active' : '' %>">
+                                            <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= category %>"><%= i %></a>
+                                        </li>
+                                    <% } else if (i === 2 || i === currentPage - 2 || i === currentPage + 2) { %>
+                                        <li>...</li>
+                                    <% } %>
+                                <% } %>
+                                <% if (currentPage < Math.ceil(totalProductsCount / itemsPerPage)) { %>
                                 <li>
-                                    <a
-                                        href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>"
-                                    >
+                                    <a href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>">
                                         <i class="ti ti-arrow-right"></i>
-                                        <!-- Font Awesome icon for "Next" -->
                                     </a>
                                 </li>
                                 <% } %>
                             </ul>
                         </div>
+                        <!-- Pagination End -->
                     </div>
                 </div>
             </div>

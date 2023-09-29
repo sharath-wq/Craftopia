@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
-                <%- include('../../partials/flash-message.ejs') %>
+                <% include('../../partials/flash-message.ejs') %>
                 <div class="login">
                     <h1 class="cart-heading">Verify Email</h1>
                     <div class="login-form-container">
@@ -20,9 +20,16 @@
                                         required
                                     />
                                 </div>
-                                <div class="button-box">
+                                <div class="button-box d-flex flex-column">
                                     <button type="submit" class="default-btn floatright">Verify OTP</button>
                                 </div>
+                            </form>
+                            <form class="mt-10" action="/auth/resend-email" method="post">
+                                <input type="text" name="email" value="<%= email %>" class="d-none" />
+                                <button type="submit" id="resendOTP" class="btn btn-danger h-auto d-none">
+                                    Resend OTP
+                                </button>
+                                <p id="countdowntext"><span id="countdown" class="countdown">60</span> seconds remaining</p>
                             </form>
                         </div>
                     </div>
@@ -32,3 +39,33 @@
     </div>
 </div>
 <!-- login-area end -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const resendOTPButton = document.getElementById("resendOTP");
+        const countdownDisplay = document.getElementById("countdown");
+        const countdownText = document.getElementById("countdowntext");
+        let countdown = 60;
+
+        function startCountdown() {
+            const interval = setInterval(function () {
+                countdown--;
+                countdownDisplay.textContent = countdown;
+
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    countdownDisplay.textContent = "0";
+                    resendOTPButton.classList.add("d-block");
+                    countdownText.classList.add("d-none");
+                }
+            }, 1000);
+        }
+
+        startCountdown();
+
+        resendOTPButton.addEventListener("click", function () {
+            countdown = 60;
+            startCountdown();
+        });
+    });
+</script>

@@ -9,6 +9,7 @@ const passport = require("passport");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const nocache = require("nocache");
+const { initializeFirebase } = require("./utils/firebase");
 
 const Category = require("./models/categoryModel");
 const Cart = require("./models/cartModeal");
@@ -31,6 +32,7 @@ const app = express();
 
 // Connect to the database
 connectDatabase();
+initializeFirebase();
 
 // Firebase Initalization
 
