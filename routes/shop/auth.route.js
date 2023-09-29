@@ -41,6 +41,7 @@ router.post("/forgot-password", authController.forgotPassword);
 router.post("/send-otp", ensureLoggedIn({ redirectTo: "/" }), authController.sendOtp);
 router.post("/verify-otp", ensureLoggedIn({ redirectTo: "/" }), authController.verifyOtp);
 router.post("/verify-email", authController.verifyEmail);
+router.post("/resend-email", authController.resendEmail);
 router.put("/reset-password/:token", authController.resetPassword);
 
 module.exports = router;

@@ -59,14 +59,15 @@ exports.addCategory = asyncHandler(async (req, res) => {
             });
             res.redirect("back");
         } else {
-            const existingCategory = await Category.findOne({ title: req.body.title });
+            const existingCategory = await Category.findOne({ title: { $regex: new RegExp(req.body.title, "i") } });
             if (existingCategory) {
                 req.flash("warning", "Category Alrady Exists");
                 res.redirect("/admin/category/add");
+            } else {
+                const newCategory = await Category.create(req.body);
+                req.flash("success", `${newCategory.title} added Successfully`);
+                res.redirect("/admin/category/add");
             }
-            const newCategory = await Category.create(req.body);
-            req.flash("success", `${newCategory.title} added Successfully`);
-            res.redirect("/admin/category/add");
         }
     } catch (error) {
         throw new Error(error);
