@@ -51,6 +51,10 @@ const productSchema = new mongoose.Schema(
             type: String,
             default: 0,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true }
 );

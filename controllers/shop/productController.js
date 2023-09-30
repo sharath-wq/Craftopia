@@ -28,6 +28,9 @@ exports.shoppage = asyncHandler(async (req, res) => {
             queryOptions.category = category;
         }
 
+        queryOptions.isListed = true;
+        queryOptions.isDeleted = false;
+
         const currentPage = parseInt(page) || 1;
         const itemsPerPage = parseInt(perPage) || 8;
         const allProducts = await Product.find(queryOptions).populate("images").exec();

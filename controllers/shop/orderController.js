@@ -9,7 +9,6 @@ const { status } = require("../../utils/status");
  */
 exports.orderspage = asyncHandler(async (req, res) => {
     try {
-        const { page, perPage } = req.query;
         const userId = req.user._id;
 
         const orderItems = await Order.find({ customer: userId })

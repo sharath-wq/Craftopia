@@ -14,7 +14,7 @@ const { validationResult } = require("express-validator");
 exports.productspage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        const products = await Product.find().populate("category").populate("images").exec();
+        const products = await Product.find({ isDeleted: false }).populate("category").populate("images").exec();
         res.render("admin/pages/product/products", { title: "Products", products, messages });
     } catch (error) {
         throw new Error(error);
@@ -209,6 +209,21 @@ exports.editProductImages = asyncHandler(async (req, res) => {
 
         req.flash("success", "Image updated");
         res.redirect("back");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Delete Product (Soft delete)
+ * Method DELETE
+ */
+exports.deleteProduct = asyncHandler(async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findByIdAndUpdate(productId, { isDeleted: true });
+        req.flash("danger", `${product.title} is deleted`);
+        res.redirect("/admin/products");
     } catch (error) {
         throw new Error(error);
     }

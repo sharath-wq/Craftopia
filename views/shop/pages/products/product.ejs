@@ -93,11 +93,13 @@
                         <!-- <span>₹ <%= product.productPrice %> </span> -->
                     </div>
                     <% if (product.quantity === 0) { %>
-                    <smal class="text-danger h3">Out Of Stock!😓</smal>
+                    <small class="text-danger h3">Out Of Stock!😓</small>
+                    <% }else if (product.isDeleted) { %>
+                    <small class="text-danger h3">Currently Not Available</small>
                     <% } else if (product.quantity < 5) { %>
-                    <smal class="text-warning h3">Hurry, Only <%= product.quantity %> more left!</smal>
+                    <small class="text-warning h3">Hurry, Only <%= product.quantity %> more left!</small>
                     <% } else { %>
-                    <smal class="text-success h3">In Stock</smal>
+                    <small class="text-success h3">In Stock</small>
                     <% } %>
                     <div class="product-details-delivery-tag mt-35">
                         <i class="ti ti-truck"></i> <span> FREE RETURNS + FREE SHIPPING</span>
@@ -142,6 +144,8 @@
                     <div class="quickview-plus-minus">
                         <div class="quickview-btn-cart">
                             <% if (product.quantity === 0) { %>
+                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
+                            <% }else if (product.isDeleted) { %>
                             <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
                             <% } else { %>
                             <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>

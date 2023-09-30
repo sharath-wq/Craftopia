@@ -20,4 +20,6 @@ router.put("/list/:id", productController.listProduct);
 router.put("/unlist/:id", productController.unlistProdcut);
 router.put("/edit/images/upload/:id", upload.single("file"), productController.editProductImages);
 
+router.put("/delete/:id", productController.deleteProduct);
+
 module.exports = router;
