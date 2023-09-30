@@ -32,9 +32,6 @@ exports.shoppage = asyncHandler(async (req, res) => {
         const itemsPerPage = parseInt(perPage) || 8;
         const allProducts = await Product.find(queryOptions).populate("images").exec();
 
-        // Shuffle all products randomly
-        shuffleArray(allProducts);
-
         // Apply pagination to the shuffled products
         const skip = (currentPage - 1) * itemsPerPage;
         const products = allProducts.slice(skip, skip + itemsPerPage);

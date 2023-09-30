@@ -23,4 +23,5 @@ router.put("/profile/edit/:id", profileValidator, upload.single("file"), userCon
 router.put("/address/edit/:id", userControler.editAddress);
 
 router.delete("/address/delete/:id", userControler.deleteAddress);
+
 module.exports = router;

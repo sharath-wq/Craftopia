@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12 col-12 col-lg-12 col-xl-6 ms-auto me-auto">
                 <% include('../../partials/flash-message.ejs') %>
-                <h1 class="cart-heading">register</h1>
+                <h1 class="cart-heading">Register</h1>
                 <div class="login">
                     <div class="login-form-container">
                         <div class="login-form">
@@ -15,7 +15,6 @@
                                     placeholder="First Name"
                                     value="<%= data?.firstName %>"
                                     required
-                                    onblur="validateField('firstName')"
                                 />
                                 <p class="text-danger" id="firstNameError"></p>
                                 <input
@@ -24,17 +23,9 @@
                                     placeholder="Last Name"
                                     value="<%= data?.lastName %>"
                                     required
-                                    onblur="validateField('lastName')"
                                 />
                                 <p class="text-danger" id="lastNameError"></p>
-                                <input
-                                    name="email"
-                                    placeholder="Email"
-                                    type="email"
-                                    value="<%= data?.email %>"
-                                    required
-                                    onblur="validateField('email')"
-                                />
+                                <input name="email" placeholder="Email" type="email" value="<%= data?.email %>" required />
                                 <p class="text-danger" id="emailError"></p>
                                 <input
                                     type="text"
@@ -42,27 +33,17 @@
                                     placeholder="Mobile"
                                     value="<%= data?.mobile %>"
                                     required
-                                    onblur="validateField('mobile')"
                                 />
                                 <p class="text-danger" id="mobileError"></p>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    placeholder="Password"
-                                    required
-                                    onblur="validateField('password')"
-                                />
+                                <input type="password" name="password" placeholder="Password" required />
                                 <p class="text-danger" id="passwordError"></p>
-                                <input
-                                    type="password"
-                                    name="confirm-password"
-                                    placeholder="Confirm Password"
-                                    required
-                                    onblur="validateField('confirm-password')"
-                                />
+                                <input type="password" name="confirm-password" placeholder="Confirm Password" required />
                                 <p class="text-danger" id="confirmPasswordError"></p>
                                 <div class="button-box">
-                                    <button type="submit" class="default-btn floatright">Register</button>
+                                    <button type="submit" class="default-btn floatright" id="registerButton">
+                                        Register
+                                    </button>
+                                    <p class="text-danger" id="formErrorMessage"></p>
                                 </div>
                             </form>
                         </div>
@@ -72,118 +53,5 @@
         </div>
     </div>
 </div>
-<!-- register-area end -->
 
-<script>
-    function validateField(fieldName) {
-        const field = document.querySelector(`input[name="${fieldName}"]`);
-        const errorElement = document.getElementById(`${fieldName}Error`);
-        const value = field.value.trim();
-        let valid = true;
-
-        // Custom validation for each field
-        switch (fieldName) {
-            case "firstName":
-                if (value === "") {
-                    errorElement.textContent = "First Name is required.";
-                    valid = false;
-                } else if (value.length < 3) {
-                    errorElement.textContent = "First Name should be at least 3 characters long.";
-                    valid = false;
-                } else if (!/^[A-Za-z]+$/.test(value)) {
-                    errorElement.textContent = "First Name should contain only alphabets.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "lastName":
-                if (value === "") {
-                    errorElement.textContent = "Last Name is required.";
-                    valid = false;
-                } else if (value.length < 3) {
-                    errorElement.textContent = "Last Name should be at least 3 characters long.";
-                    valid = false;
-                } else if (!/^[A-Za-z]+$/.test(value)) {
-                    errorElement.textContent = "Last Name should contain only alphabets.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "email":
-                if (value === "") {
-                    errorElement.textContent = "Email is required.";
-                    valid = false;
-                } else if (!isValidEmail(value)) {
-                    errorElement.textContent = "Invalid Email format.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "mobile":
-                if (value === "") {
-                    errorElement.textContent = "Mobile is required.";
-                    valid = false;
-                } else if (!isValidMobile(value)) {
-                    errorElement.textContent = "Mobile must be 10 digits.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "password":
-                if (value === "") {
-                    errorElement.textContent = "Password is required.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "confirm-password":
-                const passwordField = document.querySelector('input[name="password"]');
-                const passwordValue = passwordField.value.trim();
-                if (value === "") {
-                    errorElement.textContent = "Confrim password is required";
-                } else if (value !== passwordValue) {
-                    errorElement.textContent = "Passwords do not match.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            default:
-                break;
-        }
-
-        return valid;
-    }
-
-    function isValidEmail(email) {
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-        return emailRegex.test(email);
-    }
-
-    function isValidMobile(mobile) {
-        return mobile.length === 10 && /^\d+$/.test(mobile);
-    }
-
-    const form = document.getElementById("registrationForm");
-    form.addEventListener("submit", function (event) {
-        let valid = true;
-
-        // Validate all fields on submit
-        const fieldNames = ["firstName", "lastName", "email", "mobile", "password", "confirmPassword"];
-        fieldNames.forEach((fieldName) => {
-            if (!validateField(fieldName)) {
-                valid = false;
-                alert("Error submiting the form");
-            }
-        });
-
-        if (!valid) {
-            event.preventDefault();
-        }
-    });
-</script>
+<script src="/shop/js/registerValidations.js"></script>
