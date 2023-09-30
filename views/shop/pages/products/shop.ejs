@@ -54,7 +54,7 @@
                                         name="sortBy"
                                         data-current-page="<%= currentPage %>"
                                         data-category="<%= category %>"
-                                        style="width: 200px; height: 30px;"
+                                        style="width: 200px; height: 30px"
                                     >
                                         <option <%= sortBy === "default" ? "selected" : "" %> value="default">Default</option>
                                         <option <%= sortBy === "az" ? "selected" : "" %> value="az">A to Z</option>
@@ -87,11 +87,14 @@
                         <div class="shop-product-content tab-content">
                             <div id="grid-sidebar1" class="tab-pane fade active show">
                                 <div class="row">
-                                    <!-- Product Loop -->
-                                    <% products.forEach(product => { %>
+                                    <% if (products.length === 0) { %>
+                                    <div class="col-md-12">
+                                        <p>Oops, no products found.</p>
+                                    </div>
+                                    <% } else { %> <% products.forEach(product => { %>
                                     <div class="col-lg-6 col-md-6 col-xl-3">
                                         <div class="product-wrapper mb-30">
-                                            <!-- Product Image and Actions --> 
+                                            <!-- Product Image and Actions -->
                                             <div class="product-img">
                                                 <a href="/product/<%= product._id %>">
                                                     <img
@@ -99,7 +102,7 @@
                                                         alt="<%= product.title %>"
                                                     />
                                                 </a>
-                                                <span class="bg-danger" >hot</span>
+                                                <span class="bg-danger">hot</span>
                                                 <div class="product-action">
                                                     <a
                                                         class="animate-left"
@@ -109,7 +112,7 @@
                                                         <i class="pe-7s-like"></i>
                                                     </a>
                                                     <% if (product.quantity) { %>
-                                                        <a
+                                                    <a
                                                         class="animate-top"
                                                         title="Add To Cart"
                                                         href="/cart/add/<%= product._id %>"
@@ -122,12 +125,21 @@
                                             <!-- Product Details -->
                                             <div class="product-content">
                                                 <div class="d-flex justify-content-between">
-                                                    <small class="card-title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" >
+                                                    <small
+                                                        class="card-title"
+                                                        style="
+                                                            overflow: hidden;
+                                                            text-overflow: ellipsis;
+                                                            white-space: nowrap;
+                                                        "
+                                                    >
                                                         <%= product.title %>
                                                     </small>
                                                 </div>
                                                 <div class="d-flex justify-content-between">
-                                                    <span class="text-decoration-line-through text-secondary" >₹ <%= product.productPrice %></span>
+                                                    <span class="text-decoration-line-through text-secondary"
+                                                        >₹ <%= product.productPrice %></span
+                                                    >
                                                     <span class="card-text h4">₹ <%= product.salePrice %></span>
                                                 </div>
                                             </div>
@@ -135,12 +147,18 @@
                                     </div>
                                     <% }) %>
                                     <!-- End Product Loop -->
+                                    <% } %>
+                                    <!-- Product Loop -->
                                 </div>
                             </div>
 
                             <div id="grid-sidebar2" class="tab-pane fade">
                                 <div class="row">
-                                    <% products.forEach(product => { %>
+                                    <% if (products.length === 0) { %>
+                                    <div class="col-md-12">
+                                        <p>Oops, no products found.</p>
+                                    </div>
+                                    <% } else { %> <% products.forEach(product => { %>
                                     <div class="col-lg-12 col-xl-6">
                                         <div class="product-wrapper mb-30 single-product-list product-list-right-pr mb-60">
                                             <div class="product-img list-img-width">
@@ -156,16 +174,25 @@
                                                 <div class="product-list-info">
                                                     <h4><a href="/product/<%= product._id %>"><%= product.title%></a></h4>
                                                     <div class="d-flex justify-content-between">
-                                                        <span class="text-decoration-line-through text-secondary">₹ <%= product.productPrice %></span>
+                                                        <span class="text-decoration-line-through text-secondary"
+                                                            >₹ <%= product.productPrice %></span
+                                                        >
                                                         <span>₹ <%= product.salePrice %></span>
                                                     </div>
                                                 </div>
                                                 <div class="product-list-cart-wishlist">
                                                     <div class="product-list-cart">
-                                                        <a class="btn-hover list-btn-style" href="/cart/add/<%= product._id %>">add to cart</a>
+                                                        <a
+                                                            class="btn-hover list-btn-style"
+                                                            href="/cart/add/<%= product._id %>"
+                                                            >add to cart</a
+                                                        >
                                                     </div>
                                                     <div class="product-list-wishlist">
-                                                        <a class="btn-hover list-btn-wishlist" href="/wishlist/add/<%= product._id %>">
+                                                        <a
+                                                            class="btn-hover list-btn-wishlist"
+                                                            href="/wishlist/add/<%= product._id %>"
+                                                        >
                                                             <i class="pe-7s-like"></i>
                                                         </a>
                                                     </div>
@@ -173,33 +200,36 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <% }) %>
+                                    <% }) %> <% } %>
                                 </div>
                             </div>
                         </div>
 
+                        <% if (totalProductsCount > 8) { %>
                         <!-- Pagination -->
                         <div class="pagination-style mt-30 text-center">
                             <ul>
                                 <% if (currentPage > 1) { %>
                                 <li>
-                                    <a href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>">
+                                    <a
+                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>"
+                                    >
                                         <i class="ti ti-arrow-left"></i>
                                     </a>
                                 </li>
-                                <% } %>
-                                <% for (let i = 1; i <= Math.ceil(totalProductsCount / itemsPerPage); i++) { %>
-                                    <% if (i === 1 || i === currentPage - 1 || i === currentPage || i === currentPage + 1 || i === Math.ceil(totalProductsCount / itemsPerPage)) { %>
-                                        <li class="<%= currentPage === i ? 'active' : '' %>">
-                                            <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= category %>"><%= i %></a>
-                                        </li>
-                                    <% } else if (i === 2 || i === currentPage - 2 || i === currentPage + 2) { %>
-                                        <li>...</li>
-                                    <% } %>
-                                <% } %>
-                                <% if (currentPage < Math.ceil(totalProductsCount / itemsPerPage)) { %>
+                                <% } %> <% for (let i = 1; i <= Math.ceil(totalProductsCount / itemsPerPage); i++) { %> <%
+                                if (i === 1 || i === currentPage - 1 || i === currentPage || i === currentPage + 1 || i ===
+                                Math.ceil(totalProductsCount / itemsPerPage)) { %>
+                                <li class="<%= currentPage === i ? 'active' : '' %>">
+                                    <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= category %>"><%= i %></a>
+                                </li>
+                                <% } else if (i === 2 || i === currentPage - 2 || i === currentPage + 2) { %>
+                                <li>...</li>
+                                <% } %> <% } %> <% if (currentPage < Math.ceil(totalProductsCount / itemsPerPage)) { %>
                                 <li>
-                                    <a href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>">
+                                    <a
+                                        href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>"
+                                    >
                                         <i class="ti ti-arrow-right"></i>
                                     </a>
                                 </li>
@@ -207,6 +237,7 @@
                             </ul>
                         </div>
                         <!-- Pagination End -->
+                        <% } %>
                     </div>
                 </div>
             </div>

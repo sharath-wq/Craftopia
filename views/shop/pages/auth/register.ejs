@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12 col-12 col-lg-12 col-xl-6 ms-auto me-auto">
                 <% include('../../partials/flash-message.ejs') %>
-                <h1 class="cart-heading">register</h1>
+                <h1 class="cart-heading">Register</h1>
                 <div class="login">
                     <div class="login-form-container">
                         <div class="login-form">
@@ -15,7 +15,6 @@
                                     placeholder="First Name"
                                     value="<%= data?.firstName %>"
                                     required
-                                    onblur="validateField('firstName')"
                                 />
                                 <p class="text-danger" id="firstNameError"></p>
                                 <input
@@ -24,17 +23,9 @@
                                     placeholder="Last Name"
                                     value="<%= data?.lastName %>"
                                     required
-                                    onblur="validateField('lastName')"
                                 />
                                 <p class="text-danger" id="lastNameError"></p>
-                                <input
-                                    name="email"
-                                    placeholder="Email"
-                                    type="email"
-                                    value="<%= data?.email %>"
-                                    required
-                                    onblur="validateField('email')"
-                                />
+                                <input name="email" placeholder="Email" type="email" value="<%= data?.email %>" required />
                                 <p class="text-danger" id="emailError"></p>
                                 <input
                                     type="text"
@@ -42,27 +33,17 @@
                                     placeholder="Mobile"
                                     value="<%= data?.mobile %>"
                                     required
-                                    onblur="validateField('mobile')"
                                 />
                                 <p class="text-danger" id="mobileError"></p>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    placeholder="Password"
-                                    required
-                                    onblur="validateField('password')"
-                                />
+                                <input type="password" name="password" placeholder="Password" required />
                                 <p class="text-danger" id="passwordError"></p>
-                                <input
-                                    type="password"
-                                    name="confirm-password"
-                                    placeholder="Confirm Password"
-                                    required
-                                    onblur="validateField('confirm-password')"
-                                />
+                                <input type="password" name="confirm-password" placeholder="Confirm Password" required />
                                 <p class="text-danger" id="confirmPasswordError"></p>
                                 <div class="button-box">
-                                    <button type="submit" class="default-btn floatright">Register</button>
+                                    <button type="submit" class="default-btn floatright" id="registerButton">
+                                        Register
+                                    </button>
+                                    <p class="text-danger" id="formErrorMessage"></p>
                                 </div>
                             </form>
                         </div>
@@ -72,118 +53,128 @@
         </div>
     </div>
 </div>
-<!-- register-area end -->
 
 <script>
-    function validateField(fieldName) {
-        const field = document.querySelector(`input[name="${fieldName}"]`);
-        const errorElement = document.getElementById(`${fieldName}Error`);
-        const value = field.value.trim();
-        let valid = true;
+    document.addEventListener("DOMContentLoaded", function () {
+        const registrationForm = document.getElementById("registrationForm");
+        const firstNameInput = document.querySelector('input[name="firstName"]');
+        const lastNameInput = document.querySelector('input[name="lastName"]');
+        const emailInput = document.querySelector('input[name="email"]');
+        const mobileInput = document.querySelector('input[name="mobile"]');
+        const passwordInput = document.querySelector('input[name="password"]');
+        const confirmPasswordInput = document.querySelector('input[name="confirm-password"]');
+        const registerButton = document.getElementById("registerButton");
+        const firstNameError = document.getElementById("firstNameError");
+        const lastNameError = document.getElementById("lastNameError");
+        const emailError = document.getElementById("emailError");
+        const mobileError = document.getElementById("mobileError");
+        const passwordError = document.getElementById("passwordError");
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+        const formErrorMessage = document.getElementById("formErrorMessage");
 
-        // Custom validation for each field
-        switch (fieldName) {
-            case "firstName":
-                if (value === "") {
-                    errorElement.textContent = "First Name is required.";
-                    valid = false;
-                } else if (value.length < 3) {
-                    errorElement.textContent = "First Name should be at least 3 characters long.";
-                    valid = false;
-                } else if (!/^[A-Za-z]+$/.test(value)) {
-                    errorElement.textContent = "First Name should contain only alphabets.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "lastName":
-                if (value === "") {
-                    errorElement.textContent = "Last Name is required.";
-                    valid = false;
-                } else if (value.length < 3) {
-                    errorElement.textContent = "Last Name should be at least 3 characters long.";
-                    valid = false;
-                } else if (!/^[A-Za-z]+$/.test(value)) {
-                    errorElement.textContent = "Last Name should contain only alphabets.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "email":
-                if (value === "") {
-                    errorElement.textContent = "Email is required.";
-                    valid = false;
-                } else if (!isValidEmail(value)) {
-                    errorElement.textContent = "Invalid Email format.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "mobile":
-                if (value === "") {
-                    errorElement.textContent = "Mobile is required.";
-                    valid = false;
-                } else if (!isValidMobile(value)) {
-                    errorElement.textContent = "Mobile must be 10 digits.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "password":
-                if (value === "") {
-                    errorElement.textContent = "Password is required.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            case "confirm-password":
-                const passwordField = document.querySelector('input[name="password"]');
-                const passwordValue = passwordField.value.trim();
-                if (value === "") {
-                    errorElement.textContent = "Confrim password is required";
-                } else if (value !== passwordValue) {
-                    errorElement.textContent = "Passwords do not match.";
-                    valid = false;
-                } else {
-                    errorElement.textContent = "";
-                }
-                break;
-            default:
-                break;
-        }
-
-        return valid;
-    }
-
-    function isValidEmail(email) {
+        // Regular expressions for validation
+        const nameRegex = /^[a-zA-Z]+$/;
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-        return emailRegex.test(email);
-    }
+        const phoneRegex = /^\d{10}$/;
 
-    function isValidMobile(mobile) {
-        return mobile.length === 10 && /^\d+$/.test(mobile);
-    }
-
-    const form = document.getElementById("registrationForm");
-    form.addEventListener("submit", function (event) {
-        let valid = true;
-
-        // Validate all fields on submit
-        const fieldNames = ["firstName", "lastName", "email", "mobile", "password", "confirmPassword"];
-        fieldNames.forEach((fieldName) => {
-            if (!validateField(fieldName)) {
-                valid = false;
-                alert("Error submiting the form");
+        // Function to validate first name
+        function validateFirstName() {
+            const firstNameValue = firstNameInput.value.trim(); // Remove leading/trailing whitespace
+            if (firstNameValue === "") {
+                firstNameError.textContent = "First name is required";
+                return false;
+            } else if (!nameRegex.test(firstNameValue)) {
+                firstNameError.textContent = "First name can only contain alphabets";
+                return false;
             }
-        });
-
-        if (!valid) {
-            event.preventDefault();
+            firstNameError.textContent = "";
+            return true;
         }
+
+        // Function to validate last name
+        function validateLastName() {
+            const lastNameValue = lastNameInput.value.trim(); // Remove leading/trailing whitespace
+            if (lastNameValue === "") {
+                lastNameError.textContent = "Last name is required";
+                return false;
+            } else if (!nameRegex.test(lastNameValue)) {
+                lastNameError.textContent = "Last name can only contain alphabets";
+                return false;
+            }
+            lastNameError.textContent = "";
+            return true;
+        }
+
+        // Function to validate email
+        function validateEmail() {
+            if (!emailRegex.test(emailInput.value)) {
+                emailError.textContent = "Invalid email address";
+                return false;
+            }
+            emailError.textContent = "";
+            return true;
+        }
+
+        // Function to validate phone number
+        function validateMobile() {
+            if (!phoneRegex.test(mobileInput.value)) {
+                mobileError.textContent = "Invalid mobile number (10 digits required)";
+                return false;
+            }
+            mobileError.textContent = "";
+            return true;
+        }
+
+        // Function to validate password
+        function validatePassword() {
+            if (passwordInput.value.length < 6) {
+                passwordError.textContent = "Password must be at least 6 characters long";
+                return false;
+            }
+            passwordError.textContent = "";
+            return true;
+        }
+
+        // Function to validate confirm password
+        function validateConfirmPassword() {
+            if (confirmPasswordInput.value !== passwordInput.value) {
+                confirmPasswordError.textContent = "Passwords do not match";
+                return false;
+            }
+            confirmPasswordError.textContent = "";
+            return true;
+        }
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            if (
+                validateFirstName() &&
+                validateLastName() &&
+                validateEmail() &&
+                validateMobile() &&
+                validatePassword() &&
+                validateConfirmPassword()
+            ) {
+                // All fields are valid, you can submit the form
+                formErrorMessage.textContent = "";
+                registrationForm.submit();
+            } else {
+                // Some fields are invalid, display an error message
+                formErrorMessage.textContent = "Please correct the errors in the form.";
+            }
+        }
+
+        // Attach event listeners for input fields
+        firstNameInput.addEventListener("blur", validateFirstName);
+        lastNameInput.addEventListener("blur", validateLastName);
+        emailInput.addEventListener("blur", validateEmail);
+        mobileInput.addEventListener("blur", validateMobile);
+        passwordInput.addEventListener("blur", validatePassword);
+        confirmPasswordInput.addEventListener("blur", validateConfirmPassword);
+
+        // Attach event listener for form submission
+        registrationForm.addEventListener("submit", handleSubmit);
     });
 </script>
