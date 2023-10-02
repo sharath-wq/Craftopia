@@ -13,12 +13,12 @@ router.use((req, res, next) => {
 });
 
 router.get("/", isBlockedUser, shopController.shopHomepage);
-router.get("/contact", shopController.contactpage);
-router.get("/about", shopController.aboutpage);
+router.get("/contact", isBlockedUser, shopController.contactpage);
+router.get("/about", isBlockedUser, shopController.aboutpage);
 
 // Product Routes
-router.get("/shop", productController.shoppage);
-router.get("/product/:id", productController.singleProductpage);
+router.get("/shop", isBlockedUser, productController.shoppage);
+router.get("/product/:id", isBlockedUser, productController.singleProductpage);
 
 // Cart Routes
 

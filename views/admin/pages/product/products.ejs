@@ -44,12 +44,12 @@
                                     />
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group" aria-label="Product Actions">
-                                        <a
-                                            href="/admin/products/edit/<%= product._id %>"
-                                            class="btn btn-primary btn-sm"
-                                            style="margin-right: 10px"
-                                        >
+                                    <div
+                                        class="btn-group d-flex gap-2 align-items-center"
+                                        role="group"
+                                        aria-label="Product Actions"
+                                    >
+                                        <a href="/admin/products/edit/<%= product._id %>" class="btn btn-primary btn-sm">
                                             <i class="ti ti-pencil"></i>
                                         </a>
                                         <% if (product.isListed) { %>
@@ -60,11 +60,18 @@
                                         </form>
                                         <% } else { %>
                                         <form method="post" action="/admin/products/list/<%= product._id %>?_method=PUT">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-times"></i>
+                                            <button type="submit" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-times text-white"></i>
                                             </button>
                                         </form>
                                         <% } %>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-danger delete-product-btn"
+                                            data-product-id="<%= product._id %>"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -81,5 +88,61 @@
 <script>
     $(document).ready(function () {
         $("#productTable").DataTable();
+    });
+</script>
+
+<!-- Make sure Bootstrap CSS and JavaScript are included -->
+
+<div
+    class="modal fade"
+    id="deleteProductModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="deleteProductModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteProductModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="deleteProductModal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this product?</p>
+                <p>
+                    This will delete the product from the listing but it won't be deleted from the database, and already
+                    purchased users can see this product on their orders.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" id="cancelButton" data-dismiss="modal">Cancel</button> -->
+                <form action="/admin/products/delete/{{ PRODUCT_ID }}?_method=DELETE" method="post" id="deleteProductForm">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Find all delete buttons and attach click event listeners
+        const deleteButtons = document.querySelectorAll(".delete-product-btn");
+        deleteButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const productId = button.getAttribute("data-product-id");
+                const deleteForm = document.querySelector("#deleteProductForm");
+                const action = `/admin/products/delete/${productId}?_method=PUT`;
+                deleteForm.setAttribute("action", action);
+                // Set the form method to "POST"
+                deleteForm.setAttribute("method", "POST");
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.querySelector("#deleteProductModal"));
+                modal.show();
+            });
+        });
     });
 </script>

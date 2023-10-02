@@ -21,14 +21,14 @@ module.exports = {
         body("pincode").isEmpty().withMessage("Pincode is required"),
         // body("mobile").isEmpty().isMobilePhone().withMessage("Invalid Mobile Number"),
     ],
-    productValidator: [
-        body("title").trim().notEmpty().withMessage("Title is required"),
-        body("description").trim().notEmpty().withMessage("Description is required"),
-        body("productPrice").isNumeric().withMessage("Product price must be a number"),
-        body("salePrice").isNumeric().withMessage("Sale price must be a number"),
-        body("category").isMongoId().withMessage("Invalid category ID"),
-        body("quantity").isNumeric().withMessage("Quantity must be a number"),
-    ],
+    // productValidator: [
+    //     body("title").trim().notEmpty().withMessage("Title is required"),
+    //     body("description").trim().notEmpty().withMessage("Description is required"),
+    //     body("productPrice").isNumeric().withMessage("Product price must be a number"),
+    //     body("salePrice").isNumeric().withMessage("Sale price must be a number"),
+    //     body("category").isMongoId().withMessage("Invalid category ID"),
+    //     body("quantity").isNumeric().withMessage("Quantity must be a number"),
+    // ],
     productEditValidator: [
         body("title").trim().notEmpty().withMessage("Title is required"),
         body("description").trim().notEmpty().withMessage("Description is required"),

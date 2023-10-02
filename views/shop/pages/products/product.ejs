@@ -2,78 +2,53 @@
     <div class="container">
         <%- include('../../partials/flash-message.ejs') %>
         <div class="row">
+            <!-- Images -->
+
             <div class="col-md-12 col-lg-7 col-12">
                 <div class="product-details-img-content">
                     <div class="product-details-tab mr-35 product-details-tab2">
-                        <div class="product-details-small nav mr-10 product-details-2" role="tablist">
+                        <div
+                            class="product-details-small nav mr-10 product-details-2 overflow-scroll"
+                            style="height: 650px"
+                            role="tablist"
+                        >
+                            <% product.images.forEach(function(image, index) { %>
                             <a
-                                class="active mb-10"
-                                href="#pro-details1"
+                                class="<%= index === 0 ? 'active' : '' %> mb-10"
+                                href="#pro-details<%= index + 1 %>"
                                 data-bs-toggle="tab"
                                 role="tab"
-                                aria-selected="true"
+                                aria-selected="<%= index === 0 %>"
                             >
-                                <img src="<%= product?.images[0]?.thumbnailUrl %>" alt="" />
+                                <img src="<%= image.thumbnailUrl %>" alt="" />
                             </a>
-                            <a class="mb-10" href="#pro-details2" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="<%= product?.images[1]?.thumbnailUrl %>" alt="" />
-                            </a>
-                            <a class="mb-10" href="#pro-details3" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="<%= product?.images[2]?.thumbnailUrl %>" alt="" />
-                            </a>
-                            <a class="mb-10" href="#pro-details4" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <img src="<%= product?.images[3]?.thumbnailUrl %>" alt="" />
-                            </a>
+                            <% }); %>
                         </div>
                         <div class="product-details-large tab-content">
-                            <div class="tab-pane active show fade" id="pro-details1" role="tabpanel">
+                            <% product.images.forEach(function(image, index) { %>
+                            <div
+                                class="tab-pane <%= index === 0 ? 'active show fade' : 'fade' %>"
+                                id="pro-details<%= index + 1 %>"
+                                role="tabpanel"
+                            >
                                 <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product?.images[0]?.productImageUrl %>">
+                                    <a href="<%= image.productImageUrl %>">
                                         <img
-                                            src="<%= product?.images[0]?.productImageUrl %>"
+                                            src="<%= image.productImageUrl %>"
                                             class="img-fluid border border-dark"
                                             alt=""
                                         />
                                     </a>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="pro-details2" role="tabpanel">
-                                <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product?.images[1]?.productImageUrl %>">
-                                        <img
-                                            src="<%= product?.images[1]?.productImageUrl %>"
-                                            class="img-fluid border border-dark"
-                                            alt=""
-                                        />
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="pro-details3" role="tabpanel">
-                                <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product?.images[2]?.productImageUrl %>">
-                                        <img
-                                            src="<%= product?.images[2]?.productImageUrl %>"
-                                            class="img-fluid border border-dark"
-                                            alt=""
-                                        />
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="pro-details4" role="tabpanel">
-                                <div class="easyzoom easyzoom--overlay is-ready">
-                                    <a href="<%= product?.images[3]?.productImageUrl %>">
-                                        <img
-                                            src="<%= product?.images[3]?.productImageUrl %>"
-                                            class="img-fluid border border-dark"
-                                            alt=""
-                                        />
-                                    </a>
-                                </div>
-                            </div>
+                            <% }); %>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Images -->
+
             <div class="col-md-12 col-lg-5 col-12">
                 <div class="product-details-content">
                     <h3><%= product.title %></h3>
@@ -93,11 +68,13 @@
                         <!-- <span>₹ <%= product.productPrice %> </span> -->
                     </div>
                     <% if (product.quantity === 0) { %>
-                    <smal class="text-danger h3">Out Of Stock!😓</smal>
+                    <small class="text-danger h3">Out Of Stock!😓</small>
+                    <% }else if (product.isDeleted) { %>
+                    <small class="text-danger h3">Currently Not Available</small>
                     <% } else if (product.quantity < 5) { %>
-                    <smal class="text-warning h3">Hurry, Only <%= product.quantity %> more left!</smal>
+                    <small class="text-warning h3">Hurry, Only <%= product.quantity %> more left!</small>
                     <% } else { %>
-                    <smal class="text-success h3">In Stock</smal>
+                    <small class="text-success h3">In Stock</small>
                     <% } %>
                     <div class="product-details-delivery-tag mt-35">
                         <i class="ti ti-truck"></i> <span> FREE RETURNS + FREE SHIPPING</span>
@@ -142,6 +119,8 @@
                     <div class="quickview-plus-minus">
                         <div class="quickview-btn-cart">
                             <% if (product.quantity === 0) { %>
+                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
+                            <% }else if (product.isDeleted) { %>
                             <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
                             <% } else { %>
                             <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>

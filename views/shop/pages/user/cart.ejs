@@ -48,8 +48,10 @@
 
                                     <td class="product-name">
                                         <a href="/product/<%= product.product._id %>"><%= product.product.title %></a>
-                                        <% if (product.product.quantity < product.quantity) { %>
-                                            <p class="text-danger" >Out of Stock</p>
+                                        <% if (product.product.isDeleted) { %>
+                                        <p class="text-danger">Currently Unavailable</p>
+                                        <% } else if (product.product.quantity < product.quantity) { %>
+                                        <p class="text-danger">Out of Stock</p>
                                         <% } %>
                                     </td>
                                     <td class="product-price-cart">
@@ -132,12 +134,14 @@
                                     </li>
                                     <li>Total<span>₹ <%= total.toFixed(2) %></span></li>
                                 </ul>
-                                <button class="button <%= cartItems.products.some(product => product.product.quantity < product.quantity ) ? 'btn-secondary cursor-na' : 'btn-dark' %>" 
-                                    type="submit" <%= cartItems.products.some(product => product.product.quantity < product.quantity) ? 'disabled' : '' %>
-                                >
+                                <% if (cartItems.products.some(product => product.product.quantity < product.quantity ) ||
+                                cartItems.products.some(product => product.product.isDeleted)) { %>
+                                <button class="button btn-secondary cursor-na" type="submit" disabled>
                                     Proceed to checkout
                                 </button>
-
+                                <% } else { %>
+                                <button class="button btn-dark">Proceed to checkout</button>
+                                <% } %>
                             </div>
                         </div>
                     </div>

@@ -7,7 +7,7 @@
                 <h1 class="cart-heading">wishlist</h1>
                 <form action="#">
                     <div class="table-content table-responsive">
-                        <table>
+                        <table class="table-striped">
                             <thead>
                                 <tr>
                                     <th>remove</th>
@@ -31,6 +31,7 @@
                                     </td>
                                     <td class="product-name">
                                         <a href="/product/<%= product._id %>"><%= product.title %></a>
+                                        <p class="text-danger"><%= product.isDeleted ? 'Currently Not Available' : ""%></p>
                                     </td>
                                     <td class="product-price-cart">
                                         <span class="amount">₹ <%= product.salePrice %></span>
