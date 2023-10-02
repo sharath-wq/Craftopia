@@ -1,12 +1,9 @@
 <div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="col-lg-6">
         <div class="card">
             <div class="card-body p-4">
                 <div class="mt-4 d-flex justify-content-between align-items-center">
                     <h5 class="card-title fw-semibold mb-4">Edit Product</h5>
-                    <a href="/admin/products/edit/images/<%= product._id %>" class="btn btn-sm btn-primary h-auto">
-                        <i class="ti ti-image"></i> Change Images
-                    </a>
                 </div>
 
                 <form action="/admin/products/edit/<%= product._id%>/?_method=PUT" method="post">
@@ -121,4 +118,193 @@
             </div>
         </div>
     </div>
+    <!-- Working -->
+
+    <div class="col-lg-4">
+        <%- include('../../partials/flash-message.ejs') %>
+        <div class="card">
+            <div class="card-body p-4">
+                <% product.images.forEach((element, index) => { %>
+                <form
+                    action="/admin/products/edit/images/upload/<%= product.images[index]._id %>/?_method=PUT"
+                    method="post"
+                    enctype="multipart/form-data"
+                >
+                    <div class="mb-3 d-flex align-items-center justify-content-between">
+                        <img
+                            src="<%= product.images[index].thumbnailUrl %>"
+                            alt="Image"
+                            id="previewImage<%= index %>"
+                            class="img-thumbnail mr-3"
+                            style="max-width: 150px"
+                        />
+                        <div class="d-flex flex-column">
+                            <input
+                                type="files"
+                                class="form-control"
+                                id="image<%= index %>"
+                                accept="image/*"
+                                style="display: none"
+                                name="file"
+                            />
+                            <div class="d-flex flex-column gap-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-primary update-image-button"
+                                    data-index="<%= index %>"
+                                >
+                                    <i class="fas fa-upload"></i> Select Image
+                                </button>
+                                <button type="submit" class="btn btn-sm btn-success" id="submitImage<%= index %>" disabled>
+                                    <i class="fas fa-edit"></i> Update Image
+                                </button>
+                                <button
+                                    type="button"
+                                    onclick="removeImage(`<%= product.images[index]._id %>`)"
+                                    class="btn btn-sm btn-danger"
+                                >
+                                    <i class="fas fa-trash"></i> Remove Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <% }) %>
+
+                <!-- Single input form for multiple images -->
+                <form
+                    action="/admin/products/edit/images/upload/new/<%= product._id %>"
+                    method="post"
+                    enctype="multipart/form-data"
+                >
+                    <div class="mb-3 d-flex align-items-center justify-content-between">
+                        <div id="previewNewImages"></div>
+                        <div>
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="newImages"
+                                accept="image/*"
+                                name="files"
+                                multiple
+                                style="display: none"
+                            />
+                            <div class="d-flex flex-column gap-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-primary update-image-button"
+                                    onclick="document.getElementById('newImages').click()"
+                                >
+                                    <i class="fas fa-upload"></i> Select Images
+                                </button>
+                                <button type="submit" class="btn btn-sm btn-success" id="submitNewImages" disabled>
+                                    <i class="fas fa-edit"></i> Upload Images
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Working end -->
 </div>
+
+<script>
+    const updateImageButtons = document.querySelectorAll(".update-image-button");
+
+    function handleFileInputChange(index) {
+        const fileInput = document.getElementById("image" + index);
+        const previewImage = document.getElementById("previewImage" + index);
+        const submitButton = document.getElementById("submitImage" + index);
+
+        fileInput.addEventListener("change", (event) => {
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+                submitButton.removeAttribute("disabled");
+            } else {
+                submitButton.setAttribute("disabled", "disabled");
+            }
+        });
+        fileInput.click();
+    }
+    updateImageButtons.forEach((button, index) => {
+        button.addEventListener("click", (event) => {
+            handleFileInputChange(index);
+        });
+    });
+</script>
+
+<script>
+    function removeImage(id) {
+        const imageId = id;
+        const url = `/admin/products/images/delete/${imageId}`;
+        const imageElement = document.getElementById(`previewImage${imageId}`);
+
+        fetch(url, {
+            method: "DELETE",
+        })
+            .then((response) => {
+                if (response.ok) {
+                    console.log("Image removed successfully");
+                    location.reload();
+                    return response.json();
+                } else {
+                    console.error("Failed to remove image");
+                }
+            })
+            .catch((error) => {
+                console.error("An error occurred:", error);
+            });
+    }
+</script>
+
+<script>
+    // JavaScript to handle image preview
+    document.getElementById("newImages").addEventListener("change", function () {
+        const previewContainer = document.getElementById("previewNewImages");
+        previewContainer.innerHTML = ""; // Clear previous previews
+
+        const files = this.files;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("img-thumbnail");
+                img.style.maxWidth = "150px";
+
+                const previewDiv = document.createElement("div");
+                previewDiv.style.position = "relative"; // Make the container relative for absolute positioning
+
+                // Create a remove button (X) for each image
+                const removeButton = document.createElement("button");
+                removeButton.innerText = "X";
+                removeButton.classList.add("btn", "btn-sm", "btn-danger", "remove-button");
+                removeButton.style.position = "absolute";
+                removeButton.style.top = "0";
+                removeButton.style.left = "0";
+                removeButton.addEventListener("click", function () {
+                    previewDiv.remove(); // Remove the preview when the button is clicked
+                });
+
+                previewDiv.appendChild(img);
+                previewDiv.appendChild(removeButton);
+
+                previewContainer.appendChild(previewDiv);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Enable the "Upload Images" button
+        document.getElementById("submitNewImages").removeAttribute("disabled");
+    });
+</script>

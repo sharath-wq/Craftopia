@@ -13,13 +13,14 @@ router.use((req, res, next) => {
 router.get("/", productController.productspage);
 router.get("/add", productController.addProductpage);
 router.get("/edit/:id", productController.editProductpage);
-router.get("/edit/images/:id", productController.editProductImagespage);
-router.post("/add", productValidator, upload.array("files", 4), productController.createProduct);
+router.post("/add", upload.array("files", 4), productController.createProduct);
 router.put("/edit/:id", productEditValidator, productController.updateProduct);
 router.put("/list/:id", productController.listProduct);
 router.put("/unlist/:id", productController.unlistProdcut);
 router.put("/edit/images/upload/:id", upload.single("file"), productController.editProductImages);
+router.post("/edit/images/upload/new/:id", upload.array("files", 4), productController.addNewImages);
 
 router.put("/delete/:id", productController.deleteProduct);
+router.delete("/images/delete/:id", productController.deleteImage);
 
 module.exports = router;
