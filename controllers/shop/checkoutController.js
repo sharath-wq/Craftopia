@@ -15,7 +15,7 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
         const userid = req.user._id;
         const user = await User.findById(userid).populate("address");
         const cartItmes = await Cart.findOne({ user: userid }).populate("products.product");
-
+        const cartData = await Cart.findOne({ user: userid });
         if (cartItmes) {
             let subtotal = 0;
             for (const product of cartItmes.products) {
@@ -23,12 +23,11 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
                 subtotal += productTotal;
             }
             const tax = (subtotal * 12) / 100;
-            let shippingFee = 60;
             if (subtotal > 2000) {
                 shippingFee = 0;
             }
 
-            const total = subtotal + tax + shippingFee;
+            const total = subtotal + tax;
 
             res.render("shop/pages/user/checkout", {
                 title: "Checkout",
@@ -38,7 +37,7 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
                 total,
                 subtotal,
                 tax,
-                shippingFee,
+                cartData,
             });
         }
     } catch (error) {
@@ -52,47 +51,65 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
  */
 exports.placeOrder = asyncHandler(async (req, res) => {
     try {
+        res.json("Working");
+        // const userId = req.user._id;
+        // const cartItems = await Cart.findOne({ user: userId }).populate("products.product");
+
+        // if (cartItems) {
+        //     const orders = [];
+
+        //     for (const cartItem of cartItems.products) {
+        //         const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
+        //         const tax = (productTotal * 12) / 100;
+        //         let shippingFee = 60;
+        //         if (productTotal > 2000) {
+        //             shippingFee = 0;
+        //         }
+
+        //         const total = productTotal + tax + shippingFee;
+
+        //         const order = await Order.create({
+        //             customer: userId,
+        //             products: [{ product: cartItem.product._id, quantity: cartItem.quantity }],
+        //             totalAmount: total,
+        //             address: req.body.addressId,
+        //             paymentMethod: req.body.payment_method,
+        //         });
+
+        //         orders.push(order);
+
+        //         const updateProduct = await Product.findById(cartItem.product._id);
+        //         updateProduct.quantity -= cartItem.quantity;
+        //         updateProduct.sold += cartItem.quantity;
+        //         await updateProduct.save();
+        //     }
+
+        //     await Cart.findOneAndDelete({ user: userId });
+        //     const address = await Address.findById(req.body.addressId);
+        //     res.render("shop/pages/user/order-placed.ejs", {
+        //         title: "Order Placed",
+        //         page: "Order Placed",
+        //         orders: orders,
+        //         address: address,
+        //     });
+        // }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Get Cart Data
+ */
+exports.getCartData = asyncHandler(async (req, res) => {
+    try {
         const userId = req.user._id;
-        const cartItems = await Cart.findOne({ user: userId }).populate("products.product");
+        const cartData = await Cart.findOne({ user: userId });
 
-        if (cartItems) {
-            const orders = [];
+        // Debug: Log the cartData to see its contents
+        console.log("Cart Data:", cartData);
 
-            for (const cartItem of cartItems.products) {
-                const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
-                const tax = (productTotal * 12) / 100;
-                let shippingFee = 60;
-                if (productTotal > 2000) {
-                    shippingFee = 0;
-                }
-
-                const total = productTotal + tax + shippingFee;
-
-                const order = await Order.create({
-                    customer: userId,
-                    products: [{ product: cartItem.product._id, quantity: cartItem.quantity }],
-                    totalAmount: total,
-                    address: req.body.addressId,
-                    paymentMethod: req.body.payment_method,
-                });
-
-                orders.push(order);
-
-                const updateProduct = await Product.findById(cartItem.product._id);
-                updateProduct.quantity -= cartItem.quantity;
-                updateProduct.sold += cartItem.quantity;
-                await updateProduct.save();
-            }
-
-            await Cart.findOneAndDelete({ user: userId });
-            const address = await Address.findById(req.body.addressId);
-            res.render("shop/pages/user/order-placed.ejs", {
-                title: "Order Placed",
-                page: "Order Placed",
-                orders: orders,
-                address: address,
-            });
-        }
+        res.json(cartData);
     } catch (error) {
         throw new Error(error);
     }
