@@ -19,7 +19,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (cartItems) { %> <% cartItems.products.forEach((product, index) => { %>
+                                <% if (cartItems) { %> <% cartItems?.products?.forEach((product, index) => { %>
                                 <tr>
                                     <td class="product-remove">
                                         <a href="/cart/remove/<%= product.product._id %>"

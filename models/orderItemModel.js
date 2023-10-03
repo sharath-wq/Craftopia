@@ -9,6 +9,11 @@ const orderItemSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
     },
+    status: {
+        type: String,
+        required: true,
+        default: "Pending",
+    },
 });
 
 module.exports = mongoose.model("OrderItem", orderItemSchema);

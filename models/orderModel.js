@@ -26,17 +26,8 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    country: {
-        type: String,
-        required: true,
-    },
     phone: {
         type: Number,
-    },
-    status: {
-        type: String,
-        required: true,
-        default: "Pending",
     },
     totalPrice: {
         type: Number,

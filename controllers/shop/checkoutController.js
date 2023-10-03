@@ -4,6 +4,7 @@ const Address = require("../../models/addressModel");
 const User = require("../../models/userModel");
 const Cart = require("../../models/cartModeal");
 const Order = require("../../models/orderModel");
+const OrderItems = require("../../models/orderItemModel");
 const Product = require("../../models/productModel");
 
 /**
@@ -51,48 +52,61 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
  */
 exports.placeOrder = asyncHandler(async (req, res) => {
     try {
-        res.json("Working");
-        // const userId = req.user._id;
-        // const cartItems = await Cart.findOne({ user: userId }).populate("products.product");
+        const userId = req.user._id;
 
-        // if (cartItems) {
-        //     const orders = [];
+        // Find the user's cart and populate the products
+        const cartItems = await Cart.findOne({ user: userId }).populate("products.product");
 
-        //     for (const cartItem of cartItems.products) {
-        //         const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
-        //         const tax = (productTotal * 12) / 100;
-        //         let shippingFee = 60;
-        //         if (productTotal > 2000) {
-        //             shippingFee = 0;
-        //         }
+        if (!cartItems) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
 
-        //         const total = productTotal + tax + shippingFee;
+        const orders = [];
+        let total = 0;
 
-        //         const order = await Order.create({
-        //             customer: userId,
-        //             products: [{ product: cartItem.product._id, quantity: cartItem.quantity }],
-        //             totalAmount: total,
-        //             address: req.body.addressId,
-        //             paymentMethod: req.body.payment_method,
-        //         });
+        for (const cartItem of cartItems.products) {
+            const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
+            const tax = (productTotal * 12) / 100;
+            let shippingFee = 60;
 
-        //         orders.push(order);
+            if (productTotal > 2000) {
+                shippingFee = 0;
+            }
 
-        //         const updateProduct = await Product.findById(cartItem.product._id);
-        //         updateProduct.quantity -= cartItem.quantity;
-        //         updateProduct.sold += cartItem.quantity;
-        //         await updateProduct.save();
-        //     }
+            total += productTotal + tax + shippingFee;
 
-        //     await Cart.findOneAndDelete({ user: userId });
-        //     const address = await Address.findById(req.body.addressId);
-        //     res.render("shop/pages/user/order-placed.ejs", {
-        //         title: "Order Placed",
-        //         page: "Order Placed",
-        //         orders: orders,
-        //         address: address,
-        //     });
-        // }
+            const item = await OrderItems.create({
+                quantity: cartItem.quantity,
+                product: cartItem.product._id,
+            });
+
+            orders.push(item);
+
+            // Update product quantities and sold counts if needed
+            const updateProduct = await Product.findById(cartItem.product._id);
+            updateProduct.quantity -= cartItem.quantity;
+            updateProduct.sold += cartItem.quantity;
+            await updateProduct.save();
+        }
+
+        const address = await Address.findById(req.body.addressId);
+
+        // Create the order
+        const order = await Order.create({
+            user: userId,
+            orderItems: orders,
+            shippingAddress: address.title,
+            city: address.city,
+            zip: address.pincode,
+            phone: address.mobile,
+            totalPrice: total,
+            paymentMethod: req.body.payment_method,
+        });
+
+        // Remove the items from the cart (uncomment when needed)
+        await Cart.findOneAndDelete({ user: userId });
+
+        res.redirect(`/checkout/order-placed/${order._id}`);
     } catch (error) {
         throw new Error(error);
     }
@@ -110,6 +124,31 @@ exports.getCartData = asyncHandler(async (req, res) => {
         console.log("Cart Data:", cartData);
 
         res.json(cartData);
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Order Placed
+ * Method GET
+ */
+exports.orderPlaced = asyncHandler(async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        // Populate the order details, including product details
+        const order = await Order.findById(orderId).populate({
+            path: "orderItems",
+            populate: {
+                path: "product",
+            },
+        });
+        // Render the order placed page with orderDetails
+        res.render("shop/pages/user/order-placed.ejs", {
+            title: "Order Placed",
+            page: "Order Placed",
+            order: order,
+        });
     } catch (error) {
         throw new Error(error);
     }
