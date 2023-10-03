@@ -55,10 +55,13 @@
                                         <% } %>
                                     </td>
                                     <td class="product-price-cart">
-                                        <span class="amount"
-                                            >₹ <% const productPrice = parseFloat(product.product.salePrice) %> <%=
-                                            productPrice.toFixed(2) %></span
-                                        >
+                                        <span
+                                            >₹
+                                            <span class="amount">
+                                                <% const productPrice = parseFloat(product.product.salePrice) %> <%=
+                                                productPrice.toFixed(2) %></span
+                                            >
+                                        </span>
                                     </td>
 
                                     <td class="text-center">
@@ -77,17 +80,6 @@
                                                 <%= product.quantity %>
                                             </span>
 
-                                            <% if (product.quantity >= product.product.quantity) { %>
-                                            <a
-                                                href="javascript:void(0);"
-                                                class="btn btn-primary h-auto plusBtn"
-                                                data-product-id="<%= product.product._id %>"
-                                                style="pointer-events: none"
-                                                id="plusBtnDisabled"
-                                            >
-                                                <i class="ti ti-plus"></i>
-                                            </a>
-                                            <% } else { %>
                                             <a
                                                 href="javascript:void(0);"
                                                 class="btn btn-primary h-auto plusBtn"
@@ -96,7 +88,6 @@
                                             >
                                                 <i class="ti ti-plus"></i>
                                             </a>
-                                            <% } %>
                                         </div>
                                     </td>
 
@@ -104,7 +95,7 @@
                                         <% if (product.product) { %> <% const productTotal =
                                         parseFloat(product.product.salePrice); %> <% const productQuantity =
                                         parseInt(product.quantity, 10); %> <% const totalProductPrice = productTotal *
-                                        productQuantity; %> ₹<%= totalProductPrice.toFixed(2) %> <% } else { %>
+                                        productQuantity; %> <%= totalProductPrice.toFixed(2) %> <% } else { %>
                                         <!-- Handle the case where product information is not available -->
                                         ₹0.00 <% } %>
                                     </td>
@@ -210,7 +201,7 @@
         // Update the quantity displayed in the <span> element
         if (quantitySpan) {
             quantitySpan.innerText = data.quantity;
-            totalProductPrice.innerText = data.productTotal;
+            totalProductPrice.innerText = data.productTotal.toFixed(2);
         }
     }
 
