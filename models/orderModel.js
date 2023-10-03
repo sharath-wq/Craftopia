@@ -1,64 +1,59 @@
 const mongoose = require("mongoose");
-const { v4: uuidv4 } = require("uuid");
+const { generateUniqueOrderID } = require("../utils/generateUniqueId");
 
 const orderSchema = new mongoose.Schema({
-    orderNumber: {
+    orderId: {
         type: String,
-        required: true,
-        unique: true,
-        default: function () {
-            const prefix = "ORDER-";
-            return prefix + uuidv4();
-        },
+        requried: true,
+        default: "OD" + generateUniqueOrderID(),
     },
-    customer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
-    address: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Address",
-        required: true,
-    },
-    products: [
+    orderItems: [
         {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product",
-                required: true,
-            },
-            quantity: {
-                type: Number,
-                required: true,
-            },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "OrderItem",
+            required: true,
         },
     ],
-    totalAmount: {
-        type: Number,
+    shippingAddress: {
+        type: String,
         required: true,
+    },
+    city: {
+        type: String,
+        required: true,
+    },
+    zip: {
+        type: String,
+        required: true,
+    },
+    country: {
+        type: String,
+        required: true,
+    },
+    phone: {
+        type: Number,
     },
     status: {
         type: String,
-        enum: ["Pending", "Shipped", "Delivered", "Cancelled"],
+        required: true,
         default: "Pending",
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
+    totalPrice: {
+        type: Number,
     },
-    estimatedDelivery: {
-        type: Date,
-        required: true,
-        default: function () {
-            const deliveryDate = new Date(this.createdAt);
-            deliveryDate.setDate(this.createdAt.getDate() + 5);
-            return deliveryDate;
-        },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     },
-    paymentMethod: {
-        type: String,
-        required: true,
+    orderedDate: {
+        type: Date,
+        default: Date.now(),
+    },
+    shippedDate: {
+        type: Date,
+    },
+    deliveredDate: {
+        type: Date,
     },
 });
 

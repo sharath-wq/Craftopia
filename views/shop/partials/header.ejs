@@ -1,6 +1,6 @@
 <!-- header start -->
-<header>
-    <div class="header-bottom wrapper-padding-2 res-header-sm">
+<header class="sticky-top bg-white z-3">
+    <div class="header-bottom wrapper-padding-2 res-header-sm" style="height: 130px">
         <div class="container-fluid">
             <div class="header-bottom-wrapper">
                 <div class="logo-2 py-4 d-flex justify-content-center align-items-center">
@@ -54,7 +54,7 @@
                     <div class="header-cart-4">
                         <a class="icon-cart" href="/cart">
                             <i class="pe-7s-shopbag"></i>
-                            <span class="handicraft-count"><%= cartCount %></span>
+                            <span id="cartCount" class="handicraft-count"><%= cartCount %></span>
                         </a>
                     </div>
                     <% } %>
