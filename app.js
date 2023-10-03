@@ -72,10 +72,13 @@ require("./utils/passport.auth");
 // Set user data in res.locals for EJS templates
 app.use(async (req, res, next) => {
     const categories = await Category.find({ isListed: true });
+
     if (req?.user?.role === roles.user) {
         const cart = await Cart.find({ user: req.user.id });
-        if (cart.length > 0 && cart[0].products) {
-            res.locals.cartCount = cart[0].products.reduce((sum, product) => sum + product.quantity, 0);
+
+        // Check if the cart array has any elements
+        if (cart && cart.length > 0) {
+            res.locals.cartCount = cart[0].products.length; // Assuming the user has only one cart
         } else {
             res.locals.cartCount = 0;
         }

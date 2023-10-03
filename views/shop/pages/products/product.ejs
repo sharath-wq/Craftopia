@@ -3,7 +3,6 @@
         <%- include('../../partials/flash-message.ejs') %>
         <div class="row">
             <!-- Images -->
-
             <div class="col-md-12 col-lg-7 col-12">
                 <div class="product-details-img-content">
                     <div class="product-details-tab mr-35 product-details-tab2">
@@ -123,7 +122,7 @@
                             <% }else if (product.isDeleted) { %>
                             <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
                             <% } else { %>
-                            <a class="btn-hover-black" href="/cart/add/<%= product._id %>">add to cart</a>
+                            <a class="btn-hover-black" onclick="addToCart(`<%= product._id %>`)">add to cart</a>
                             <% } %>
                         </div>
                         <div class="quickview-btn-wishlist">
@@ -132,7 +131,7 @@
                                 <i class="pe-7s-like text-danger"></i>
                             </a>
                             <% } else { %>
-                            <a class="btn-hover" href="/wishlist/add/<%= product._id %>">
+                            <a class="btn-hover">
                                 <i class="pe-7s-like"></i>
                             </a>
                             <% } %>
@@ -228,7 +227,7 @@
                                 <i class="pe-7s-like"></i>
                             </a>
                             <% if (item.quantity) { %>
-                            <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
+                            <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= product._id %>`)">
                                 <i class="pe-7s-cart"></i>
                             </a>
                             <% } %>

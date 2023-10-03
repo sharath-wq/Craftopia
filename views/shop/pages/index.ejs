@@ -93,7 +93,7 @@
                                     <i class="pe-7s-like"></i>
                                 </a>
                                 <% if (product.quantity) { %>
-                                <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
+                                <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= product._id %>`)">
                                     <i class="pe-7s-cart"></i>
                                 </a>
                                 <% } %>
@@ -147,7 +147,7 @@
                                     <i class="pe-7s-like"></i>
                                 </a>
                                 <% if (product.quantity) { %>
-                                <a class="animate-top" title="Add To Cart" href="/cart/add/<%= product._id %>">
+                                <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= product._id %>`)">
                                     <i class="pe-7s-cart"></i>
                                 </a>
                                 <% } %>

@@ -3,6 +3,7 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 const User = require("../../models/userModel");
 const Cart = require("../../models/cartModeal");
 const Product = require("../../models/productModel");
+const { incrementQuantity, decrementQuantity, calculateCartTotals } = require("../../helpers/cartHelper");
 
 /**
  * Cart page Route
@@ -12,7 +13,7 @@ exports.cartpage = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const messages = req.flash();
     try {
-        const cartItems = await Cart.findOne({ user: userId })
+        const cart = await Cart.findOne({ user: userId })
             .populate({
                 path: "products.product",
                 populate: {
@@ -22,27 +23,13 @@ exports.cartpage = asyncHandler(async (req, res) => {
             })
             .exec();
 
-        if (cartItems) {
-            // Calculate subtotal and total
-            let subtotal = 0;
-            for (const product of cartItems.products) {
-                const productTotal = parseFloat(product.product.salePrice) * product.quantity;
-                subtotal += productTotal;
-            }
+        if (cart) {
+            const { subtotal, total, tax, shippingFee } = calculateCartTotals(cart.products);
 
-            const tax = (subtotal * 12) / 100;
-            let shippingFee = 60;
-            if (subtotal > 2000) {
-                shippingFee = 0;
-            }
-
-            const total = subtotal + tax + shippingFee;
-
-            // Render the EJS template with the calculated values
             res.render("shop/pages/user/cart", {
                 title: "Cart",
                 page: "cart",
-                cartItems,
+                cartItems: cart,
                 messages,
                 subtotal,
                 total,
@@ -50,7 +37,7 @@ exports.cartpage = asyncHandler(async (req, res) => {
                 shippingFee,
             });
         } else {
-            res.render("shop/pages/user/cart", { title: "Cart", page: "cart", messages, cartItems });
+            res.render("shop/pages/user/cart", { title: "Cart", page: "cart", messages });
         }
     } catch (error) {
         throw new Error(error);
@@ -67,8 +54,17 @@ exports.addToCart = asyncHandler(async (req, res) => {
     validateMongoDbId(productId);
 
     try {
-        let cart = await Cart.findOne({ user: userId });
+        const product = await Product.findById(productId);
 
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        if (product.quantity < 1) {
+            return res.status(400).json({ message: "Product is out of stock" });
+        }
+
+        let cart = await Cart.findOne({ user: userId });
         if (!cart) {
             cart = await Cart.create({
                 user: userId,
@@ -78,16 +74,21 @@ exports.addToCart = asyncHandler(async (req, res) => {
             const existingProduct = cart.products.find((item) => item.product.equals(productId));
 
             if (existingProduct) {
+                if (product.quantity <= existingProduct.quantity) {
+                    return res.json({
+                        message: "Out of Stock",
+                        status: "danger",
+                        count: cart.products.length,
+                    });
+                }
                 existingProduct.quantity += 1;
             } else {
                 cart.products.push({ product: productId, quantity: 1 });
             }
-
             await cart.save();
         }
 
-        req.flash("success", "Item added to cart");
-        res.redirect("back");
+        res.json({ message: "Product Added to Cart", count: cart.products.length, status: "success" });
     } catch (error) {
         throw new Error(error);
     }
@@ -115,7 +116,7 @@ exports.removeFromCart = asyncHandler(async (req, res) => {
 });
 
 /**
- * Increment Quantity  Route
+ * Increment Quantity Route
  * Method PUT
  */
 exports.incQuantity = asyncHandler(async (req, res) => {
@@ -124,14 +125,7 @@ exports.incQuantity = asyncHandler(async (req, res) => {
         const userId = req.user._id;
         validateMongoDbId(productId);
 
-        const updatedProduct = await Cart.findOneAndUpdate(
-            { user: userId, "products._id": productId },
-            { $inc: { "products.$.quantity": 1 } }
-        );
-
-        if (updatedProduct) {
-            res.redirect("/cart");
-        }
+        await incrementQuantity(userId, productId, res);
     } catch (error) {
         throw new Error(error);
     }
@@ -147,23 +141,7 @@ exports.decQuantity = asyncHandler(async (req, res) => {
         const userId = req.user._id;
         validateMongoDbId(productId);
 
-        const updatedCart = await Cart.findOne({ user: userId });
-
-        const productToDecrement = updatedCart.products.find((item) => item._id == productId);
-
-        if (productToDecrement) {
-            productToDecrement.quantity -= 1;
-
-            if (productToDecrement.quantity <= 0) {
-                updatedCart.products = updatedCart.products.filter((item) => item._id != productId);
-            }
-
-            await updatedCart.save();
-
-            res.redirect("/cart");
-        } else {
-            res.status(404).json({ message: "Product not found in the cart." });
-        }
+        await decrementQuantity(userId, productId, res);
     } catch (error) {
         throw new Error(error);
     }

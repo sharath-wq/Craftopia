@@ -115,7 +115,7 @@
                                                     <a
                                                         class="animate-top"
                                                         title="Add To Cart"
-                                                        href="/cart/add/<%= product._id %>"
+                                                        onclick="addToCart(`<%= product._id %>`)"
                                                     >
                                                         <i class="pe-7s-cart"></i>
                                                     </a>
@@ -184,7 +184,7 @@
                                                     <div class="product-list-cart">
                                                         <a
                                                             class="btn-hover list-btn-style"
-                                                            href="/cart/add/<%= product._id %>"
+                                                            onclick="addToCart(`<%= product._id %>`)"
                                                             >add to cart</a
                                                         >
                                                     </div>

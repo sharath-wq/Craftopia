@@ -64,27 +64,43 @@
                                     <td class="text-center">
                                         <div class="btn-group" role="group" aria-label="Quantity">
                                             <a
-                                                href="/cart/dec/<%= product._id %>"
-                                                class="btn btn-danger h-auto"
-                                                id="minusBtn"
+                                                href="javascript:void(0);"
+                                                class="btn btn-danger h-auto minusBtn"
+                                                data-product-id="<%= product.product._id %>"
                                             >
                                                 <i class="ti ti-minus"></i>
                                             </a>
-                                            <span id="quantity" class="btn btn-light h-auto"><%= product.quantity %></span>
+                                            <span
+                                                class="btn btn-light h-auto quantity"
+                                                id="quantity_<%= product.product._id %>"
+                                            >
+                                                <%= product.quantity %>
+                                            </span>
+
+                                            <% if (product.quantity >= product.product.quantity) { %>
                                             <a
-                                                href="/cart/inc/<%= product._id %>"
-                                                class="btn btn-primary h-auto"
-                                                id="plusBtn"
-                                                <%
-                                                if
-                                                (product.quantity
-                                                >= product.product.quantity ) { %> style="pointer-events: none" <% } %> >
+                                                href="javascript:void(0);"
+                                                class="btn btn-primary h-auto plusBtn"
+                                                data-product-id="<%= product.product._id %>"
+                                                style="pointer-events: none"
+                                                id="plusBtnDisabled"
+                                            >
                                                 <i class="ti ti-plus"></i>
                                             </a>
+                                            <% } else { %>
+                                            <a
+                                                href="javascript:void(0);"
+                                                class="btn btn-primary h-auto plusBtn"
+                                                data-product-id="<%= product.product._id %>"
+                                                id="plusBtn"
+                                            >
+                                                <i class="ti ti-plus"></i>
+                                            </a>
+                                            <% } %>
                                         </div>
                                     </td>
 
-                                    <td class="product-subtotal">
+                                    <td class="product-subtotal" id="totalProductPrice_<%= product.product._id %>">
                                         <% if (product.product) { %> <% const productTotal =
                                         parseFloat(product.product.salePrice); %> <% const productQuantity =
                                         parseInt(product.quantity, 10); %> <% const totalProductPrice = productTotal *
@@ -123,16 +139,15 @@
                             <div class="cart-page-total">
                                 <h2>Cart totals</h2>
                                 <ul>
-                                    <li>Subtotal<span>₹ <%= subtotal.toFixed(2) %></span></li>
-                                    <li>Tax<span> ₹ <%= tax.toFixed(2) %></span></li>
                                     <li>
-                                        Shipping Fee <% if (subtotal < 2000) { %>
-                                        <sup class="text-bg-warning"
-                                            >Add Item worth <%= 2000 - subtotal %> to get free delivery</sup
-                                        >
-                                        <% } %><span> ₹ <%= shippingFee.toFixed(2) %></span>
+                                        Subtotal <span>₹ <span id="subtotal"> <%= subtotal.toFixed(2) %></span></span>
                                     </li>
-                                    <li>Total<span>₹ <%= total.toFixed(2) %></span></li>
+                                    <li>
+                                        Tax <span>₹ <span id="tax"> <%= tax.toFixed(2) %></span></span>
+                                    </li>
+                                    <li>
+                                        Total <span>₹ <span id="cart-total"> <%= total.toFixed(2) %></span></span>
+                                    </li>
                                 </ul>
                                 <% if (cartItems.products.some(product => product.product.quantity < product.quantity ) ||
                                 cartItems.products.some(product => product.product.isDeleted)) { %>
@@ -157,3 +172,122 @@
     </div>
 </div>
 <!-- shopping-cart-area end -->
+
+<script>
+    // Declare the data variable outside the functions
+    let data;
+
+    // Function to update the cart message
+    function updateCartMessage(data) {
+        const cartMessage = document.getElementById("cart-message");
+
+        // Update the cart message
+        cartMessage.innerHTML = data.message;
+        cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
+        cartMessage.style.display = "block";
+
+        // Hide the cart message after 3 seconds
+        setTimeout(function () {
+            cartMessage.style.display = "none";
+        }, 3000);
+    }
+
+    // Function to update the cart count
+    function updateCartCount(data) {
+        const cartCount = document.getElementById("cartCount");
+
+        // Update the cart count (if available)
+        if (data.count !== undefined) {
+            cartCount.innerText = data.count;
+        }
+    }
+
+    // Function to update the quantity displayed in the <span> element
+    function updateQuantityDisplay(id, data) {
+        const quantitySpan = document.getElementById(`quantity_${id}`);
+        const totalProductPrice = document.getElementById(`totalProductPrice_${id}`);
+
+        // Update the quantity displayed in the <span> element
+        if (quantitySpan) {
+            quantitySpan.innerText = data.quantity;
+            totalProductPrice.innerText = data.productTotal;
+        }
+    }
+
+    function managePlusButton(data) {
+        const plusBtnDisabled = document.getElementById("plusBtnDisabled");
+        const plusBtn = document.getElementById("plusBtn");
+
+        if (data.status === "warning") {
+            plusBtnDisabled.style.pointerEvents = "all";
+        }
+    }
+
+    function updateCartTotal(data) {
+        const subTotal = document.getElementById("subtotal");
+        const tax = document.getElementById("tax");
+        const cartTotal = document.getElementById("cart-total");
+
+        subTotal.innerText = data.subtotal;
+        tax.innerText = data.tax;
+        cartTotal.innerText = data.total;
+    }
+
+    // Function to handle quantity increment and decrement
+    function updateQuantity(id, isIncrement) {
+        const action = isIncrement ? "inc" : "dec";
+        const url = `/cart/${action}/${id}`;
+
+        fetch(url, {
+            method: "GET",
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    console.error("Failed");
+                }
+            })
+            .then((responseData) => {
+                if (responseData) {
+                    data = responseData;
+
+                    if (data.quantity <= 0) {
+                        location.reload();
+                    }
+
+                    // Update the cart message
+                    updateCartMessage(data);
+
+                    // Update the cart count
+                    updateCartCount(data);
+
+                    // Update the quantity displayed in the <span> element
+                    updateQuantityDisplay(id, data);
+
+                    updateCartTotal(data);
+                }
+            })
+            .catch((error) => {
+                console.error("An error occurred:", error);
+            });
+    }
+
+    // Add event listeners to all plus and minus buttons
+    const plusButtons = document.querySelectorAll(".plusBtn");
+    const minusButtons = document.querySelectorAll(".minusBtn");
+
+    plusButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            updateQuantity(productId, true);
+        });
+    });
+
+    minusButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            updateQuantity(productId, false);
+        });
+    });
+</script>
