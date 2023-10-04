@@ -99,7 +99,7 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
 exports.searchOrder = asyncHandler(async (req, res) => {
     try {
         const search = req.body.search;
-        const order = await Order.findOne({ orderNumber: search });
+        const order = await Order.findOne({ orderId: search });
         if (order) {
             res.redirect(`/admin/orders/${search}`);
         } else {

@@ -103,7 +103,7 @@ exports.placeOrder = asyncHandler(async (req, res) => {
             zip: address.pincode,
             phone: address.mobile,
             totalPrice: total,
-            paymentMethod: req.body.payment_method,
+            payment_method: req.body.payment_method,
         });
 
         // Remove the items from the cart (uncomment when needed)

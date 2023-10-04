@@ -9,10 +9,7 @@
 
                         <!-- Display order details from the provided data -->
                         <p><strong>Order ID:</strong> <%= order.orderId %></p>
-                        <p>
-                            <strong>Shipping Address:</strong> <%= order.shippingAddress %>, <%= order.city %>, <%=
-                            order.zip %>
-                        </p>
+                        <p><strong>Shipping Address:</strong> <%= order.street %>, <%= order.city %>, <%= order.state %></p>
                         <p><strong>Phone:</strong> <%= order.phone %></p>
                         <p><strong>Total Price:</strong> <%= order.totalPrice %></p>
                         <p><strong>Ordered Date:</strong> <%= new Date(order.orderedDate).toUTCString() %></p>

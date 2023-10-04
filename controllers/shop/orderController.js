@@ -24,7 +24,7 @@ exports.orderspage = asyncHandler(async (req, res) => {
                 },
             })
             .select("orderId orderedDate shippingAddress city")
-            .sort({ orderedDate: -1 });
+            .sort({ _id: -1 });
 
         res.render("shop/pages/user/orders", {
             title: "Orders",
