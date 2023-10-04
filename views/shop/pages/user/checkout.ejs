@@ -1,4 +1,4 @@
-<!-- checkout-area start -->
+<!-- Checkout Area Start -->
 <div class="checkout-area ptb-100">
     <div class="container">
         <form action="/checkout/place-order" method="post">
@@ -47,6 +47,12 @@
                 <div class="col-lg-6 col-md-12 col-12">
                     <div class="your-order">
                         <h3>Your order</h3>
+                        <input
+                            type="hidden"
+                            id="originalCartData"
+                            name="currentCartData"
+                            value="<%= JSON.stringify(cartData) %>"
+                        />
                         <div class="your-order-table table-responsive">
                             <table>
                                 <thead>
@@ -80,10 +86,6 @@
                                         <th>Tax and Other Charges</th>
                                         <td><span class="amount">₹ <%= tax %></span></td>
                                     </tr>
-                                    <tr class="cart-shipping fee">
-                                        <th>Shipping Fee</th>
-                                        <td><span class="amount">₹ <%= shippingFee %></span></td>
-                                    </tr>
                                     <tr class="order-total">
                                         <th>Order Total</th>
                                         <td>
@@ -107,7 +109,6 @@
                                         <option value="razorpay">Razorpay</option>
                                     </select>
                                 </div>
-
                                 <% if (address && address.length) { %>
                                 <div class="order-button-payment">
                                     <input type="submit" value="Place order" />
@@ -121,4 +122,65 @@
         </form>
     </div>
 </div>
-<!-- checkout-area end -->
+<!-- Checkout Area End -->
+
+<script>
+    // Get references to the form and original cart data input
+    const form = document.querySelector("form");
+    const originalCartInput = document.getElementById("originalCartData");
+
+    function showCartConfirmation() {
+        Swal.fire({
+            title: "Cart Confirmation",
+            text: "Your cart has changed. Do you want to the page?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Reload",
+            cancelButtonText: "Close",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                proceedToCheckout();
+            }
+        });
+    }
+
+    function proceedToCheckout() {
+        window.location.reload();
+    }
+
+    // Add an event listener to the form submit event
+    form.addEventListener("submit", function (event) {
+        // Prevent the form from submitting immediately
+        event.preventDefault();
+
+        // Get the original cart data from the hidden input field
+        const originalCartData = JSON.parse(originalCartInput.value);
+
+        // Make a GET request to the /checkout/get endpoint to get the current cart data
+        fetch("/checkout/get")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((currentCartData) => {
+                if (currentCartData !== null) {
+                    // Compare the original cart data with the current cart data
+                    const originalCartJSON = JSON.stringify(originalCartData);
+                    const currentCartJSON = JSON.stringify(currentCartData);
+
+                    if (originalCartJSON !== currentCartJSON) {
+                        console.log("working");
+                        showCartConfirmation();
+                    } else {
+                        form.submit(); // If the cart hasn't changed, submit the form immediately
+                    }
+                }
+            })
+            .catch((error) => {
+                // Handle errors
+                console.error("Error fetching cart data:", error);
+            });
+    });
+</script>

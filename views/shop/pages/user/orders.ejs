@@ -1,61 +1,43 @@
 <div class="container mt-4">
     <h2>My Orders</h2>
-
-    <!-- Bootstrap List Group for Orders -->
-    <ul class="list-group mt-5">
-        <!-- Order -->
-
-        <% if (orderItems && orderItems.length) { %> <% orderItems.forEach(order => { %>
-
-        <!-- Loop through products of each order -->
-        <% order.products.forEach(product => { %>
+    <ul class="list-group mt-5 col-md-10">
+        <% if (orders && orders.length) { %> <% orders.forEach(order => { %> <% order.orderItems.forEach(orderItem => { %>
         <li class="list-group-item">
-            <div class="row">
-                <!-- Image on the right -->
-                <div class="col-md-6 align-self-center">
-                    <!-- Use the actual URL for the image src -->
-                    <a href="/product/<%= product.product._id %>">
-                        <img
-                            class="img-fluid img-thumbnail"
-                            src="<%= product.product.images[0].thumbnailUrl %>"
-                            alt="Card image cap"
-                        />
-                    </a>
-                </div>
-                <!-- Text on the left -->
-                <div class="col-md-6">
-                    <div class="card-body text-start">
-                        <!-- Center align text content -->
-                        <h5 class="card-title">
-                            Order Date: <%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month:
-                            'long', day: 'numeric' }) %>
-                        </h5>
-                        <p class="card-text">Order Number: <%= order.orderNumber %></p>
-                        <p class="card-text">
-                            Ship To Name: <strong class="text-primary"><%= order?.address?.title %></strong>
-                        </p>
-                        <p class="card-text">
-                            Order Status:
-                            <strong
-                                class="<% if (order.status === 'Pending') { %> text-warning <% } else if (order.status === 'Shipped') { %> text-primary <% } else if (order.status === 'Cancelled') { %> text-danger <% } else if (order.status === 'Delivered') { %> text-success <% } %>"
-                            >
-                                <%= order.status %>
-                            </strong>
-                        </p>
-                        <p class="card-text">
-                            Product Price: <strong class="text-info">₹ <%= product.product.salePrice %></strong>
-                        </p>
-                        <p class="card-text">
-                            Product Name: <strong class="text-dark"><%= product.product.title %></strong>
-                        </p>
-                        <a href="/orders/<%= order.orderNumber %>" class="btn btn-dark h-auto">View Order</a>
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-10 d-flex">
+                    <div class="col-md-4 align-self-center">
+                        <a href="/product/<%= orderItem.product._id %>">
+                            <img
+                                class="img-fluid img-thumbnail"
+                                src="<%= orderItem.product.images[0].thumbnailUrl %>"
+                                alt="Card image cap"
+                                style="height: 200px; width: 200px"
+                            />
+                        </a>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body text-start">
+                            <h3 class="card-text">Order Number: <%= order.orderId %></h3>
+                            <p class="card-text">
+                                Order Status:
+                                <strong
+                                    class="<% if (orderItem.status === 'Pending') { %> text-warning <% } else if (orderItem.status === 'Shipped') { %> text-primary <% } else if (orderItem.status === 'Cancelled') { %> text-danger <% } else if (orderItem.status === 'Delivered') { %> text-success <% } %>"
+                                >
+                                    <%= orderItem.status %>
+                                </strong>
+                            </p>
+                            <p class="card-text">
+                                Product Name: <strong class="text-dark"><%= orderItem.product.title %></strong>
+                            </p>
+                            <a href="/orders/<%= orderItem._id %>" class="btn btn-dark h-auto">View Order</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </li>
 
-        <% }) %> <% }) %> <% } else { %> No Orders <% } %>
-
-        <!-- Order End -->
+        <% }) %> <% }) %> <% } else { %>
+        <li class="list-group-item">No Orders</li>
+        <% } %>
     </ul>
 </div>

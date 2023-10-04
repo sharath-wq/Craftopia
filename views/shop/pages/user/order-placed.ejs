@@ -2,44 +2,33 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-12">
-                <div class="text-center">
-                    <h2 class="display-3 text-success mb-4">Thank you for your order!</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center">Order Placed</h2>
+                        <hr />
 
-                    <% for (const order of orders) { %>
-                    <div class="order-details mt-4">
-                        <p class="lead"><strong class="text-success">Order Details:</strong></p>
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <strong>Order ID:</strong> <span class="text-primary"><%= order.orderNumber %></span>
-                            </li>
-                            <li class="mb-2">
-                                <strong>Total Amount:</strong> <span class="text-primary">₹ <%= order.totalAmount %></span>
-                            </li>
-                            <li class="mb-2">
-                                <strong>Delivery Address:</strong>
-                                <span class="text-primary"
-                                    ><%= address.street %>, <%= address.city %>, <%= address.state %></span
-                                >
-                            </li>
-                            <li class="mb-2">
-                                <strong>Estimated Arrival Date:</strong>
-                                <span class="text-primary">
-                                    <% const inputDate = order.estimatedDelivery; %> <% const dateObject = new
-                                    Date(inputDate); %> <% const options = { year: 'numeric', month: 'long', day: 'numeric'
-                                    }; %> <%= new Intl.DateTimeFormat('en-US', options).format(dateObject) %>
-                                </span>
-                            </li>
-                            <li class="mb-2">
-                                <strong>Payment Method:</strong>
-                                <span class="text-primary"><%= order.paymentMethod %></span>
+                        <!-- Display order details from the provided data -->
+                        <p><strong>Order ID:</strong> <%= order.orderId %></p>
+                        <p>
+                            <strong>Shipping Address:</strong> <%= order.shippingAddress %>, <%= order.city %>, <%=
+                            order.zip %>
+                        </p>
+                        <p><strong>Phone:</strong> <%= order.phone %></p>
+                        <p><strong>Total Price:</strong> <%= order.totalPrice %></p>
+                        <p><strong>Ordered Date:</strong> <%= new Date(order.orderedDate).toUTCString() %></p>
+
+                        <h4 class="mt-4">Order Items</h4>
+                        <% order.orderItems.forEach(product => { %>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                Product Name: <%= product.product.title %>
+                                <span class="badge badge-primary">Quantity: <%= product.quantity %></span>
                             </li>
                         </ul>
-                    </div>
-                    <% } %>
+                        <% }) %>
 
-                    <div class="quickview-btn-cart mt-3">
-                        <a class="btn-hover-black" href="/">Continue Shopping</a>
-                        <a class="btn-hover-black" href="/orders">View Orders</a>
+                        <a href="/shop" class="btn btn-dark h-auto mt-4">Continue Shopping</a>
+                        <a href="/orders" class="btn btn-dark h-auto mt-4">View Orders</a>
                     </div>
                 </div>
             </div>

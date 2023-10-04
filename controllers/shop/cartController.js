@@ -37,7 +37,7 @@ exports.cartpage = asyncHandler(async (req, res) => {
                 shippingFee,
             });
         } else {
-            res.render("shop/pages/user/cart", { title: "Cart", page: "cart", messages });
+            res.render("shop/pages/user/cart", { title: "Cart", page: "cart", messages, cartItems: null });
         }
     } catch (error) {
         throw new Error(error);

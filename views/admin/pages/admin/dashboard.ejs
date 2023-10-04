@@ -93,16 +93,16 @@
                     <% recentOrders.forEach(order => { %>
                     <div class="media mb-3">
                         <img
-                            src="<%= order.customer.image || '/admin/images/profile/user-1.jpg' %>"
+                            src="<%= order.user.image || '/admin/images/profile/user-1.jpg' %>"
                             class="mr-3 rounded-circle"
                             alt="User Image"
                             style="width: 60px"
                         />
                         <div class="media-body">
-                            <h5 class="mt-0"><%= order.customer.firstName %></h5>
-                            <p><%= order.createdAtFormatted %></p>
+                            <h5 class="mt-0"><%= order.user.firstName %></h5>
+                            <small><%= order.createdAtFormatted %></small>
                         </div>
-                        <p class="mb-0 text-success">₹ <%= order.totalAmount %></p>
+                        <p class="mb-0 text-success">₹ <%= order.totalPrice %></p>
                     </div>
                     <% }) %>
                 </div>

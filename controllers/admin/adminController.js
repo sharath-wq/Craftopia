@@ -36,10 +36,10 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
         const recentOrders = await Order.find()
             .limit(5)
             .populate({
-                path: "customer",
+                path: "user",
                 select: "firstName lastName image",
             })
-            .select("totalAmount createdAt")
+            .select("totalAmount orderedDate totalPrice")
             .sort({ createdAt: -1 });
 
         let totalSalesAmount = (await Order.find({ status: { $ne: "Cancelled" } })).reduce(
@@ -50,7 +50,7 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
 
         // Format timestamps using moment.js
         recentOrders.forEach((order) => {
-            order.createdAtFormatted = moment(order.createdAt).fromNow();
+            order.createdAtFormatted = moment(order.orderedDate).fromNow();
         });
         const totalSoldProducts = await Product.aggregate([
             {
