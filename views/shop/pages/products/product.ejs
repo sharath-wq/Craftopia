@@ -126,15 +126,10 @@
                             <% } %>
                         </div>
                         <div class="quickview-btn-wishlist">
-                            <% if (user?.wishlist?.includes(product._id)) { %>
-                            <a class="btn-hover" onclick="addToWishlist(`<%= product._id %>`)">
-                                <i class="pe-7s-like text-danger"></i>
+                            <a id="wishlistButton" onclick="toggleWishlist(`<%= product._id %>`)">
+                                <% if (user?.wishlist?.includes(product._id)) { %>
+                                <i class="pe-7s-like text-danger"></i><% } else { %> <i class="pe-7s-like"></i><% } %>
                             </a>
-                            <% } else { %>
-                            <a class="btn-hover">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -223,11 +218,11 @@
                         </a>
                         <span>hot</span>
                         <div class="product-action">
-                            <a class="animate-left" onclick="addToWishlist(`<%= product._id %>`)" title="Wishlist" href="#">
+                            <a class="animate-left" onclick="toggleWishlist(`<%= item._id %>`)" title="Wishlist">
                                 <i class="pe-7s-like"></i>
                             </a>
                             <% if (item.quantity) { %>
-                            <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= product._id %>`)">
+                            <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= item._id %>`)">
                                 <i class="pe-7s-cart"></i>
                             </a>
                             <% } %>
@@ -246,10 +241,10 @@
 <!-- product area end -->
 
 <script>
-    function addToWishlist(id) {
+    function toggleWishlist(id) {
         const productId = id;
-        const url = `/wishlist/add/${productId}`;
-        const cartCount = document.getElementById("cartCount");
+        const url = `/wishlist/toggle/${productId}`;
+        const wishlistButton = document.getElementById("wishlistButton");
         const cartMessage = document.getElementById("cart-message");
 
         fetch(url, {
@@ -264,9 +259,9 @@
             })
             .then((data) => {
                 if (data) {
-                    if (data.message) {
+                    if (data.isInWishlist) {
+                        wishlistButton.innerHTML = `<i class="pe-7s-like text-danger"></i>`;
                         cartMessage.innerHTML = data.message;
-
                         cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
                         cartMessage.style.display = "block";
 
@@ -274,8 +269,19 @@
                             cartMessage.style.display = "none";
                         }, 3000);
                     } else {
-                        console.error("Unexpected data format");
+                        wishlistButton.innerHTML = `<i class="pe-7s-like"></i>`;
+                        cartMessage.innerHTML = data.message;
+                        cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
+                        cartMessage.style.display = "block";
+
+                        setTimeout(function () {
+                            cartMessage.style.display = "none";
+                        }, 3000);
                     }
+
+                    // Optionally, you can display a message here if needed.
+                } else {
+                    console.error("Unexpected data format");
                 }
             })
             .catch((error) => {
