@@ -127,7 +127,7 @@
                         </div>
                         <div class="quickview-btn-wishlist">
                             <% if (user?.wishlist?.includes(product._id)) { %>
-                            <a class="btn-hover" href="/wishlist/remove/<%= product._id %>">
+                            <a class="btn-hover" onclick="addToWishlist(`<%= product._id %>`)">
                                 <i class="pe-7s-like text-danger"></i>
                             </a>
                             <% } else { %>
@@ -223,7 +223,7 @@
                         </a>
                         <span>hot</span>
                         <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
+                            <a class="animate-left" onclick="addToWishlist(`<%= product._id %>`)" title="Wishlist" href="#">
                                 <i class="pe-7s-like"></i>
                             </a>
                             <% if (item.quantity) { %>
@@ -244,3 +244,42 @@
     </div>
 </div>
 <!-- product area end -->
+
+<script>
+    function addToWishlist(id) {
+        const productId = id;
+        const url = `/wishlist/add/${productId}`;
+        const cartCount = document.getElementById("cartCount");
+        const cartMessage = document.getElementById("cart-message");
+
+        fetch(url, {
+            method: "GET",
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json(); // Assuming server sends JSON
+                } else {
+                    console.error("Failed");
+                }
+            })
+            .then((data) => {
+                if (data) {
+                    if (data.message) {
+                        cartMessage.innerHTML = data.message;
+
+                        cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
+                        cartMessage.style.display = "block";
+
+                        setTimeout(function () {
+                            cartMessage.style.display = "none";
+                        }, 3000);
+                    } else {
+                        console.error("Unexpected data format");
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("An error occurred:", error);
+            });
+    }
+</script>

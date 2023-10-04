@@ -1,12 +1,9 @@
-const usedOrderIDs = new Set();
-
-function generateUniqueOrderID() {
+function generateUniqueOrderID(order) {
     let orderID;
     do {
         orderID = generateRandomOrderID();
-    } while (usedOrderIDs.has(orderID));
+    } while (order.includes(orderID));
 
-    usedOrderIDs.add(orderID);
     return orderID;
 }
 

@@ -6,6 +6,7 @@ const Cart = require("../../models/cartModeal");
 const Order = require("../../models/orderModel");
 const OrderItems = require("../../models/orderItemModel");
 const Product = require("../../models/productModel");
+const { generateUniqueOrderID } = require("../../utils/generateUniqueId");
 
 /**
  * Checkout Page Route
@@ -92,8 +93,10 @@ exports.placeOrder = asyncHandler(async (req, res) => {
 
         const address = await Address.findById(req.body.addressId);
 
+        const existingOrderIds = await Order.find().select("orderId");
         // Create the order
         const order = await Order.create({
+            orderId: "OD" + generateUniqueOrderID(existingOrderIds),
             user: userId,
             orderItems: orders,
             shippingAddress: address.title,
