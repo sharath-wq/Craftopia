@@ -12,6 +12,8 @@
                     <a href="/admin/customers/view/<%= order.user._id %>"><%= order.user.email %></a>
                 </p>
                 <p><strong>Address:</strong> <%= order.street %>, <%= order.city %>, <%= order.state %></p>
+                <p><strong>Payment Method:</strong> <%= order.payment_method %></p>
+                
                 <hr class="border-1 bg-dark" />
 
                 <h6 class="card-subtitle mb-2 text-muted mt-4">Order Details</h6>

@@ -19,10 +19,20 @@
                                 <!-- Product Name -->
                                 <h5 class="card-title"><strong>Product Name:</strong> <%= order.product.title %></h5>
                                 <!-- Ordered Date -->
-
                                 <p class="card-text">
                                     <strong>Ordered Date:</strong> <%= new Date(orders.orderedDate).toUTCString() %>
                                 </p>
+
+                                <% if (order.status === "Shipped") { %>
+                                <p class="card-text">
+                                    <strong>Shipped On:</strong> <%= new Date(order.shippedDate).toUTCString() %>
+                                </p>
+                                <% } else if (order.status === "Delivered") { %>
+                                <p class="card-text">
+                                    <strong>Delivered On:</strong> <%= new Date(order.deliveredDate).toUTCString() %>
+                                </p>
+                                <% } %>
+
                                 <!-- Ship To Name -->
                                 <p class="card-text"><strong>Ship To Name:</strong> <%= orders.shippingAddress %></p>
                                 <!-- Order Status -->

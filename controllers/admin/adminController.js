@@ -39,19 +39,27 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
                 path: "user",
                 select: "firstName lastName image",
             })
+            .populate("orderItems")
             .select("totalAmount orderedDate totalPrice")
-            .sort({ createdAt: -1 });
+            .sort({ _id: -1 });
 
-        let totalSalesAmount = (await Order.find({ status: { $ne: "Cancelled" } })).reduce(
-            (total, order) => total + order.totalAmount,
-            0
-        );
+        //
+        let totalSalesAmount = recentOrders.reduce((total, order) => {
+            const nonCancelledItems = order.orderItems.filter((item) => item.status !== "Cancelled");
+
+            if (nonCancelledItems.length > 0) {
+                const totalPrice = nonCancelledItems.reduce((acc, item) => {
+                    return acc + parseFloat(item.price);
+                }, 0);
+                return total + totalPrice;
+            } else {
+                return total;
+            }
+        }, 0);
+        //
+
         totalSalesAmount = numeral(totalSalesAmount).format("0.0a");
 
-        // Format timestamps using moment.js
-        recentOrders.forEach((order) => {
-            order.createdAtFormatted = moment(order.orderedDate).fromNow();
-        });
         const totalSoldProducts = await Product.aggregate([
             {
                 $group: {
@@ -74,6 +82,7 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
             totalOrderCount,
             totalActiveUserCount,
             totalSalesAmount,
+            moment,
             totalSoldProducts: totalSoldProducts[0].total_sold_count,
         });
     } catch (error) {
@@ -100,7 +109,7 @@ exports.settingspage = asyncHandler(async (req, res) => {
 exports.adminpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        const admins = await User.find({ role: { $in: [roles.admin, roles.superAdmin] } });
+        const admins = await User.find({ role: { $in: [roles.admin, roles.superAdmin] }, _id: { $ne: req.user._id } });
         res.render("admin/pages/customer/admins", { title: "Admins", admins, messages, roles });
     } catch (error) {
         throw new Error(error);

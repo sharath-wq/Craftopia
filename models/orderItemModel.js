@@ -18,6 +18,12 @@ const orderItemSchema = new mongoose.Schema({
         required: true,
         default: "Pending",
     },
+    shippedDate: {
+        type: Date,
+    },
+    deliveredDate: {
+        type: Date,
+    },
 });
 
 module.exports = mongoose.model("OrderItem", orderItemSchema);

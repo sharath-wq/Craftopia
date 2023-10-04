@@ -73,6 +73,13 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
             status: req.body.status,
         });
 
+        if (req.body.status === status.status.shipped) {
+            order.shippedDate = Date.now();
+        } else if (req.body.status === status.status.delivered) {
+            order.deliveredDate = Date.now();
+        }
+        await order.save();
+
         if (req.body.status === status.status.cancelled) {
             const product = await Product.findById(order.product);
             product.sold -= order.quantity;
@@ -92,7 +99,7 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
 exports.searchOrder = asyncHandler(async (req, res) => {
     try {
         const search = req.body.search;
-        const order = await Order.findOne({ orderNumber: search });
+        const order = await Order.findOne({ orderId: search });
         if (order) {
             res.redirect(`/admin/orders/${search}`);
         } else {

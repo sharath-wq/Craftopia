@@ -1,11 +1,9 @@
 const mongoose = require("mongoose");
-const { generateUniqueOrderID } = require("../utils/generateUniqueId");
 
 const orderSchema = new mongoose.Schema({
     orderId: {
         type: String,
         requried: true,
-        default: "OD" + generateUniqueOrderID(),
     },
     orderItems: [
         {
@@ -53,6 +51,10 @@ const orderSchema = new mongoose.Schema({
     },
     deliveredDate: {
         type: Date,
+    },
+    payment_method: {
+        type: String,
+        required: true,
     },
 });
 

@@ -126,15 +126,10 @@
                             <% } %>
                         </div>
                         <div class="quickview-btn-wishlist">
-                            <% if (user?.wishlist?.includes(product._id)) { %>
-                            <a class="btn-hover" href="/wishlist/remove/<%= product._id %>">
-                                <i class="pe-7s-like text-danger"></i>
+                            <a id="wishlistButton" onclick="toggleWishlist(`<%= product._id %>`)">
+                                <% if (user?.wishlist?.includes(product._id)) { %>
+                                <i class="pe-7s-like text-danger"></i><% } else { %> <i class="pe-7s-like"></i><% } %>
                             </a>
-                            <% } else { %>
-                            <a class="btn-hover">
-                                <i class="pe-7s-like"></i>
-                            </a>
-                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -223,11 +218,16 @@
                         </a>
                         <span>hot</span>
                         <div class="product-action">
-                            <a class="animate-left" title="Wishlist" href="#">
+                            <a
+                                id="wishlistButton"
+                                class="animate-left"
+                                onclick="toggleWishlist(`<%= item._id %>`)"
+                                title="Wishlist"
+                            >
                                 <i class="pe-7s-like"></i>
                             </a>
                             <% if (item.quantity) { %>
-                            <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= product._id %>`)">
+                            <a class="animate-top" title="Add To Cart" onclick="addToCart(`<%= item._id %>`)">
                                 <i class="pe-7s-cart"></i>
                             </a>
                             <% } %>

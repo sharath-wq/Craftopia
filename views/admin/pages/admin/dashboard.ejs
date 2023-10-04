@@ -100,9 +100,9 @@
                         />
                         <div class="media-body">
                             <h5 class="mt-0"><%= order.user.firstName %></h5>
-                            <small><%= order.createdAtFormatted %></small>
+                            <small><%= moment(order.orderedDate).fromNow() %></small>
                         </div>
-                        <p class="mb-0 text-success">₹ <%= order.totalPrice %></p>
+                        <p class="mb-0 text-success">₹ <%= order.totalPrice.toFixed(2) %></p>
                     </div>
                     <% }) %>
                 </div>

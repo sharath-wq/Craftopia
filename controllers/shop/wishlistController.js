@@ -23,20 +23,32 @@ exports.wishlistpage = asyncHandler(async (req, res) => {
  * Add To Wishlist Route
  * Method POST
  */
-exports.addToWishlist = asyncHandler(async (req, res) => {
+exports.toggleWishlist = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
         const productId = req.params.id;
         validateMongoDbId(productId);
 
-        const user = await User.findByIdAndUpdate(userId, {
-            $addToSet: { wishlist: productId },
-        });
+        const user = await User.findById(userId);
 
-        req.flash("success", "Item added to wishlist");
-        res.redirect("back");
+        if (!user) {
+            return res.status(404).json({ message: "User not found", status: "error" });
+        }
+
+        const isInWishlist = user.wishlist.includes(productId);
+
+        if (isInWishlist) {
+            user.wishlist = user.wishlist.filter((item) => item.toString() !== productId);
+            await user.save();
+            res.json({ message: "Product removed from wishlist", status: "danger", isInWishlist: false });
+        } else {
+            user.wishlist.push(productId);
+            await user.save();
+            res.json({ message: "Product added to wishlist", status: "success", isInWishlist: true });
+        }
     } catch (error) {
-        throw new Error(error);
+        console.error(error);
+        res.status(500).json({ message: "Server error", status: "error" });
     }
 });
 
