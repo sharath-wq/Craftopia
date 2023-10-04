@@ -8,7 +8,7 @@
                         <!-- Product Image -->
                         <div class="col-md-4 d-flex align-items-center justify-content-center">
                             <img
-                                src="<%= order.products[0].product.images[0].productImageUrl %>"
+                                src="<%= order.product.images[0].productImageUrl %>"
                                 class="card-img"
                                 alt="Product Image"
                             />
@@ -17,18 +17,14 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <!-- Product Name -->
-                                <h5 class="card-title">
-                                    <strong>Product Name:</strong> <%= order.products[0].product.title %>
-                                </h5>
+                                <h5 class="card-title"><strong>Product Name:</strong> <%= order.product.title %></h5>
                                 <!-- Ordered Date -->
+
                                 <p class="card-text">
-                                    <strong>Ordered Date:</strong> <% const inputDate = order.createdAt; %> <% const
-                                    dateObject = new Date(inputDate); %> <% const options = { year: 'numeric', month:
-                                    'long', day: 'numeric' }; %> <%= new Intl.DateTimeFormat('en-US',
-                                    options).format(dateObject) %>
+                                    <strong>Ordered Date:</strong> <%= new Date(orders.orderedDate).toUTCString() %>
                                 </p>
                                 <!-- Ship To Name -->
-                                <p class="card-text"><strong>Ship To Name:</strong> <%= order.address.title %></p>
+                                <p class="card-text"><strong>Ship To Name:</strong> <%= orders.shippingAddress %></p>
                                 <!-- Order Status -->
                                 <p class="card-text">
                                     <strong>Order Status:</strong>
@@ -39,18 +35,13 @@
                                     </span>
                                 </p>
                                 <!-- Product Price -->
-                                <p class="card-text">
-                                    <strong>Product Price:</strong> ₹<%= order.products[0].product.salePrice %>
-                                </p>
+                                <p class="card-text"><strong>Product Price:</strong> ₹<%= order.price %></p>
                                 <!-- Quantity -->
-                                <p class="card-text"><strong>Quantity:</strong> <%= order.products[0].quantity %></p>
+                                <p class="card-text"><strong>Quantity:</strong> <%= order.quantity %></p>
 
-                                <!-- Cancel Button -->
-                                <% if (order.status === 'Cancelled') { %>
-                                <button class="btn btn-danger h-auto" disabled %>>Cancel Order</button>
-                                <% } else if (order.status === "Delivered") { %>
+                                <% if (order.status === "Delivered") { %>
                                 <button class="btn btn-danger h-auto" %>>Return Order</button>
-                                <% } else { %>
+                                <% } else if(order.status !== "Cancelled") { %>
                                 <button class="btn btn-danger h-auto" data-toggle="modal" data-target="#cancelOrderModal">
                                     Cancel Order
                                 </button>
@@ -65,7 +56,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h3>Write a Review</h3>
-                                <form action="/user/review/add/<%= order.products[0].product._id %>" method="post">
+                                <form action="/user/review/add/<%= order.product._id %>" method="post">
                                     <!-- Review Rating -->
                                     <div class="form-group">
                                         <label for="rating">Rating:</label>
@@ -116,7 +107,7 @@
             </div>
             <div class="modal-body">Are you sure you want to cancel this order?</div>
             <div class="modal-footer">
-                <form action="/orders/<%= order.orderNumber %>?_method=PUT" method="post">
+                <form action="/orders/<%= order._id %>?_method=PUT" method="post">
                     <button type="submit" class="btn btn-danger h-auto" id="confirmCancelBtn">Confirm</button>
                 </form>
                 <button type="button" class="btn btn-secondary h-auto" data-dismiss="modal">Cancel</button>

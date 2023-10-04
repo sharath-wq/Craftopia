@@ -9,69 +9,30 @@
                             <tr>
                                 <th>#</th>
                                 <th>Order ID</th>
-                                <th>Product</th>
-                                <th>Address</th>
+                                <th>Shipping Details</th>
                                 <th>Date</th>
                                 <th>Price</th>
-                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% if (orderItems && orderItems.length) { %> <% orderItems.forEach((order, index) => { %>
+                            <% orders.forEach((order, index) => { %>
                             <tr>
                                 <td class="align-middle"><%= index + 1 %></td>
+                                <td class="align-middle"><%= order.orderId %></td>
                                 <td class="align-middle">
-                                    <a href="/admin/orders/<%= order.orderNumber %>">
-                                        <% const orderNumber = order.orderNumber ? order.orderNumber.toString() : ''; %> <%=
-                                        orderNumber.length > 14 ? orderNumber.substring(0, 14) + "..." : orderNumber %>
-                                    </a>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <% if (order.products && order.products.length > 0) { %> <% const product =
-                                        order.products[0].product; %>
-                                        <img
-                                            src="<%= product.images && product.images.length > 0 ? product.images[0].thumbnailUrl : '' %>"
-                                            alt="Image"
-                                            width="50"
-                                        />
-                                        <span class="ml-2">
-                                            <% const productTitle = product.title ? product.title.toString() : ''; %> <%=
-                                            productTitle.length > 10 ? productTitle.substring(0, 10) + "..." : productTitle
-                                            %>
-                                        </span>
-                                        <% } else { %>
-                                        <!-- Handle missing product data here -->
-                                        <span>Product Data Missing</span>
-                                        <% } %>
-                                    </div>
+                                    <%= order.shippingAddress %>, <%= order.city %>, <%= order.zip %>
                                 </td>
                                 <td class="align-middle">
-                                    <%= order.address ? (order.address.street + ', ' + order.address.city + ', ' +
-                                    order.address.state) : '' %>
-                                </td>
-                                <td class="align-middle">
-                                    <%= new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month:
+                                    <%= new Date(order.orderedDate).toLocaleDateString('en-US', { year: 'numeric', month:
                                     'long', day: 'numeric' }) %>
                                 </td>
+                                <td class="align-middle"><%= order.totalPrice %></td>
                                 <td class="align-middle">
-                                    <% if (order.products && order.products.length > 0) { %> <% const product =
-                                    order.products[0].product; %> <%= product.salePrice ? '₹ ' + product.salePrice : '' %>
-                                    <% } else { %>
-                                    <!-- Handle missing product data here -->
-                                    <span>Price Data Missing</span>
-                                    <% } %>
-                                </td>
-
-                                <td class="align-middle">
-                                    <span
-                                        class="rounded <% if (order.status === 'Pending') { %> bg-warning <% } else if (order.status === 'Shipped') { %> bg-primary <% } else if (order.status === 'Cancelled') { %> bg-danger <% } else if (order.status === 'Delivered') { %> bg-success <% } %> p-2 text-white"
-                                    >
-                                        <%= order.status %>
-                                    </span>
+                                    <a class="btn btn-sm btn-primary" href="/admin/orders/<%= order.orderId %>">Details</a>
                                 </td>
                             </tr>
-                            <% }) %> <% } %>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>

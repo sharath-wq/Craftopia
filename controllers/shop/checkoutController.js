@@ -77,6 +77,7 @@ exports.placeOrder = asyncHandler(async (req, res) => {
 
             const item = await OrderItems.create({
                 quantity: cartItem.quantity,
+                price: cartItem.product.salePrice,
                 product: cartItem.product._id,
             });
 
@@ -97,6 +98,8 @@ exports.placeOrder = asyncHandler(async (req, res) => {
             orderItems: orders,
             shippingAddress: address.title,
             city: address.city,
+            street: address.street,
+            state: address.state,
             zip: address.pincode,
             phone: address.mobile,
             totalPrice: total,

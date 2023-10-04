@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Order = require("../../models/orderModel");
 const status = require("../../utils/status");
 const Product = require("../../models/productModel");
+const OrderItem = require("../../models/orderItemModel");
 
 /**
  * Manage Orders Page Route
@@ -9,23 +10,22 @@ const Product = require("../../models/productModel");
  */
 exports.ordersPage = asyncHandler(async (req, res) => {
     try {
-        const orderItems = await Order.find()
-            .select("orderNumber createdAt products.product status")
+        const orders = await Order.find()
             .populate({
-                path: "products.product",
-                model: "Product",
+                path: "orderItems",
+                select: "product status _id",
                 populate: {
-                    path: "images",
-                    model: "Images",
+                    path: "product",
+                    select: "title images",
+                    populate: {
+                        path: "images",
+                    },
                 },
             })
-            .populate({
-                path: "address",
-                model: "Address",
-            })
-            .sort({ createdAt: -1 });
-        // res.json(orderItems);
-        res.render("admin/pages/order/orders", { title: "Orders", orderItems });
+            .select("orderId orderedDate shippingAddress city zip totalPrice")
+            .sort({ orderedDate: -1 });
+        // res.json(orders);
+        res.render("admin/pages/order/orders", { title: "Orders", orders });
     } catch (error) {
         throw new Error(error);
     }
@@ -38,26 +38,23 @@ exports.ordersPage = asyncHandler(async (req, res) => {
 exports.editOrder = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
-        const order = await Order.find({ orderNumber: orderId })
-            .select("orderNumber createdAt products.product products.quantity totalAmount paymentMethod status customer")
+        const order = await Order.findOne({ orderId: orderId })
             .populate({
-                path: "products.product",
-                model: "Product",
+                path: "orderItems",
+                modal: "OrderItems",
                 populate: {
-                    path: "images",
-                    model: "Images",
+                    path: "product",
+                    modal: "Product",
+                    populate: {
+                        path: "images",
+                        modal: "Images",
+                    },
                 },
             })
             .populate({
-                path: "address",
-                model: "Address",
-            })
-            .populate({
-                path: "customer",
-                model: "User",
-            })
-            .sort({ createdAt: -1 });
-        // res.json(order);
+                path: "user",
+                modal: "User",
+            });
         res.render("admin/pages/order/edit-order", { title: "Edit Order", order });
     } catch (error) {
         throw new Error(error);
@@ -71,19 +68,18 @@ exports.editOrder = asyncHandler(async (req, res) => {
 exports.updateOrderStatus = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
-        // res.json(req.body);
-        const order = await Order.findOneAndUpdate(
-            { orderNumber: orderId },
-            {
-                status: req.body.status,
-            }
-        );
+
+        const order = await OrderItem.findByIdAndUpdate(orderId, {
+            status: req.body.status,
+        });
+
         if (req.body.status === status.status.cancelled) {
-            const product = await Product.findById(order.products[0].product);
-            product.sold -= order.products[0].quantity;
+            const product = await Product.findById(order.product);
+            product.sold -= order.quantity;
+            product.quantity += order.quantity;
             await product.save();
         }
-        res.redirect("/admin/orders");
+        res.redirect("back");
     } catch (error) {
         throw new Error(error);
     }
