@@ -73,6 +73,13 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
             status: req.body.status,
         });
 
+        if (req.body.status === status.status.shipped) {
+            order.shippedDate = Date.now();
+        } else if (req.body.status === status.status.delivered) {
+            order.deliveredDate = Date.now();
+        }
+        await order.save();
+
         if (req.body.status === status.status.cancelled) {
             const product = await Product.findById(order.product);
             product.sold -= order.quantity;
