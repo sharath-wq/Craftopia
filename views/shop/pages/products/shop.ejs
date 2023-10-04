@@ -106,9 +106,10 @@
                                                 <span class="bg-danger">hot</span>
                                                 <div class="product-action">
                                                     <a
+                                                        id="wishlistButton"
                                                         class="animate-left"
                                                         title="Wishlist"
-                                                        href="/wishlist/add/<%= product._id %>"
+                                                        onclick="toggleWishlist(`<%= product._id %>`)"
                                                     >
                                                         <i class="pe-7s-like"></i>
                                                     </a>
@@ -191,8 +192,9 @@
                                                     </div>
                                                     <div class="product-list-wishlist">
                                                         <a
+                                                            id="wishlistButton"
                                                             class="btn-hover list-btn-wishlist"
-                                                            href="/wishlist/add/<%= product._id %>"
+                                                            onclick="toggleWishlist(`<%= product._id %>`)"
                                                         >
                                                             <i class="pe-7s-like"></i>
                                                         </a>

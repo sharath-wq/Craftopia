@@ -218,7 +218,12 @@
                         </a>
                         <span>hot</span>
                         <div class="product-action">
-                            <a class="animate-left" onclick="toggleWishlist(`<%= item._id %>`)" title="Wishlist">
+                            <a
+                                id="wishlistButton"
+                                class="animate-left"
+                                onclick="toggleWishlist(`<%= item._id %>`)"
+                                title="Wishlist"
+                            >
                                 <i class="pe-7s-like"></i>
                             </a>
                             <% if (item.quantity) { %>
@@ -239,53 +244,3 @@
     </div>
 </div>
 <!-- product area end -->
-
-<script>
-    function toggleWishlist(id) {
-        const productId = id;
-        const url = `/wishlist/toggle/${productId}`;
-        const wishlistButton = document.getElementById("wishlistButton");
-        const cartMessage = document.getElementById("cart-message");
-
-        fetch(url, {
-            method: "GET",
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json(); // Assuming server sends JSON
-                } else {
-                    console.error("Failed");
-                }
-            })
-            .then((data) => {
-                if (data) {
-                    if (data.isInWishlist) {
-                        wishlistButton.innerHTML = `<i class="pe-7s-like text-danger"></i>`;
-                        cartMessage.innerHTML = data.message;
-                        cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
-                        cartMessage.style.display = "block";
-
-                        setTimeout(function () {
-                            cartMessage.style.display = "none";
-                        }, 3000);
-                    } else {
-                        wishlistButton.innerHTML = `<i class="pe-7s-like"></i>`;
-                        cartMessage.innerHTML = data.message;
-                        cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
-                        cartMessage.style.display = "block";
-
-                        setTimeout(function () {
-                            cartMessage.style.display = "none";
-                        }, 3000);
-                    }
-
-                    // Optionally, you can display a message here if needed.
-                } else {
-                    console.error("Unexpected data format");
-                }
-            })
-            .catch((error) => {
-                console.error("An error occurred:", error);
-            });
-    }
-</script>

@@ -89,7 +89,12 @@
                             </a>
                             <span class="new bg-danger">New</span>
                             <div class="product-action position-absolute start-0 bottom-0">
-                                <a class="animate-left" title="Wishlist" href="/wishlist/add/<%= product._id %>">
+                                <a
+                                    id="wishlistButton"
+                                    class="animate-left"
+                                    title="Wishlist"
+                                    onclick="toggleWishlist(`<%= product._id %>`)"
+                                >
                                     <i class="pe-7s-like"></i>
                                 </a>
                                 <% if (product.quantity) { %>
@@ -143,7 +148,12 @@
                             </a>
                             <span class="new bg-danger">Hot</span>
                             <div class="product-action position-absolute start-0 bottom-0">
-                                <a class="animate-left" title="Wishlist" href="/wishlist/add/<%= product._id %>">
+                                <a
+                                    class="animate-left"
+                                    title="Wishlist"
+                                    id="wishlistButton"
+                                    onclick="toggleWishlist(`<%= product._id %>`)"
+                                >
                                     <i class="pe-7s-like"></i>
                                 </a>
                                 <% if (product.quantity) { %>
