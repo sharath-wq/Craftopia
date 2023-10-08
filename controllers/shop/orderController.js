@@ -1,8 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const Order = require("../../models/orderModel");
-const Product = require("../../models/productModel");
-const { status } = require("../../utils/status");
-const OrderItem = require("../../models/orderItemModel");
+const orderHelper = require("../../helpers/orderHelper");
+
 /**
  * Orders Page Route
  * Method GET
@@ -11,20 +9,7 @@ exports.orderspage = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const orders = await Order.find({ user: userId })
-            .populate({
-                path: "orderItems",
-                select: "product status _id",
-                populate: {
-                    path: "product",
-                    select: "title images",
-                    populate: {
-                        path: "images",
-                    },
-                },
-            })
-            .select("orderId orderedDate shippingAddress city")
-            .sort({ _id: -1 });
+        const orders = await orderHelper.getOrders(userId);
 
         res.render("shop/pages/user/orders", {
             title: "Orders",
@@ -44,15 +29,8 @@ exports.singleOrder = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
 
-        const order = await OrderItem.findById(orderId).populate({
-            path: "product",
-            modal: "Product",
-            populate: {
-                path: "images",
-                model: "Images",
-            },
-        });
-        const orders = await Order.findOne({ orderItems: orderId }).select("shippingAddress city orderedDate");
+        const { order, orders } = await orderHelper.getSingleOrder(orderId);
+
         res.render("shop/pages/user/single-order.ejs", {
             title: order.product.title,
             page: order.product.title,
@@ -68,17 +46,37 @@ exports.singleOrder = asyncHandler(async (req, res) => {
  * Cancel Order Route
  * Method PUT
  */
-exports.chancelOrder = asyncHandler(async (req, res) => {
+exports.cancelOrder = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
-        const updatedOrder = await OrderItem.findByIdAndUpdate(orderId, {
-            status: status.cancelled,
-        });
-        const cancelledProduct = await Product.findById(updatedOrder.product);
-        cancelledProduct.quantity += updatedOrder.quantity;
-        cancelledProduct.sold -= updatedOrder.quantity;
-        await cancelledProduct.save();
-        res.redirect("back");
+
+        const result = await orderHelper.cancelOrderById(orderId);
+
+        if (result === "redirectBack") {
+            res.redirect("back");
+        } else {
+            res.json(result);
+        }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Cancel Single Order Route
+ * Method PUT
+ */
+exports.cancelSingleOrder = asyncHandler(async (req, res) => {
+    try {
+        const orderItemId = req.params.id;
+
+        const result = await orderHelper.cancelSingleOrder(orderItemId);
+
+        if (result === "redirectBack") {
+            res.redirect("back");
+        } else {
+            res.json(result);
+        }
     } catch (error) {
         throw new Error(error);
     }

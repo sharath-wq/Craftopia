@@ -17,14 +17,9 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="form-check">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="radio"
-                                                    name="addressId"
-                                                    id="address<%= index %>"
-                                                    value="<%= item._id %>"
-                                                    required
-                                                />
+                                                <input class="form-check-input" type="radio" name="addressId" id="address<%=
+                                                index %>" value="<%= item._id %>" required <%= index === 0 ? "checked" : ""
+                                                %> />
                                                 <label class="form-check-label" for="address<%= index %>">
                                                     <h5 class="card-title"><%= item.title %></h5>
                                                     <p class="card-text">
@@ -99,19 +94,26 @@
                             <div class="payment-accordion">
                                 <div class="payment-method">
                                     <label for="payment-method-select">Select Payment Method:</label>
-                                    <select
-                                        id="payment-method-select"
-                                        required
-                                        name="payment_method"
-                                        class="form-select form-select-lg"
-                                    >
-                                        <option value="cash-on-delivery">Cash on Delivery</option>
-                                        <option value="razorpay">Razorpay</option>
-                                    </select>
                                 </div>
                                 <% if (address && address.length) { %>
-                                <div class="order-button-payment">
-                                    <input type="submit" value="Place order" />
+                                <div class="order-button-payment d-flex flex-column gap-2">
+                                    <button
+                                        type="button"
+                                        class="btn btn-dark h-auto rounded-0 fw-bold"
+                                        style="padding: 12px"
+                                        id="cod-button"
+                                    >
+                                        CASH ON DELIVERY
+                                    </button>
+                                    <button
+                                        class="btn btn-primary h-auto rounded-0 fw-bold"
+                                        style="padding: 12px"
+                                        type="button"
+                                        id="rzp-button"
+                                        value="submit"
+                                    >
+                                        Pay with Razorypay
+                                    </button>
                                 </div>
                                 <% } else { %> <span class="text-danger">Please Add an Address</span> <% } %>
                             </div>
@@ -122,17 +124,106 @@
         </form>
     </div>
 </div>
-<!-- Checkout Area End -->
 
+<!-- Checkout Area End -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    // Get references to the form and original cart data input
-    const form = document.querySelector("form");
-    const originalCartInput = document.getElementById("originalCartData");
+    let selectedAddressId = null;
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("form");
+        const rzpBtn = document.getElementById("rzp-button");
+        const codBtn = document.getElementById("cod-button");
+        const addressRadios = document.querySelectorAll('input[name="addressId"]');
+
+        const firstRadio = document.querySelector('input[name="addressId"]:checked');
+        if (firstRadio) {
+            selectedAddressId = firstRadio.value;
+        }
+
+        addressRadios.forEach((radio) => {
+            radio.addEventListener("change", (event) => {
+                selectedAddressId = event.target.value;
+            });
+        });
+
+        codBtn.addEventListener("click", handleCodButtonClick);
+        rzpBtn.addEventListener("click", handleRzpButtonClick);
+    });
+
+    async function handleCodButtonClick(event) {
+        event.preventDefault();
+        if (await checkCartData()) {
+            const data = {
+                addressId: selectedAddressId,
+                payment_method: "cash_on_delivery",
+            };
+            await placeOrder("/checkout/place-order", data);
+        }
+    }
+
+    async function handleRzpButtonClick() {
+        if (await checkCartData()) {
+            const data = {
+                addressId: selectedAddressId,
+                payment_method: "online_payment",
+            };
+            await placeOrder("/checkout/place-order", data);
+        }
+    }
+
+    async function placeOrder(url, data) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            const responseData = await response.json();
+            if (data.payment_method === "cash_on_delivery") {
+                handleCodPayment(responseData);
+            } else if (data.payment_method === "online_payment") {
+                handleRzpPayment(responseData);
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    async function checkCartData() {
+        try {
+            const originalCartData = JSON.parse(document.getElementById("originalCartData").value);
+            const response = await fetch("/checkout/get");
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const currentCartData = await response.json();
+
+            if (currentCartData !== null && compareJSONStrings(originalCartData, currentCartData)) {
+                showCartConfirmation();
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    function compareJSONStrings(jsonString1, jsonString2) {
+        return JSON.stringify(jsonString1) !== JSON.stringify(jsonString2);
+    }
 
     function showCartConfirmation() {
         Swal.fire({
             title: "Cart Confirmation",
-            text: "Your cart has changed. Do you want to the page?",
+            text: "Your cart has changed. Do you want to reload the page?",
             icon: "info",
             showCancelButton: true,
             confirmButtonText: "Reload",
@@ -148,39 +239,99 @@
         window.location.reload();
     }
 
-    // Add an event listener to the form submit event
-    form.addEventListener("submit", function (event) {
-        // Prevent the form from submitting immediately
-        event.preventDefault();
+    function handleCodPayment(responseData) {
+        window.location.href = `/checkout/order-placed/${responseData.orderId}`;
+    }
 
-        // Get the original cart data from the hidden input field
-        const originalCartData = JSON.parse(originalCartInput.value);
+    function handleRzpPayment(responseData) {
+        const options = {
+            key: "rzp_test_4ruq7ozLCdsikN",
+            amount: responseData.order.totalPrice * 100,
+            currency: "INR",
+            name: "Craftopia",
+            description: "Test Transaction",
+            image: "https://example.com/your_logo.png",
+            order_id: responseData.order.id,
+            handler: function (response) {
+                handleSuccessPayment(response, responseData.orderId);
+            },
+            prefill: {
+                name: responseData.user.firstName,
+                email: responseData.user.email,
+                contact: responseData.user.mobile,
+            },
+            notes: {
+                address: "Razorpay Corporate Office",
+            },
+            theme: {
+                color: "#000000",
+            },
+            modal: {
+                ondismiss: function () {
+                    handlePaymentFailure(responseData.orderId);
+                },
+            },
+        };
 
-        // Make a GET request to the /checkout/get endpoint to get the current cart data
-        fetch("/checkout/get")
+        const rzp1 = new Razorpay(options);
+
+        rzp1.on("payment.failed", function (response) {
+            handlePaymentFailure(responseData.orderId);
+        });
+
+        rzp1.open();
+    }
+
+    function handleSuccessPayment(response, orderId) {
+        const postData = {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            orderId: orderId,
+        };
+
+        fetch(`/checkout/verify-payment`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+        })
             .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Error fetching data");
                 }
-                return response.json();
             })
-            .then((currentCartData) => {
-                if (currentCartData !== null) {
-                    // Compare the original cart data with the current cart data
-                    const originalCartJSON = JSON.stringify(originalCartData);
-                    const currentCartJSON = JSON.stringify(currentCartData);
-
-                    if (originalCartJSON !== currentCartJSON) {
-                        console.log("working");
-                        showCartConfirmation();
-                    } else {
-                        form.submit(); // If the cart hasn't changed, submit the form immediately
-                    }
-                }
+            .then((data) => {
+                window.location.href = `/checkout/order-placed/${data.orderId}`;
             })
             .catch((error) => {
-                // Handle errors
-                console.error("Error fetching cart data:", error);
+                handleError(error);
             });
-    });
+    }
+
+    async function handlePaymentFailure(orderId) {
+        try {
+            const cancelOrderUrl = `/orders/${orderId}`;
+            const requestOptions = {
+                method: "PUT",
+            };
+            const response = await fetch(cancelOrderUrl, requestOptions);
+
+            if (response.ok) {
+                console.log("Order cancellation request succeeded.");
+                return response.json();
+            } else {
+                console.error("Order cancellation request failed.");
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
+
+    function handleError(error) {
+        console.error("Error:", error);
+    }
 </script>

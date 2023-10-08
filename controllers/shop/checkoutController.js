@@ -1,12 +1,11 @@
 const asyncHandler = require("express-async-handler");
-const validateMongoDbId = require("../../utils/validateMongodbId");
-const Address = require("../../models/addressModel");
+const checkoutHelper = require("../../helpers/checkoutHelper");
 const User = require("../../models/userModel");
 const Cart = require("../../models/cartModeal");
 const Order = require("../../models/orderModel");
-const OrderItems = require("../../models/orderItemModel");
+const Razorpay = require("razorpay");
 const Product = require("../../models/productModel");
-const { generateUniqueOrderID } = require("../../utils/generateUniqueId");
+const validateMongoDbId = require("../../utils/validateMongodbId");
 
 /**
  * Checkout Page Route
@@ -16,26 +15,17 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
     try {
         const userid = req.user._id;
         const user = await User.findById(userid).populate("address");
-        const cartItmes = await Cart.findOne({ user: userid }).populate("products.product");
+        const cartItems = await checkoutHelper.getCartItems(userid);
         const cartData = await Cart.findOne({ user: userid });
-        if (cartItmes) {
-            let subtotal = 0;
-            for (const product of cartItmes.products) {
-                const productTotal = parseFloat(product.product.salePrice) * product.quantity;
-                subtotal += productTotal;
-            }
-            const tax = (subtotal * 12) / 100;
-            if (subtotal > 2000) {
-                shippingFee = 0;
-            }
 
-            const total = subtotal + tax;
+        if (cartItems) {
+            const { subtotal, tax, total } = checkoutHelper.calculateTotalPrice(cartItems);
 
             res.render("shop/pages/user/checkout", {
                 title: "Checkout",
                 page: "checkout",
                 address: user.address,
-                product: cartItmes.products,
+                product: cartItems.products,
                 total,
                 subtotal,
                 tax,
@@ -54,65 +44,43 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
 exports.placeOrder = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
+        const { addressId, payment_method } = req.body;
 
-        // Find the user's cart and populate the products
-        const cartItems = await Cart.findOne({ user: userId }).populate("products.product");
+        const newOrder = await checkoutHelper.placeOrder(userId, addressId, payment_method);
 
-        if (!cartItems) {
-            return res.status(404).json({ message: "Cart not found" });
-        }
-
-        const orders = [];
-        let total = 0;
-
-        for (const cartItem of cartItems.products) {
-            const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
-            const tax = (productTotal * 12) / 100;
-            let shippingFee = 60;
-
-            if (productTotal > 2000) {
-                shippingFee = 0;
-            }
-
-            total += productTotal + tax + shippingFee;
-
-            const item = await OrderItems.create({
-                quantity: cartItem.quantity,
-                price: cartItem.product.salePrice,
-                product: cartItem.product._id,
+        if (payment_method === "cash_on_delivery") {
+            res.status(200).json({
+                message: "Order placed successfully",
+                orderId: newOrder._id,
             });
-
-            orders.push(item);
-
-            // Update product quantities and sold counts if needed
-            const updateProduct = await Product.findById(cartItem.product._id);
-            updateProduct.quantity -= cartItem.quantity;
-            updateProduct.sold += cartItem.quantity;
-            await updateProduct.save();
+        } else if (payment_method === "online_payment") {
+            const user = await User.findById(req.user._id);
+            var instance = new Razorpay({
+                key_id: process.env.RAZORPAY_KEY_ID,
+                key_secret: process.env.RAZORPAY_KEY_SECRET,
+            });
+            const rzp_order = instance.orders.create(
+                {
+                    amount: newOrder.totalPrice * 100,
+                    currency: "INR",
+                    receipt: newOrder.orderId,
+                },
+                (err, order) => {
+                    if (err) {
+                        res.status(500).json(err);
+                    }
+                    res.status(200).json({
+                        message: "Order placed successfully",
+                        rzp_order,
+                        order,
+                        user,
+                        orderId: newOrder._id,
+                    });
+                }
+            );
+        } else {
+            res.status(400).json({ message: "Invalid payment method" });
         }
-
-        const address = await Address.findById(req.body.addressId);
-
-        const existingOrderIds = await Order.find().select("orderId");
-        // Create the order
-        const order = await Order.create({
-            orderId: "OD" + generateUniqueOrderID(existingOrderIds),
-            user: userId,
-            orderItems: orders,
-            shippingAddress: address.title,
-            city: address.city,
-            street: address.street,
-            state: address.state,
-            zip: address.pincode,
-            phone: address.mobile,
-            totalPrice: total,
-            payment_method: req.body.payment_method,
-        });
-
-        // Remove the items from the cart (uncomment when needed)
-        await Cart.findOneAndDelete({ user: userId });
-
-        res.redirect(`/checkout/order-placed/${order._id}`);
     } catch (error) {
         throw new Error(error);
     }
@@ -125,10 +93,6 @@ exports.getCartData = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
         const cartData = await Cart.findOne({ user: userId });
-
-        // Debug: Log the cartData to see its contents
-        console.log("Cart Data:", cartData);
-
         res.json(cartData);
     } catch (error) {
         throw new Error(error);
@@ -149,12 +113,47 @@ exports.orderPlaced = asyncHandler(async (req, res) => {
                 path: "product",
             },
         });
+
+        const cartItems = await checkoutHelper.getCartItems(req.user._id);
+
+        if (cartItems) {
+            for (const cartItem of cartItems.products) {
+                const updateProduct = await Product.findById(cartItem.product._id);
+                updateProduct.quantity -= cartItem.quantity;
+                updateProduct.sold += cartItem.quantity;
+                await updateProduct.save();
+
+                await Cart.findOneAndDelete({ user: req.user._id });
+            }
+        }
+
         // Render the order placed page with orderDetails
         res.render("shop/pages/user/order-placed.ejs", {
             title: "Order Placed",
             page: "Order Placed",
             order: order,
         });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Vefify Payment
+ * Method POST
+ */
+exports.verifyPayment = asyncHandler(async (req, res) => {
+    try {
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature, orderId } = req.body;
+
+        const result = await checkoutHelper.verifyPayment(
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature,
+            orderId
+        );
+
+        res.json(result);
     } catch (error) {
         throw new Error(error);
     }
