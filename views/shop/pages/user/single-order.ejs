@@ -117,7 +117,7 @@
             </div>
             <div class="modal-body">Are you sure you want to cancel this order?</div>
             <div class="modal-footer">
-                <form action="/orders/<%= order._id %>?_method=PUT" method="post">
+                <form action="/orders/single/<%= order._id %>?_method=PUT" method="post">
                     <button type="submit" class="btn btn-danger h-auto" id="confirmCancelBtn">Confirm</button>
                 </form>
                 <button type="button" class="btn btn-secondary h-auto" data-dismiss="modal">Cancel</button>
