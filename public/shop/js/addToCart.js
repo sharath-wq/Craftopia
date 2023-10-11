@@ -16,12 +16,9 @@ function addToCart(id) {
         })
         .then((data) => {
             if (data) {
-                console.log(data["message"]);
-
-                // Check if 'count' and 'message' properties exist in data
                 if (data.count && data.message) {
                     cartCount.innerText = data.count;
-                    cartMessage.innerHTML = data.message;
+                    cartMessage.innerText = data.message;
 
                     cartMessage.className = `position-fixed bg-${data.status} text-white p-2 rounded`;
                     cartMessage.style.display = "block";

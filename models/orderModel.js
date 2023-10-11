@@ -56,6 +56,14 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    wallet: {
+        type: Number,
+        default: 0,
+    },
+    paidAmount: {
+        type: Number,
+        defualt: 0,
+    },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

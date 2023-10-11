@@ -9,6 +9,8 @@ const sendEmail = require("../../utils/sendEmail");
 const { validationResult } = require("express-validator");
 const sharp = require("sharp");
 const { admin } = require("../../utils/firebase");
+const Wallet = require("../../models/walletModel");
+const WalletTransaction = require("../../models/walletTransactionModel");
 
 /**
  * Profile Page Route
@@ -18,7 +20,8 @@ exports.profilepage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const user = await User.findById(req.user._id).populate("address");
-        res.render("shop/pages/user/profile", { title: "Profile", page: "profile", user, messages });
+        const wallet = await Wallet.findOne({ user: user._id });
+        res.render("shop/pages/user/profile", { title: "Profile", page: "profile", user, messages, wallet });
     } catch (error) {
         throw new Error(error);
     }
@@ -32,7 +35,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
     const id = req.params.id;
     try {
         const errors = validationResult(req);
-        const { firstName, lastName, street, city, state, pincode, mobile } = req.body;
+        const { firstName, lastName, mobile } = req.body;
         const file = req.file;
 
         if (file) {
@@ -47,19 +50,11 @@ exports.editProfile = asyncHandler(async (req, res) => {
                 res.redirect("/user/profile");
             } else {
                 validateMongoDbId(id);
-                const address = await Address.create({
-                    street: street,
-                    city: city,
-                    state: state,
-                    pincode: pincode,
-                    mobile: mobile,
-                });
                 const user = await User.findByIdAndUpdate(id, {
                     firstName: firstName,
                     lastName: lastName,
                     image: avatharUrl,
                     mobile: mobile,
-                    $push: { address: address._id },
                 });
 
                 req.flash("success", "Profile updated");
@@ -73,18 +68,10 @@ exports.editProfile = asyncHandler(async (req, res) => {
                 res.redirect("/user/profile");
             } else {
                 validateMongoDbId(id);
-                const address = await Address.create({
-                    street: street,
-                    city: city,
-                    state: state,
-                    pincode: pincode,
-                    mobile: mobile,
-                });
                 const user = await User.findByIdAndUpdate(id, {
                     firstName: firstName,
                     lastName: lastName,
                     mobile: mobile,
-                    $push: { address: address._id },
                 });
 
                 req.flash("success", "Profile updated");
@@ -268,14 +255,40 @@ exports.addReview = asyncHandler(async (req, res) => {
         const productId = req.params.id;
         const userId = req.user._id;
 
-        const newReview = await Review.create({
-            user: userId,
-            product: productId,
-            review: req.body.review,
-            rating: req.body.rating,
-        });
+        const existingReview = await Review.findOne({ user: userId, product: productId });
 
+        if (existingReview) {
+            existingReview.review = req.body.review;
+            existingReview.rating = req.body.rating;
+            await existingReview.save();
+        } else {
+            const newReview = await Review.create({
+                user: userId,
+                product: productId,
+                review: req.body.review,
+                rating: req.body.rating,
+            });
+        }
         res.redirect("back");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Wallet Transactions
+ * Method Get
+ */
+exports.walletTransactionspage = asyncHandler(async (req, res) => {
+    try {
+        const walletId = req.params.id;
+        const walletTransactions = await WalletTransaction.find({ wallet: walletId });
+        console.log({ walletTransactions });
+        res.render("shop/pages/user/walletTransactions", {
+            title: "Wallet Transactions",
+            page: "Wallet-Transactions",
+            walletTransactions,
+        });
     } catch (error) {
         throw new Error(error);
     }

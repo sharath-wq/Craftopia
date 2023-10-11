@@ -17,41 +17,77 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <!-- Product Name -->
-                                <h5 class="card-title"><strong>Product Name:</strong> <%= order.product.title %></h5>
+                                <h5 class="card-title">
+                                    <strong>Product Name:</strong>
+                                    <%= order.product.title %>
+                                </h5>
                                 <!-- Ordered Date -->
                                 <p class="card-text">
-                                    <strong>Ordered Date:</strong> <%= new Date(orders.orderedDate).toUTCString() %>
+                                    <strong>Ordered Date:</strong>
+                                    <%= new Date(orders.orderedDate).toUTCString() %>
                                 </p>
 
-                                <% if (order.status === "Shipped") { %>
+                                <% if (order.status==="Shipped" ) { %>
                                 <p class="card-text">
-                                    <strong>Shipped On:</strong> <%= new Date(order.shippedDate).toUTCString() %>
+                                    <strong>Shipped On:</strong>
+                                    <%= new Date(order.shippedDate).toUTCString() %>
                                 </p>
-                                <% } else if (order.status === "Delivered") { %>
+                                <% } else if (order.status==="Delivered" ) { %>
                                 <p class="card-text">
-                                    <strong>Delivered On:</strong> <%= new Date(order.deliveredDate).toUTCString() %>
+                                    <strong>Delivered On:</strong>
+                                    <%= new Date(order.deliveredDate).toUTCString() %>
                                 </p>
                                 <% } %>
 
                                 <!-- Ship To Name -->
-                                <p class="card-text"><strong>Ship To Name:</strong> <%= orders.shippingAddress %></p>
+                                <p class="card-text">
+                                    <strong>Ship To Name:</strong>
+                                    <%= orders.shippingAddress %>
+                                </p>
                                 <!-- Order Status -->
                                 <p class="card-text">
                                     <strong>Order Status:</strong>
-                                    <span
-                                        class="<% if (order.status === 'Pending') { %> text-warning <% } else if (order.status === 'Shipped') { %> text-primary <% } else if (order.status === 'Cancelled') { %> text-danger <% } else if (order.status === 'Delivered') { %> text-success <% } %>"
-                                    >
-                                        <%= order.status %>
-                                    </span>
+                                    <% if (order.status==='Pending' ) { %>
+                                    <span class="text-warning"> <%= order.status %> </span>
+                                    <% } else if (order.status==='Shipped' ) { %>
+                                    <span class="text-primary"> <%= order.status %> </span>
+                                    <% } else if (order.status==='Cancelled' || order.status==='Return Requested' ) { %>
+                                    <span class="text-danger"> <%= order.status %> </span>
+                                    <% } else if (order.status==='Delivered' ) { %>
+                                    <span class="text-success"> <%= order.status %> </span>
+                                    <% } else if (order.status==='Returned' ) { %>
+                                    <span class="text-info"> <%= order.status %> </span>
+                                    <% } %>
                                 </p>
                                 <!-- Product Price -->
                                 <p class="card-text"><strong>Product Price:</strong> ₹<%= order.price %></p>
+                                
+                                <% if (order.isPaid === "paid") { %>
+                                    <p class="card-text"><strong>Payment Status: </strong><span class="capitalize text-success"><%= order.isPaid %></span></p>
+                                <% } else if (order.isPaid === "cod") { %>
+                                    <p class="card-text"><strong>Payment Status: </strong><span class="capitalize text-warning"><%= order.isPaid %></span></p>
+                                <% } else if (order.isPaid === "pending") {%>
+                                    <p class="card-text"><strong>Payment Status: </strong><span class="capitalize text-danger"><%= order.isPaid %></span></p>
+                                <% } %>
+                                
                                 <!-- Quantity -->
-                                <p class="card-text"><strong>Quantity:</strong> <%= order.quantity %></p>
+                                <p class="card-text">
+                                    <strong>Quantity:</strong>
+                                    <%= order.quantity %>
+                                </p>
 
-                                <% if (order.status === "Delivered") { %>
-                                <button class="btn btn-danger h-auto" %>>Return Order</button>
-                                <% } else if(order.status !== "Cancelled") { %>
+                                <% if (order.status==="Delivered" ) { const deliveryDate=new Date(order.deliveredDate);
+                                const currentDate=new Date(); const daysDifference=(currentDate - deliveryDate) / (1000 * 60
+                                * 60 * 24); if (daysDifference <=7) { %>
+                                <button
+                                    type="button"
+                                    class="btn btn-danger h-auto"
+                                    data-toggle="modal"
+                                    data-target="#returnOrderModal"
+                                >
+                                    Return Order
+                                </button>
+                                <% } } else if (order.status==="Pending" || order.status==="Shipped" ) { %>
                                 <button class="btn btn-danger h-auto" data-toggle="modal" data-target="#cancelOrderModal">
                                     Cancel Order
                                 </button>
@@ -59,7 +95,7 @@
                             </div>
                         </div>
                     </div>
-                    <% if (order.status === "Delivered") { %>
+                    <% if (order.status==="Delivered" ) { %>
                     <hr class="border-2 border-secondary" />
                     <!-- Review Section -->
                     <div class="container mt-5">
@@ -71,20 +107,25 @@
                                     <div class="form-group">
                                         <label for="rating">Rating:</label>
                                         <select class="form-control" id="rating" name="rating">
-                                            <option value="5">5 stars</option>
-                                            <option value="4">4 stars</option>
-                                            <option value="3">3 stars</option>
-                                            <option value="2">2 stars</option>
-                                            <option value="1">1 star</option>
-                                        </select>
+                                                <option value="" disabled selected>Select a Rating</option>
+                                                <option value="5" <% if (review?.rating==="5") { %>selected<% } %>>5 stars</option>
+                                                <option value="4" <% if (review?.rating==="4") { %>selected<% } %>>4 stars</option>
+                                                <option value="3" <% if (review?.rating==="3") { %>selected<% } %>>3 stars</option>
+                                                <option value="2" <% if (review?.rating==="2") { %>selected<% } %>>2 stars</option>
+                                                <option value="1" <% if (review?.rating==="1") { %>selected<% } %>>1 stars</option>
+                                            </select>
                                     </div>
                                     <!-- Review Text -->
                                     <div class="form-group">
                                         <label for="reviewText">Review:</label>
-                                        <textarea class="form-control" id="reviewText" name="review" rows="4"></textarea>
+                                        <textarea class="form-control" id="reviewText" name="review" rows="4">
+<%= review?.review %></textarea
+                                        >
                                     </div>
                                     <!-- Submit Button -->
-                                    <button type="submit" class="btn btn-primary h-auto">Submit Review</button>
+                                    <button type="submit" class="btn btn-primary h-auto">
+                                        <%= review.length ? "Update Review" : "Submit Review" %>
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -123,5 +164,48 @@
                 <button type="button" class="btn btn-secondary h-auto" data-dismiss="modal">Cancel</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Return modal -->
+
+<div
+    class="modal fade"
+    id="returnOrderModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="returnOrderModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog" role="document">
+        <form action="/orders/return/<%= order._id %>" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="returnOrderModalLabel">Return Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="reason">Reason for Return</label>
+                        <select class="form-control" id="reason" name="reason" required>
+                            <option value="" disabled selected>Select a reason</option>
+                            <option value="item_description_mismatch">Item doesn't match the description</option>
+                            <option value="received_wrong_item">Received the wrong item</option>
+                            <option value="item_damaged_or_defective">Item arrived damaged or defective</option>
+                            <option value="changed_mind">Changed my mind</option>
+                            <option value="didnt_meet_expectations">Item didn't meet my expectations</option>
+                            <option value="no_longer_needed">Item is no longer needed</option>
+                            <option value="item_arrived_late">Item arrived late</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary h-auto" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger h-auto">Submit</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>

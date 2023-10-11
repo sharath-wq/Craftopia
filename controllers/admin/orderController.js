@@ -3,6 +3,8 @@ const Order = require("../../models/orderModel");
 const status = require("../../utils/status");
 const Product = require("../../models/productModel");
 const OrderItem = require("../../models/orderItemModel");
+const Wallet = require("../../models/walletModel");
+const WalletTransactoins = require("../../models/walletTransactionModel");
 
 /**
  * Manage Orders Page Route
@@ -81,11 +83,85 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
         await order.save();
 
         if (req.body.status === status.status.cancelled) {
+            if (order.isPaid !== "pending") {
+                const product = await Product.findById(order.product);
+                product.sold -= order.quantity;
+                product.quantity += order.quantity;
+                await product.save();
+            }
+        }
+
+        const orders = await Order.findOne({ orderItems: order._id });
+
+        if (order.status === status.status.returnPending && orders.payment_method === "online_payment") {
+            order.status = status.status.returned;
             const product = await Product.findById(order.product);
             product.sold -= order.quantity;
             product.quantity += order.quantity;
             await product.save();
+
+            const wallet = await Wallet.findOne({ user: req.user._id });
+            const orders = await Order.findOne({ orderItems: order._id });
+
+            if (!wallet) {
+                const newWallet = await Wallet.create({
+                    balance: parseInt(order.price) * order.quantity,
+                    user: orders.user,
+                });
+                const walletTransaction = await WalletTransactoins.create({
+                    wallet: newWallet._id,
+                    amount: parseInt(order.price) * order.quantity,
+                    type: "credit",
+                });
+            } else {
+                const existingWallet = await Wallet.findOne({ user: orders.user });
+                existingWallet.balance += parseInt(order.price) * order.quantity;
+                await existingWallet.save();
+
+                const walletTransaction = await WalletTransactoins.create({
+                    wallet: existingWallet._id,
+                    amount: parseInt(order.price) * order.quantity,
+                    type: "credit",
+                });
+            }
+
+            await order.save();
+        } else if (order.status === status.status.returnPending && orders.payment_method === "cash_on_delivery") {
+            order.status = status.status.returned;
+            const product = await Product.findById(order.product);
+            product.sold -= order.quantity;
+            product.quantity += order.quantity;
+            await product.save();
+            await order.save();
+
+            const wallet = await Wallet.findOne({ user: req.user._id });
+            const orders = await Order.findOne({ orderItems: order._id });
+
+            if (!wallet) {
+                const newWallet = await Wallet.create({
+                    balance: parseInt(order.price) * order.quantity,
+                    user: orders.user,
+                });
+                const walletTransaction = await WalletTransactoins.create({
+                    wallet: newWallet._id,
+                    amount: parseInt(order.price) * order.quantity,
+                    type: "credit",
+                });
+            } else {
+                const existingWallet = await Wallet.findOne({ user: orders.user });
+                existingWallet.balance += parseInt(order.price) * order.quantity;
+                await existingWallet.save();
+
+                const walletTransaction = await WalletTransactoins.create({
+                    wallet: existingWallet._id,
+                    amount: parseInt(order.price) * order.quantity,
+                    type: "credit",
+                });
+            }
+
+            await order.save();
         }
+
         res.redirect("back");
     } catch (error) {
         throw new Error(error);

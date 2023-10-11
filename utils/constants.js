@@ -4,4 +4,5 @@ module.exports = {
         admin: "ADMIN",
         superAdmin: "SUPER ADMIN",
     },
+    productTax: 8,
 };

@@ -40,6 +40,8 @@
                         <p><strong class="bg-success text-white px-3 py-2 rounded-pill"><%= item.status %></strong></p>
                         <% } else if (item.status === "Cancelled") { %>
                         <p><strong class="bg-danger text-white px-3 py-2 rounded-pill"><%= item.status %></strong></p>
+                        <% } else if (item.status === "Returned") {  %>
+                        <p><strong class="bg-info text-white px-3 py-2 rounded-pill"><%= item.status %></strong></p>
                         <% } %>
                     </div>
                     <div class="col-md-2 d-flex flex-column align-items-center justify-content-center">
@@ -48,7 +50,7 @@
                     <div class="col-md-2 d-flex flex-column align-items-center justify-content-center">
                         <p><strong>Price:</strong> <%= item.price %></p>
                     </div>
-                    <% if (item.status !== "Cancelled" && item.status !== "Delivered") { %>
+                    <% if (item.status !== "Cancelled" && item.status !== "Delivered" && item.status !== "Return Requested" && item.status !== "Returned") { %>
                     <div class="col-md-2 d-flex flex-column d-flex flex-column justify-content-center">
                         <form action="/admin/orders/update/<%= item._id %>?_method=PUT" method="post">
                             <select name="status" class="form-control mb-3">
@@ -74,6 +76,17 @@
                     <% } else if (item.status === "Cancelled") { %>
                         <div class="col-md-2 d-flex flex-column justify-content-center">
                             <img style="width: 100px; height: 100px;" src="/admin/images/icons/cancelled.svg" alt="Cancelled" class="icon">
+                        </div>
+                    <% } else if (item.status === "Return Requested") { %>
+                        <div class="col-md-2 d-flex flex-column justify-content-center">
+                            <form action="/admin/orders/update/<%= item._id %>?_method=PUT" method="post">
+                                <button class="btn btn-danger text-white" >Confirm Return</button>
+                            </form>
+                        </div>
+                    <% } else if (item.status === "Returned") { %>
+                        <div class="col-md-2 d-flex flex-column justify-content-center">
+                            <img style="width: 100px; height: 100px;" src="/admin/images/icons/refunded.svg" alt="Cancelled" class="icon">
+                            
                         </div>
                     <% } %>
                 </div>

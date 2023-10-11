@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const nocache = require("nocache");
 const { initializeFirebase } = require("./utils/firebase");
+const { scheduleOrderItemUpdateJob } = require("./utils/sheducler");
 
 const Category = require("./models/categoryModel");
 const Cart = require("./models/cartModeal");
@@ -33,6 +34,7 @@ const app = express();
 // Connect to the database
 connectDatabase();
 initializeFirebase();
+scheduleOrderItemUpdateJob();
 
 // Firebase Initalization
 
@@ -69,21 +71,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 require("./utils/passport.auth");
 
-// Set user data in res.locals for EJS templates
 app.use(async (req, res, next) => {
     const categories = await Category.find({ isListed: true });
-
     if (req?.user?.role === roles.user) {
         const cart = await Cart.find({ user: req.user.id });
-
-        // Check if the cart array has any elements
         if (cart && cart.length > 0) {
-            res.locals.cartCount = cart[0].products.length; // Assuming the user has only one cart
+            res.locals.cartCount = cart[0].products.length;
         } else {
             res.locals.cartCount = 0;
         }
     }
-
     res.locals.categories = categories;
     res.locals.user = req.user;
     next();

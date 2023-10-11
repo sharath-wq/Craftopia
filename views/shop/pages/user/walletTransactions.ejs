@@ -1,0 +1,27 @@
+<div class="container mt-4">
+    <h1 class="mb-4">Wallet Transactions</h1>
+
+    <!-- Table to display transactions -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% walletTransactions.forEach(transaction => { %>
+            <tr>
+                <td><%= new Date(transaction.timestamp).toUTCString() %></td>
+                <td><%= transaction.amount %></td>
+                <% if (transaction.type === "credit") { %>
+                <td class="text-success"><%= transaction.type %></td>
+                <% } else { %>
+                <td class="text-danger"><%= transaction.type %></td>
+                <% } %>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

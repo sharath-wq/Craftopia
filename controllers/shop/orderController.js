@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const orderHelper = require("../../helpers/orderHelper");
+const orderHelper = require("../../helpers/shop/orderHelper");
 
 /**
  * Orders Page Route
@@ -30,11 +30,15 @@ exports.singleOrder = asyncHandler(async (req, res) => {
         const orderId = req.params.id;
 
         const { order, orders } = await orderHelper.getSingleOrder(orderId);
+        const review = await orderHelper.getReview(req.user._id, order.product._id);
+
+        console.log(review);
 
         res.render("shop/pages/user/single-order.ejs", {
             title: order.product.title,
             page: order.product.title,
             order,
+            review,
             orders,
         });
     } catch (error) {
@@ -70,7 +74,26 @@ exports.cancelSingleOrder = asyncHandler(async (req, res) => {
     try {
         const orderItemId = req.params.id;
 
-        const result = await orderHelper.cancelSingleOrder(orderItemId);
+        const result = await orderHelper.cancelSingleOrder(orderItemId, req.user._id);
+
+        if (result === "redirectBack") {
+            res.redirect("back");
+        } else {
+            res.json(result);
+        }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Return Order Requst
+ * Method POST
+ */
+exports.returnOrder = asyncHandler(async (req, res) => {
+    try {
+        const returnOrderItemId = req.params.id;
+        const result = await orderHelper.returnOrder(returnOrderItemId);
 
         if (result === "redirectBack") {
             res.redirect("back");

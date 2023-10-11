@@ -3,7 +3,7 @@ const validateMongoDbId = require("../../utils/validateMongodbId");
 const User = require("../../models/userModel");
 const Cart = require("../../models/cartModeal");
 const Product = require("../../models/productModel");
-const { incrementQuantity, decrementQuantity, calculateCartTotals } = require("../../helpers/cartHelper");
+const { incrementQuantity, decrementQuantity, calculateCartTotals } = require("../../helpers/shop/cartHelper");
 
 /**
  * Cart page Route
