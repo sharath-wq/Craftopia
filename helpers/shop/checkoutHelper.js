@@ -1,13 +1,15 @@
 // orderHelper.js
 
 const asyncHandler = require("express-async-handler");
-const Address = require("../models/addressModel");
-const Cart = require("../models/cartModeal");
-const Order = require("../models/orderModel");
-const OrderItems = require("../models/orderItemModel");
-const Product = require("../models/productModel");
-const { generateUniqueOrderID } = require("../utils/generateUniqueId");
+const Address = require("../../models/addressModel");
+const Cart = require("../../models/cartModeal");
+const Order = require("../../models/orderModel");
+const OrderItems = require("../../models/orderItemModel");
+const Product = require("../../models/productModel");
+const { generateUniqueOrderID } = require("../../utils/generateUniqueId");
 const Crypto = require("crypto");
+const { productTax } = require("../../utils/constants");
+const Wallet = require("../../models/walletModel");
 
 /**
  * Get user's cart items
@@ -19,20 +21,33 @@ exports.getCartItems = asyncHandler(async (userId) => {
 /**
  * Calculate the total price of cart items
  */
-exports.calculateTotalPrice = (cartItems) => {
+exports.calculateTotalPrice = asyncHandler(async (cartItems, userid, payWithWallet) => {
+    const wallet = await Wallet.findOne({ user: userid });
     let subtotal = 0;
     for (const product of cartItems.products) {
         const productTotal = parseFloat(product.product.salePrice) * product.quantity;
         subtotal += productTotal;
     }
-    const tax = (subtotal * 12) / 100;
-    let shippingFee = 0;
-    if (subtotal > 2000) {
-        shippingFee = 0;
+    const tax = (subtotal * productTax) / 100;
+    let total;
+    let usedFromWallet = 0;
+    if (wallet && payWithWallet) {
+        total = subtotal + tax;
+        if (total <= wallet.balance) {
+            usedFromWallet = total;
+            wallet.balance -= total;
+            total = 0;
+        } else {
+            usedFromWallet = wallet.balance;
+            total = subtotal + tax - wallet.balance;
+            wallet.balance = 0;
+        }
+        return { subtotal, tax, total, usedFromWallet, walletBalance: wallet.balance };
+    } else {
+        total = subtotal + tax;
+        return { subtotal, tax, total, usedFromWallet, walletBalance: wallet ? wallet.balance : 0 };
     }
-    const total = subtotal + tax + shippingFee;
-    return { subtotal, tax, total };
-};
+});
 
 /**
  * Place an order
@@ -40,8 +55,8 @@ exports.calculateTotalPrice = (cartItems) => {
 exports.placeOrder = asyncHandler(async (userId, addressId, paymentMethod) => {
     const cartItems = await exports.getCartItems(userId);
 
-    if (!cartItems) {
-        throw new Error("Cart not found");
+    if (!cartItems && cartItems.length) {
+        throw new Error("Cart not found or empty");
     }
 
     const orders = [];
@@ -49,7 +64,7 @@ exports.placeOrder = asyncHandler(async (userId, addressId, paymentMethod) => {
 
     for (const cartItem of cartItems.products) {
         const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
-        const tax = (productTotal * 8) / 100;
+        const tax = (productTotal * productTax) / 100;
 
         total += productTotal + tax;
 
@@ -59,10 +74,6 @@ exports.placeOrder = asyncHandler(async (userId, addressId, paymentMethod) => {
             product: cartItem.product._id,
         });
         orders.push(item);
-        const updateProduct = await Product.findById(cartItem.product._id);
-        updateProduct.quantity -= cartItem.quantity;
-        updateProduct.sold += cartItem.quantity;
-        await updateProduct.save();
     }
 
     const address = await Address.findById(addressId);

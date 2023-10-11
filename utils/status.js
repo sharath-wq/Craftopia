@@ -4,5 +4,7 @@ module.exports = {
         shipped: "Shipped",
         delivered: "Delivered",
         cancelled: "Cancelled",
+        returnPending: "Return Requested",
+        returned: "Returned",
     },
 };

@@ -19,12 +19,17 @@
                         <div class="card-body text-start">
                             <h3 class="card-text">Order Number: <%= order.orderId %></h3>
                             <p class="card-text">
-                                Order Status:
-                                <strong
-                                    class="<% if (orderItem.status === 'Pending') { %> text-warning <% } else if (orderItem.status === 'Shipped') { %> text-primary <% } else if (orderItem.status === 'Cancelled') { %> text-danger <% } else if (orderItem.status === 'Delivered') { %> text-success <% } %>"
-                                >
-                                    <%= orderItem.status %>
-                                </strong>
+                                Order Status: <% if (orderItem.status === 'Pending') { %>
+                                <strong class="text-warning"><%= orderItem.status %></strong>
+                                <% } else if (orderItem.status === 'Shipped') { %>
+                                <strong class="text-primary"><%= orderItem.status %></strong>
+                                <% } else if (orderItem.status === 'Cancelled' ) { %>
+                                <strong class="text-danger"><%= orderItem.status %></strong>
+                                <% } else if (orderItem.status === 'Delivered') { %>
+                                <strong class="text-success"><%= orderItem.status %></strong>
+                                <% } else if (orderItem.status === 'Returned') { %>
+                                <strong class="text-info"><%= orderItem.status %></strong>
+                                <% } %>
                             </p>
                             <p class="card-text">
                                 Product Name: <strong class="text-dark"><%= orderItem.product.title %></strong>

@@ -81,10 +81,34 @@
                                         <th>Tax and Other Charges</th>
                                         <td><span class="amount">₹ <%= tax %></span></td>
                                     </tr>
+                                    <!-- Wallet -->
+                                    <tr class="wallet-payment">
+                                        <td colspan="2">
+                                            <div class="wallet-info d-flex justify-content-between align-items-center">
+                                                <div class="d-flex flex-column ml-10">
+                                                    <div class="d-flex align-items-center">
+                                                        <input type="checkbox" id="wallet" name="wallet" value="wallet"
+                                                        style="width: 20px; height: 20px; margin-right: 10px" <%=
+                                                        wallet.balance === 0 ? "disabled" : "" %> />
+                                                        <label for="wallet">Pay with Wallet:</label>
+                                                    </div>
+                                                    <small
+                                                        >Available Balance: ₹
+                                                        <span id="available-balance"
+                                                            ><%= wallet?.balance ?? "0" %></span
+                                                        ></small
+                                                    >
+                                                </div>
+                                                <span>- ₹<span id="wallet-amount" class="mr-90">0</span></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Wallet End -->
                                     <tr class="order-total">
                                         <th>Order Total</th>
                                         <td>
-                                            <strong><span class="amount">₹ <%= total %></span></strong>
+                                            <strong>₹<span id="total" class="amount"> <%= total %></span></strong>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -114,6 +138,15 @@
                                     >
                                         Pay with Razorypay
                                     </button>
+                                    <button
+                                        class="btn btn-success h-auto rounded-0 fw-bold"
+                                        style="padding: 12px; display: none"
+                                        type="button"
+                                        id="wlt-button"
+                                        value="submit"
+                                    >
+                                        Pay With Wallet
+                                    </button>
                                 </div>
                                 <% } else { %> <span class="text-danger">Please Add an Address</span> <% } %>
                             </div>
@@ -129,10 +162,13 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     let selectedAddressId = null;
+    const wallet = document.getElementById("wallet");
+
     document.addEventListener("DOMContentLoaded", () => {
         const form = document.querySelector("form");
         const rzpBtn = document.getElementById("rzp-button");
         const codBtn = document.getElementById("cod-button");
+        const wltBtn = document.getElementById("wlt-button");
         const addressRadios = document.querySelectorAll('input[name="addressId"]');
 
         const firstRadio = document.querySelector('input[name="addressId"]:checked');
@@ -148,7 +184,22 @@
 
         codBtn.addEventListener("click", handleCodButtonClick);
         rzpBtn.addEventListener("click", handleRzpButtonClick);
+        wltBtn.addEventListener("click", handleWltButtonClick);
+
+        handleWalletPayment();
     });
+
+    async function handleWltButtonClick(event) {
+        event.preventDefault();
+        if (await checkCartData()) {
+            const data = {
+                addressId: selectedAddressId,
+                payment_method: "wallet_payment",
+                isWallet: wallet.checked,
+            };
+            await placeOrder("/checkout/place-order", data);
+        }
+    }
 
     async function handleCodButtonClick(event) {
         event.preventDefault();
@@ -156,6 +207,7 @@
             const data = {
                 addressId: selectedAddressId,
                 payment_method: "cash_on_delivery",
+                isWallet: wallet.checked,
             };
             await placeOrder("/checkout/place-order", data);
         }
@@ -166,6 +218,7 @@
             const data = {
                 addressId: selectedAddressId,
                 payment_method: "online_payment",
+                isWallet: wallet.checked,
             };
             await placeOrder("/checkout/place-order", data);
         }
@@ -188,6 +241,8 @@
                 handleCodPayment(responseData);
             } else if (data.payment_method === "online_payment") {
                 handleRzpPayment(responseData);
+            } else if (data.payment_method === "wallet_payment") {
+                handleWltPayment(responseData);
             }
         } catch (error) {
             handleError(error);
@@ -243,6 +298,10 @@
         window.location.href = `/checkout/order-placed/${responseData.orderId}`;
     }
 
+    function handleWltPayment(responseData) {
+        window.location.href = `/checkout/order-placed/${responseData.orderId}`;
+    }
+
     function handleRzpPayment(responseData) {
         const options = {
             key: "rzp_test_4ruq7ozLCdsikN",
@@ -253,7 +312,7 @@
             image: "https://example.com/your_logo.png",
             order_id: responseData.order.id,
             handler: function (response) {
-                handleSuccessPayment(response, responseData.orderId);
+                handleSuccessPayment(response, responseData);
             },
             prefill: {
                 name: responseData.user.firstName,
@@ -282,12 +341,14 @@
         rzp1.open();
     }
 
-    function handleSuccessPayment(response, orderId) {
+    function handleSuccessPayment(response, responseData) {
         const postData = {
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
             razorpay_signature: response.razorpay_signature,
-            orderId: orderId,
+            orderId: responseData.orderId,
+            userId: responseData.user._id,
+            walletAmount: response.walletamount,
         };
 
         fetch(`/checkout/verify-payment`, {
@@ -333,5 +394,50 @@
 
     function handleError(error) {
         console.error("Error:", error);
+    }
+
+    function handleWalletPayment() {
+        wallet.removeEventListener("change", handlePaymentChange);
+        wallet.addEventListener("change", handlePaymentChange);
+    }
+
+    function handlePaymentChange() {
+        const totalAmount = document.getElementById("total");
+        const walletAmount = document.getElementById("wallet-amount");
+        const availableBalance = document.getElementById("available-balance");
+        const codBtn = document.getElementById("cod-button");
+        const wltBtn = document.getElementById("wlt-button");
+        const rzpBtn = document.getElementById("rzp-button");
+        const payWithWallet = this.checked ? true : false;
+
+        if (payWithWallet) {
+            codBtn.classList.add("disabled");
+        } else {
+            codBtn.classList.remove("disabled");
+        }
+
+        fetch("/checkout/update", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ payWithWallet }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                totalAmount.innerText = data.total.toFixed(2);
+                walletAmount.innerText = data.usedFromWallet.toFixed(2);
+                availableBalance.innerText = data.walletBalance.toFixed(2);
+                if (data.total === 0) {
+                    wltBtn.style.display = "grid";
+                    rzpBtn.style.display = "none";
+                } else {
+                    wltBtn.style.display = "none";
+                    rzpBtn.style.display = "grid";
+                }
+            })
+            .catch((error) => {
+                console.error("Error updating checkout page:", error);
+            });
     }
 </script>

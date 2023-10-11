@@ -6,7 +6,8 @@ const Order = require("../../models/orderModel");
 const moment = require("moment");
 const Product = require("../../models/productModel");
 const numeral = require("numeral");
-const status = require("../../utils/status");
+const { status } = require("../../utils/status");
+const OrderItem = require("../../models/orderItemModel");
 
 /**
  * Home Page Route
@@ -45,7 +46,9 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
 
         //
         let totalSalesAmount = recentOrders.reduce((total, order) => {
-            const nonCancelledItems = order.orderItems.filter((item) => item.status !== "Cancelled");
+            const nonCancelledItems = order.orderItems.filter(
+                (item) => item.status === status.delivered || item.status === status.shipped
+            );
 
             if (nonCancelledItems.length > 0) {
                 const totalPrice = nonCancelledItems.reduce((acc, item) => {
@@ -56,7 +59,6 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
                 return total;
             }
         }, 0);
-        //
 
         totalSalesAmount = numeral(totalSalesAmount).format("0.0a");
 

@@ -46,6 +46,8 @@
         <%- body %>
         <!-- Main End -->
 
+        <div class="toast" id="miuiAlert">this is a alert</div>
+
         <!-- Footer  -->
         <%- include('./partials/footer.ejs') %>
         <!-- Footer End -->
@@ -53,13 +55,14 @@
         <!-- Model  -->
         <%- include('./partials/modal.ejs') %>
         <!-- Model End -->
-        <% } else { %> <%- body %> <% } %>
 
         <div
             id="cart-message"
             class="position-fixed p-2 rounded"
             style="bottom: 20px; right: 20px; display: none; z-index: 999"
         ></div>
+
+        <% } else { %> <%- body %> <% } %>
 
         <script>
             // Function to hide the flash message after a certain time (e.g., 5 seconds)

@@ -188,7 +188,8 @@
                                                             class="btn-hover list-btn-style"
                                                             onclick="addToCart(`<%= product._id %>`)"
                                                             >add to cart</a
-                                                        >
+                                                                   <%- include('../../partials/flash-message.ejs') %>
+     >
                                                     </div>
                                                     <div class="product-list-wishlist">
                                                         <a

@@ -15,6 +15,7 @@ router.get("/address", userControler.addresspage);
 router.get("/address/add", userControler.addAddresspage);
 router.get("/address/edit/:id", userControler.editAddresspage);
 router.get("/profile/send-email-otp", userControler.sendEmail);
+router.get("/profile/wallet/:id", userControler.walletTransactionspage);
 
 router.post("/address/add", userControler.addAddress);
 router.post("/review/add/:id", userControler.addReview);
