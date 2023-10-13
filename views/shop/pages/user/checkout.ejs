@@ -81,6 +81,13 @@
                                         <th>Tax and Other Charges</th>
                                         <td><span class="amount">₹ <%= tax %></span></td>
                                     </tr>
+
+                                    <% if (coupon) { %>
+                                    <tr class="cart-tax">
+                                        <th><%= coupon.code %></th>
+                                        <td><span class="amount">₹ <%= discount %></span></td>
+                                    </tr>
+                                    <% } %>
                                     <!-- Wallet -->
                                     <tr class="wallet-payment">
                                         <td colspan="2">
@@ -108,7 +115,9 @@
                                     <tr class="order-total">
                                         <th>Order Total</th>
                                         <td>
-                                            <strong>₹<span id="total" class="amount"> <%= total %></span></strong>
+                                            <strong
+                                                >₹<span id="total" class="amount"> <%= total.toFixed(2) %></span></strong
+                                            >
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -187,6 +196,7 @@
         wltBtn.addEventListener("click", handleWltButtonClick);
 
         handleWalletPayment();
+        handleCouponChange();
     });
 
     async function handleWltButtonClick(event) {
@@ -288,6 +298,29 @@
                 proceedToCheckout();
             }
         });
+    }
+
+    async function handleCouponChange() {
+        try {
+            fetch("/checkout/coupon/", {
+                method: "POST",
+                body: JSON.stringify({ code: sanitizedValue }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                })
+                .then((data) => {
+                    console.log(data);
+                })
+                .catch((error) => {
+                    console.error("Fetch error:", error);
+                });
+        } catch (error) {}
     }
 
     function proceedToCheckout() {

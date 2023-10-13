@@ -12,6 +12,7 @@ const { incrementQuantity, decrementQuantity, calculateCartTotals } = require(".
 exports.cartpage = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const messages = req.flash();
+    const coupon = req.session.coupon;
     try {
         const cart = await Cart.findOne({ user: userId })
             .populate({
@@ -24,8 +25,11 @@ exports.cartpage = asyncHandler(async (req, res) => {
             .exec();
 
         if (cart) {
-            const { subtotal, total, tax, shippingFee } = calculateCartTotals(cart.products);
-
+            const { subtotal, total, tax, discount } = calculateCartTotals(cart.products, coupon);
+            let couponMessage = {};
+            if (!coupon) {
+                couponMessage = { status: "text-info", message: "Try FLAT100 | PERCENT20" };
+            }
             res.render("shop/pages/user/cart", {
                 title: "Cart",
                 page: "cart",
@@ -34,7 +38,9 @@ exports.cartpage = asyncHandler(async (req, res) => {
                 subtotal,
                 total,
                 tax,
-                shippingFee,
+                coupon,
+                discount,
+                couponMessage,
             });
         } else {
             res.render("shop/pages/user/cart", { title: "Cart", page: "cart", messages, cartItems: null });

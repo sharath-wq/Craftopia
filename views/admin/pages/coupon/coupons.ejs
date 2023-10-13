@@ -11,28 +11,31 @@
                                 <th>Coupon Type</th>
                                 <th>Coupon Amount</th>
                                 <th>Description</th>
-                                <th>Usage Limit</th>
+                                <th>Min Amount</th>
+                                <th>Max Amount</th>
                                 <th>Expiry Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <% coupons?.forEach(coupon => { %>
                             <tr>
-                                <td>Coupon123</td>
-                                <td>Percentage Off</td>
-                                <td>$10.00</td>
-                                <td>Get 10% off on all products</td>
-                                <td>10</td>
-                                <td>2023-12-31</td>
+                                <td class="text-center"><%= coupon?.code %></td>
+                                <td class="text-center"><%= coupon?.type.toUpperCase() %></td>
+                                <td class="text-center"><%= coupon?.value %></td>
+                                <td class="text-center"><%= coupon?.description %></td>
+                                <td class="text-center"><%= coupon?.minAmount %></td>
+                                <td class="text-center"><%= coupon?.maxAmount %></td>
+                                <td class="text-center">
+                                    <%= new Date(coupon?.expiryDate).toLocaleDateString('en-US', { year: 'numeric', month:
+                                    'long', day: 'numeric' }) %>
+                                </td>
+                                <td class="text-center">
+                                    <a href="" class="btn btn-sm btn-primary"><i class="ti ti-edit text-white"></i></a>
+                                    <a class="btn btn-sm btn-danger"><i class="ti ti-trash text-white"></i></a>
+                                </td>
                             </tr>
-                            <tr>
-                                <td>SAVE20</td>
-                                <td>Fixed Amount Off</td>
-                                <td>$20.00</td>
-                                <td>Save $20 on your purchase</td>
-                                <td>5</td>
-                                <td>2023-09-30</td>
-                            </tr>
-                            <!-- Add more coupon rows as needed -->
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>

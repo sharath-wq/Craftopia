@@ -1,18 +1,35 @@
 const Product = require("../../models/productModel");
 const Cart = require("../../models/cartModeal");
+const { productTax } = require("../../utils/constants");
 
-function calculateCartTotals(products) {
+function calculateCartTotals(products, coupon) {
     let subtotal = 0;
     for (const product of products) {
         const productTotal = parseFloat(product.product.salePrice) * product.quantity;
         subtotal += productTotal;
     }
 
-    const tax = (subtotal * 12) / 100;
+    const tax = (subtotal * productTax) / 100;
 
-    const total = subtotal + tax;
+    let total = subtotal + tax;
+    let discount = 0;
 
-    return { subtotal, total, tax };
+    if (coupon) {
+        if (coupon.type === "percentage") {
+            discount = ((total * coupon.value) / 100).toFixed(2);
+            if (discount > coupon.maxAmount) {
+                discount = coupon.maxAmount;
+                total -= discount;
+            } else {
+                total -= discount;
+            }
+        } else if (coupon.type === "fixedAmount") {
+            discount = coupon.value;
+            total -= discount;
+        }
+    }
+
+    return { subtotal, total, tax, discount };
 }
 
 const findCartItem = async (userId, productId) => {
@@ -48,8 +65,8 @@ const incrementQuantity = async (userId, productId, res) => {
             quantity: foundProduct.quantity,
             productTotal,
             status: "success",
-            subtotal: subtotal,
-            total: total,
+            subtotal: subtotal.toFixed(2),
+            total: total.toFixed(2),
             tax: tax,
         });
     } else {
@@ -61,8 +78,8 @@ const incrementQuantity = async (userId, productId, res) => {
             status: "danger",
             quantity: foundProduct.quantity,
             productTotal,
-            subtotal: subtotal,
-            total: total,
+            subtotal: subtotal.toFixed(2),
+            total: total.toFixed(2),
             tax: tax,
         });
     }
