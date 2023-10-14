@@ -1,18 +1,32 @@
 const Product = require("../../models/productModel");
 const Cart = require("../../models/cartModeal");
 
-function calculateCartTotals(products) {
+function calculateCartTotals(products, coupon) {
     let subtotal = 0;
     for (const product of products) {
         const productTotal = parseFloat(product.product.salePrice) * product.quantity;
         subtotal += productTotal;
     }
 
-    const tax = (subtotal * 12) / 100;
+    let total = subtotal;
+    let discount = 0;
 
-    const total = subtotal + tax;
+    if (coupon) {
+        if (coupon.type === "percentage") {
+            discount = ((total * coupon.value) / 100).toFixed(2);
+            if (discount > coupon.maxAmount) {
+                discount = coupon.maxAmount;
+                total -= discount;
+            } else {
+                total -= discount;
+            }
+        } else if (coupon.type === "fixedAmount") {
+            discount = coupon.value;
+            total -= discount;
+        }
+    }
 
-    return { subtotal, total, tax };
+    return { subtotal, total, discount };
 }
 
 const findCartItem = async (userId, productId) => {
@@ -41,29 +55,27 @@ const incrementQuantity = async (userId, productId, res) => {
 
         const productTotal = product.salePrice * foundProduct.quantity;
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
 
         res.json({
             message: "Quantity Increased",
             quantity: foundProduct.quantity,
             productTotal,
             status: "success",
-            subtotal: subtotal,
-            total: total,
-            tax: tax,
+            subtotal: subtotal.toFixed(2),
+            total: total.toFixed(2),
         });
     } else {
         const productTotal = product.salePrice * foundProduct.quantity;
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
         res.json({
             message: "Out of Stock",
             status: "danger",
             quantity: foundProduct.quantity,
             productTotal,
-            subtotal: subtotal,
-            total: total,
-            tax: tax,
+            subtotal: subtotal.toFixed(2),
+            total: total.toFixed(2),
         });
     }
 };
@@ -84,7 +96,7 @@ const decrementQuantity = async (userId, productId, res) => {
         await updatedCart.save();
 
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
 
         res.json({
             message: "Quantity Decreased",
@@ -93,18 +105,16 @@ const decrementQuantity = async (userId, productId, res) => {
             productTotal: product.salePrice * productToDecrement.quantity,
             subtotal,
             total,
-            tax,
         });
     } else {
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
         const product = await findProductById(productId);
         res.json({
             message: "Product not found in the cart.",
             status: "error",
             subtotal,
             total,
-            tax,
             productTotal: product.salePrice * productToDecrement.quantity,
         });
     }

@@ -9,7 +9,7 @@ function addToCart(id) {
     })
         .then((response) => {
             if (response.ok) {
-                return response.json(); // Assuming server sends JSON
+                return response.json();
             } else {
                 console.error("Failed");
             }

@@ -1,443 +1,615 @@
 <!-- Checkout Area Start -->
+
 <div class="checkout-area ptb-100">
     <div class="container">
-        <form action="/checkout/place-order" method="post">
+        <div class="row">
+            <!--  -->
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-12">
-                    <div class="checkbox-form">
-                        <div class="d-flex">
-                            <h3>Select Address</h3>
-                            <a href="/user/address/add" class="btn btn-sm btn-dark" title="Add New Address">Add</a>
+                <div class="col-lg-6 col-md-12 col-12 mb-10">
+                    <div class="coupon-all">
+                        <div class="coupon">
+                            <button id="rmCoupon" type="button" class="btn btn-sm">
+                                <i class="ti ti-close text-danger fw-bolder"></i>
+                            </button>
+                            <input
+                                id="coupon_code"
+                                class="input-text"
+                                name="coupon_code"
+                                value="<%= coupon?.code %>"
+                                placeholder="Coupon code"
+                                type="text"
+                                oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();"
+                            />
+                            <input class="button" name="apply_coupon" id="couponBtn" type="button" value="Apply coupon" />
                         </div>
-
-                        <div class="different-address">
-                            <div id="" class="row">
-                                <% if (address && address.length) { %> <% address.forEach((item, index) => { %>
-                                <div class="col-md-8 mb-3">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="addressId" id="address<%=
-                                                index %>" value="<%= item._id %>" required <%= index === 0 ? "checked" : ""
-                                                %> />
-                                                <label class="form-check-label" for="address<%= index %>">
-                                                    <h5 class="card-title"><%= item.title %></h5>
-                                                    <p class="card-text">
-                                                        <%= item.street %>, <%= item.city %>, <%= item.state %>, <%=
-                                                        item.pincode %>
-                                                    </p>
-                                                    <p class="card-text">Mobile: +91 <%= item.mobile %></p>
-                                                </label>
+                    </div>
+                </div>
+                <h6 class="mt-2 text-success" id="couponError"><%= coupon ? "" : couponMessage?.message %></h6>
+            </div>
+            <!--   -->
+            <form action="/checkout/place-order" method="post">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="checkbox-form">
+                            <div class="d-flex">
+                                <h3>Select Address</h3>
+                                <a href="/user/address/add" class="btn btn-sm btn-dark" title="Add New Address">Add</a>
+                            </div>
+                            <div class="different-address">
+                                <div id="" class="row">
+                                    <% if (address && address.length) { %> <% address.forEach((item, index) => { %>
+                                    <div class="col-md-8 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="addressId"
+                                                    id="address<%= index %>" value="<%= item._id %>" required <%= index ===
+                                                    0 ? "checked" : "" %> />
+                                                    <label class="form-check-label" for="address<%= index %>">
+                                                        <h5 class="card-title"><%= item.title %></h5>
+                                                        <p class="card-text">
+                                                            <%= item.street %>, <%= item.city %>, <%= item.state %>, <%=
+                                                            item.pincode %>
+                                                        </p>
+                                                        <p class="card-text">Mobile: +91 <%= item.mobile %></p>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <% }) %> <% } else { %> No Address Found
+                                    <a class="btn btn-dark h-auto" href="/user/address/add">Add Address</a>
+                                    <% } %>
                                 </div>
-                                <% }) %> <% } else { %> No Address Found
-                                <a class="btn btn-dark h-auto" href="/user/address/add">Add Address</a>
-                                <% } %>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-12 col-12">
-                    <div class="your-order">
-                        <h3>Your order</h3>
-                        <input
-                            type="hidden"
-                            id="originalCartData"
-                            name="currentCartData"
-                            value="<%= JSON.stringify(cartData) %>"
-                        />
-                        <div class="your-order-table table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th class="product-name">Product</th>
-                                        <th class="product-total">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% product.forEach(item => { %>
-                                    <tr class="cart_item">
-                                        <td class="product-name">
-                                            <% if (item.product.title.length > 36) { %>
-                                            <small><%= item.product.title.substring(0, 36) + '...' %></small> <% } else { %>
-                                            <small><%= item.product.title %></small> <% } %>
-                                            <strong class="product-quantity"> × <%= item.quantity %></strong>
-                                        </td>
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="your-order">
+                            <h3>Your order</h3>
+                            <input
+                                type="hidden"
+                                id="originalCartData"
+                                name="currentCartData"
+                                value="<%= JSON.stringify(cartData) %>"
+                            />
+                            <div class="your-order-table table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th class="product-name">Product</th>
+                                            <th class="product-total">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% product.forEach(item => { %>
+                                        <tr class="cart_item">
+                                            <td class="product-name">
+                                                <% if (item.product.title.length > 36) { %>
+                                                <small><%= item.product.title.substring(0, 36) + '...' %></small> <% } else
+                                                { %> <small><%= item.product.title %></small> <% } %>
+                                                <strong class="product-quantity"> × <%= item.quantity %></strong>
+                                            </td>
 
-                                        <td class="product-total">
-                                            <span class="amount">₹ <%= item.product.salePrice * item.quantity %></span>
-                                        </td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-                                <tfoot>
-                                    <tr class="cart-subtotal">
-                                        <th>Cart Subtotal</th>
-                                        <td><span class="amount">₹ <%= subtotal %></span></td>
-                                    </tr>
-                                    <tr class="cart-tax">
-                                        <th>Tax and Other Charges</th>
-                                        <td><span class="amount">₹ <%= tax %></span></td>
-                                    </tr>
-                                    <!-- Wallet -->
-                                    <tr class="wallet-payment">
-                                        <td colspan="2">
-                                            <div class="wallet-info d-flex justify-content-between align-items-center">
-                                                <div class="d-flex flex-column ml-10">
-                                                    <div class="d-flex align-items-center">
-                                                        <input type="checkbox" id="wallet" name="wallet" value="wallet"
-                                                        style="width: 20px; height: 20px; margin-right: 10px" <%=
-                                                        wallet.balance === 0 ? "disabled" : "" %> />
-                                                        <label for="wallet">Pay with Wallet:</label>
+                                            <td class="product-total">
+                                                <span class="amount">₹ <%= item.product.salePrice * item.quantity %></span>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="cart-subtotal">
+                                            <th>Cart Subtotal</th>
+                                            <td><span class="amount">₹ <%= subtotal %></span></td>
+                                        </tr>
+
+                                        <tr class="cart-discount">
+                                            <th>Discount</th>
+                                            <td>₹<span class="amount" id="discount"> <%= discount %></span></td>
+                                        </tr>
+
+                                        <!-- Wallet -->
+                                        <tr class="wallet-payment">
+                                            <td colspan="2">
+                                                <div class="wallet-info d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex flex-column ml-10">
+                                                        <div class="d-flex align-items-center">
+                                                            <input type="checkbox" id="wallet" name="wallet" value="wallet"
+                                                            style="width: 20px; height: 20px; margin-right: 10px" <%=
+                                                            wallet.balance === 0 ? "disabled" : "" %> />
+                                                            <label for="wallet">Pay with Wallet:</label>
+                                                        </div>
+                                                        <small
+                                                            >Available Balance: ₹
+                                                            <span id="available-balance"
+                                                                ><%= wallet?.balance ?? "0" %></span
+                                                            ></small
+                                                        >
                                                     </div>
-                                                    <small
-                                                        >Available Balance: ₹
-                                                        <span id="available-balance"
-                                                            ><%= wallet?.balance ?? "0" %></span
-                                                        ></small
-                                                    >
+                                                    <span>- ₹<span id="wallet-amount" class="mr-90">0</span></span>
                                                 </div>
-                                                <span>- ₹<span id="wallet-amount" class="mr-90">0</span></span>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
 
-                                    <!-- Wallet End -->
-                                    <tr class="order-total">
-                                        <th>Order Total</th>
-                                        <td>
-                                            <strong>₹<span id="total" class="amount"> <%= total %></span></strong>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div class="payment-method">
-                            <div class="payment-accordion">
-                                <div class="payment-method">
-                                    <label for="payment-method-select">Select Payment Method:</label>
+                                        <!-- Wallet End -->
+                                        <tr class="order-total">
+                                            <th>Order Total</th>
+                                            <td>
+                                                <strong
+                                                    >₹<span id="total" class="amount">
+                                                        <%= total.toFixed(2) %></span
+                                                    ></strong
+                                                >
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-accordion">
+                                    <div class="payment-method">
+                                        <label for="payment-method-select">Select Payment Method:</label>
+                                    </div>
+                                    <% if (address && address.length) { %>
+                                    <div class="order-button-payment d-flex flex-column gap-2">
+                                        <button
+                                            type="button"
+                                            class="btn btn-dark h-auto rounded-0 fw-bold"
+                                            style="padding: 12px"
+                                            id="cod-button"
+                                        >
+                                            CASH ON DELIVERY
+                                        </button>
+                                        <button
+                                            class="btn btn-primary h-auto rounded-0 fw-bold"
+                                            style="padding: 12px"
+                                            type="button"
+                                            id="rzp-button"
+                                            value="submit"
+                                        >
+                                            Pay with Razorypay
+                                        </button>
+                                        <button
+                                            class="btn btn-success h-auto rounded-0 fw-bold"
+                                            style="padding: 12px; display: none"
+                                            type="button"
+                                            id="wlt-button"
+                                            value="submit"
+                                        >
+                                            Pay With Wallet
+                                        </button>
+                                    </div>
+                                    <% } else { %> <span class="text-danger">Please Add an Address</span> <% } %>
                                 </div>
-                                <% if (address && address.length) { %>
-                                <div class="order-button-payment d-flex flex-column gap-2">
-                                    <button
-                                        type="button"
-                                        class="btn btn-dark h-auto rounded-0 fw-bold"
-                                        style="padding: 12px"
-                                        id="cod-button"
-                                    >
-                                        CASH ON DELIVERY
-                                    </button>
-                                    <button
-                                        class="btn btn-primary h-auto rounded-0 fw-bold"
-                                        style="padding: 12px"
-                                        type="button"
-                                        id="rzp-button"
-                                        value="submit"
-                                    >
-                                        Pay with Razorypay
-                                    </button>
-                                    <button
-                                        class="btn btn-success h-auto rounded-0 fw-bold"
-                                        style="padding: 12px; display: none"
-                                        type="button"
-                                        id="wlt-button"
-                                        value="submit"
-                                    >
-                                        Pay With Wallet
-                                    </button>
-                                </div>
-                                <% } else { %> <span class="text-danger">Please Add an Address</span> <% } %>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Checkout Area End -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    let selectedAddressId = null;
-    const wallet = document.getElementById("wallet");
+    <!-- Checkout Area End -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        let selectedAddressId = null;
+        const wallet = document.getElementById("wallet");
+        const couponBtn = document.getElementById("couponBtn");
+        const rmCoupon = document.getElementById("rmCoupon");
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const form = document.querySelector("form");
-        const rzpBtn = document.getElementById("rzp-button");
-        const codBtn = document.getElementById("cod-button");
-        const wltBtn = document.getElementById("wlt-button");
-        const addressRadios = document.querySelectorAll('input[name="addressId"]');
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
+            const rzpBtn = document.getElementById("rzp-button");
+            const codBtn = document.getElementById("cod-button");
+            const wltBtn = document.getElementById("wlt-button");
+            const addressRadios = document.querySelectorAll('input[name="addressId"]');
+            const isCoupon = document.getElementById("coupon_code");
 
-        const firstRadio = document.querySelector('input[name="addressId"]:checked');
-        if (firstRadio) {
-            selectedAddressId = firstRadio.value;
-        }
+            const firstRadio = document.querySelector('input[name="addressId"]:checked');
+            if (firstRadio) {
+                selectedAddressId = firstRadio.value;
+            }
 
-        addressRadios.forEach((radio) => {
-            radio.addEventListener("change", (event) => {
-                selectedAddressId = event.target.value;
+            addressRadios.forEach((radio) => {
+                radio.addEventListener("change", (event) => {
+                    selectedAddressId = event.target.value;
+                });
             });
+
+            codBtn.addEventListener("click", handleCodButtonClick);
+            rzpBtn.addEventListener("click", handleRzpButtonClick);
+            wltBtn.addEventListener("click", handleWltButtonClick);
+            couponBtn.addEventListener("click", handleCouponBtnClick);
+            rmCoupon.addEventListener("click", handleRemoveCouponBtnClick);
+
+            handleWalletPayment();
+
+            if (isCoupon.value) {
+                codBtn.classList.add("disabled");
+                handleCouponChange();
+            }
+
+            const couponElement = document.querySelector("#coupon_code");
+            handleCouponBtnClick("onLoad");
         });
 
-        codBtn.addEventListener("click", handleCodButtonClick);
-        rzpBtn.addEventListener("click", handleRzpButtonClick);
-        wltBtn.addEventListener("click", handleWltButtonClick);
-
-        handleWalletPayment();
-    });
-
-    async function handleWltButtonClick(event) {
-        event.preventDefault();
-        if (await checkCartData()) {
-            const data = {
-                addressId: selectedAddressId,
-                payment_method: "wallet_payment",
-                isWallet: wallet.checked,
-            };
-            await placeOrder("/checkout/place-order", data);
+        async function handleWltButtonClick(event) {
+            event.preventDefault();
+            if (await checkCartData()) {
+                const data = {
+                    addressId: selectedAddressId,
+                    payment_method: "wallet_payment",
+                    isWallet: wallet.checked,
+                };
+                await placeOrder("/checkout/place-order", data);
+            }
         }
-    }
 
-    async function handleCodButtonClick(event) {
-        event.preventDefault();
-        if (await checkCartData()) {
-            const data = {
-                addressId: selectedAddressId,
-                payment_method: "cash_on_delivery",
-                isWallet: wallet.checked,
-            };
-            await placeOrder("/checkout/place-order", data);
+        async function handleCodButtonClick(event) {
+            event.preventDefault();
+            if (await checkCartData()) {
+                const data = {
+                    addressId: selectedAddressId,
+                    payment_method: "cash_on_delivery",
+                    isWallet: wallet.checked,
+                };
+                await placeOrder("/checkout/place-order", data);
+            }
         }
-    }
 
-    async function handleRzpButtonClick() {
-        if (await checkCartData()) {
-            const data = {
-                addressId: selectedAddressId,
-                payment_method: "online_payment",
-                isWallet: wallet.checked,
-            };
-            await placeOrder("/checkout/place-order", data);
+        async function handleRzpButtonClick() {
+            if ((await checkCartData()) && (await checkCoupon())) {
+                const data = {
+                    addressId: selectedAddressId,
+                    payment_method: "online_payment",
+                    isWallet: wallet.checked,
+                };
+                await placeOrder("/checkout/place-order", data);
+            }
         }
-    }
 
-    async function placeOrder(url, data) {
-        try {
-            const response = await fetch(url, {
+        async function placeOrder(url, data) {
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const responseData = await response.json();
+                if (data.payment_method === "cash_on_delivery") {
+                    handleCodPayment(responseData);
+                } else if (data.payment_method === "online_payment") {
+                    handleRzpPayment(responseData);
+                } else if (data.payment_method === "wallet_payment") {
+                    handleWltPayment(responseData);
+                }
+            } catch (error) {
+                handleError(error);
+            }
+        }
+
+        async function checkCartData() {
+            try {
+                const originalCartData = JSON.parse(document.getElementById("originalCartData").value);
+                const response = await fetch("/checkout/get");
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                const currentCartData = await response.json();
+
+                if (currentCartData !== null && compareJSONStrings(originalCartData, currentCartData)) {
+                    showCartConfirmation();
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                handleError(error);
+            }
+        }
+
+        async function checkCoupon() {
+            const code = document.getElementById("code");
+            if (code) {
+                try {
+                    fetch("/checkout/coupon/", {
+                        method: "POST",
+                        body: JSON.stringify({ code: code.value }),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                        })
+                        .then((data) => {
+                            if (data.status === "danger") {
+                            } else if (data.status === "success") {
+                            }
+                            console.log(data);
+                        })
+                        .catch((error) => {
+                            console.error("Fetch error:", error);
+                        });
+                } catch (error) {
+                    handleError(error);
+                }
+            } else {
+                return true;
+            }
+        }
+
+        function compareJSONStrings(jsonString1, jsonString2) {
+            return JSON.stringify(jsonString1) !== JSON.stringify(jsonString2);
+        }
+
+        function showCartConfirmation() {
+            Swal.fire({
+                title: "Cart Confirmation",
+                text: "Your cart has changed. Do you want to reload the page?",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Reload",
+                cancelButtonText: "Close",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    proceedToCheckout();
+                }
+            });
+        }
+
+        async function handleCouponChange() {
+            const code = document.getElementById("code");
+            const coupon = document.getElementById("coupnSection");
+            const total = document.getElementById("total");
+
+            try {
+                fetch("/checkout/coupon/", {
+                    method: "POST",
+                    body: JSON.stringify({ code: code.textContent }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                    })
+                    .then((data) => {
+                        if (data.status === "danger") {
+                            coupon.classList.add("text-danger");
+                            coupon.style.textDecoration = "line-through";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Fetch error:", error);
+                    });
+            } catch (error) {}
+        }
+
+        function proceedToCheckout() {
+            window.location.reload();
+        }
+
+        function handleCodPayment(responseData) {
+            window.location.href = `/checkout/order-placed/${responseData.orderId}`;
+        }
+
+        function handleWltPayment(responseData) {
+            window.location.href = `/checkout/order-placed/${responseData.orderId}`;
+        }
+
+        function handleRzpPayment(responseData) {
+            const options = {
+                key: "rzp_test_4ruq7ozLCdsikN",
+                amount: responseData.order.totalPrice * 100,
+                currency: "INR",
+                name: "Craftopia",
+                description: "Test Transaction",
+                image: "https://example.com/your_logo.png",
+                order_id: responseData.order.id,
+                handler: function (response) {
+                    handleSuccessPayment(response, responseData);
+                },
+                prefill: {
+                    name: responseData.user.firstName,
+                    email: responseData.user.email,
+                    contact: responseData.user.mobile,
+                },
+                notes: {
+                    address: "Razorpay Corporate Office",
+                },
+                theme: {
+                    color: "#000000",
+                },
+                modal: {
+                    ondismiss: function () {
+                        handlePaymentFailure(responseData.orderId);
+                    },
+                },
+            };
+
+            const rzp1 = new Razorpay(options);
+
+            rzp1.on("payment.failed", function (response) {
+                handlePaymentFailure(responseData.orderId);
+            });
+
+            rzp1.open();
+        }
+
+        function handleSuccessPayment(response, responseData) {
+            const postData = {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                orderId: responseData.orderId,
+                userId: responseData.user._id,
+                walletAmount: response.walletamount,
+            };
+
+            fetch(`/checkout/verify-payment`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(data),
-            });
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            const responseData = await response.json();
-            if (data.payment_method === "cash_on_delivery") {
-                handleCodPayment(responseData);
-            } else if (data.payment_method === "online_payment") {
-                handleRzpPayment(responseData);
-            } else if (data.payment_method === "wallet_payment") {
-                handleWltPayment(responseData);
-            }
-        } catch (error) {
-            handleError(error);
+                body: JSON.stringify(postData),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error("Error fetching data");
+                    }
+                })
+                .then((data) => {
+                    window.location.href = `/checkout/order-placed/${data.orderId}`;
+                })
+                .catch((error) => {
+                    handleError(error);
+                });
         }
-    }
 
-    async function checkCartData() {
-        try {
-            const originalCartData = JSON.parse(document.getElementById("originalCartData").value);
-            const response = await fetch("/checkout/get");
+        async function handlePaymentFailure(orderId) {
+            try {
+                const cancelOrderUrl = `/orders/${orderId}`;
+                const requestOptions = {
+                    method: "PUT",
+                };
+                const response = await fetch(cancelOrderUrl, requestOptions);
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const currentCartData = await response.json();
-
-            if (currentCartData !== null && compareJSONStrings(originalCartData, currentCartData)) {
-                showCartConfirmation();
-                return false;
-            }
-
-            return true;
-        } catch (error) {
-            handleError(error);
-        }
-    }
-
-    function compareJSONStrings(jsonString1, jsonString2) {
-        return JSON.stringify(jsonString1) !== JSON.stringify(jsonString2);
-    }
-
-    function showCartConfirmation() {
-        Swal.fire({
-            title: "Cart Confirmation",
-            text: "Your cart has changed. Do you want to reload the page?",
-            icon: "info",
-            showCancelButton: true,
-            confirmButtonText: "Reload",
-            cancelButtonText: "Close",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                proceedToCheckout();
-            }
-        });
-    }
-
-    function proceedToCheckout() {
-        window.location.reload();
-    }
-
-    function handleCodPayment(responseData) {
-        window.location.href = `/checkout/order-placed/${responseData.orderId}`;
-    }
-
-    function handleWltPayment(responseData) {
-        window.location.href = `/checkout/order-placed/${responseData.orderId}`;
-    }
-
-    function handleRzpPayment(responseData) {
-        const options = {
-            key: "rzp_test_4ruq7ozLCdsikN",
-            amount: responseData.order.totalPrice * 100,
-            currency: "INR",
-            name: "Craftopia",
-            description: "Test Transaction",
-            image: "https://example.com/your_logo.png",
-            order_id: responseData.order.id,
-            handler: function (response) {
-                handleSuccessPayment(response, responseData);
-            },
-            prefill: {
-                name: responseData.user.firstName,
-                email: responseData.user.email,
-                contact: responseData.user.mobile,
-            },
-            notes: {
-                address: "Razorpay Corporate Office",
-            },
-            theme: {
-                color: "#000000",
-            },
-            modal: {
-                ondismiss: function () {
-                    handlePaymentFailure(responseData.orderId);
-                },
-            },
-        };
-
-        const rzp1 = new Razorpay(options);
-
-        rzp1.on("payment.failed", function (response) {
-            handlePaymentFailure(responseData.orderId);
-        });
-
-        rzp1.open();
-    }
-
-    function handleSuccessPayment(response, responseData) {
-        const postData = {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            orderId: responseData.orderId,
-            userId: responseData.user._id,
-            walletAmount: response.walletamount,
-        };
-
-        fetch(`/checkout/verify-payment`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postData),
-        })
-            .then((response) => {
                 if (response.ok) {
+                    console.log("Order cancellation request succeeded.");
                     return response.json();
                 } else {
-                    throw new Error("Error fetching data");
+                    console.error("Order cancellation request failed.");
                 }
-            })
-            .then((data) => {
-                window.location.href = `/checkout/order-placed/${data.orderId}`;
-            })
-            .catch((error) => {
+            } catch (error) {
                 handleError(error);
-            });
-    }
-
-    async function handlePaymentFailure(orderId) {
-        try {
-            const cancelOrderUrl = `/orders/${orderId}`;
-            const requestOptions = {
-                method: "PUT",
-            };
-            const response = await fetch(cancelOrderUrl, requestOptions);
-
-            if (response.ok) {
-                console.log("Order cancellation request succeeded.");
-                return response.json();
-            } else {
-                console.error("Order cancellation request failed.");
             }
-        } catch (error) {
-            handleError(error);
-        }
-    }
-
-    function handleError(error) {
-        console.error("Error:", error);
-    }
-
-    function handleWalletPayment() {
-        wallet.removeEventListener("change", handlePaymentChange);
-        wallet.addEventListener("change", handlePaymentChange);
-    }
-
-    function handlePaymentChange() {
-        const totalAmount = document.getElementById("total");
-        const walletAmount = document.getElementById("wallet-amount");
-        const availableBalance = document.getElementById("available-balance");
-        const codBtn = document.getElementById("cod-button");
-        const wltBtn = document.getElementById("wlt-button");
-        const rzpBtn = document.getElementById("rzp-button");
-        const payWithWallet = this.checked ? true : false;
-
-        if (payWithWallet) {
-            codBtn.classList.add("disabled");
-        } else {
-            codBtn.classList.remove("disabled");
         }
 
-        fetch("/checkout/update", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ payWithWallet }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                totalAmount.innerText = data.total.toFixed(2);
-                walletAmount.innerText = data.usedFromWallet.toFixed(2);
-                availableBalance.innerText = data.walletBalance.toFixed(2);
-                if (data.total === 0) {
-                    wltBtn.style.display = "grid";
-                    rzpBtn.style.display = "none";
-                } else {
-                    wltBtn.style.display = "none";
-                    rzpBtn.style.display = "grid";
-                }
+        function handleError(error) {
+            console.error("Error:", error);
+        }
+
+        function handleWalletPayment() {
+            wallet.removeEventListener("change", handlePaymentChange);
+            wallet.addEventListener("change", handlePaymentChange);
+            handleCouponBtnClick("onUpdate");
+        }
+
+        function handlePaymentChange() {
+            const totalAmount = document.getElementById("total");
+            const walletAmount = document.getElementById("wallet-amount");
+            const availableBalance = document.getElementById("available-balance");
+            const codBtn = document.getElementById("cod-button");
+            const wltBtn = document.getElementById("wlt-button");
+            const rzpBtn = document.getElementById("rzp-button");
+            const payWithWallet = this.checked ? true : false;
+            const code = document.getElementById("coupon_code");
+
+            if (payWithWallet) {
+                codBtn.classList.add("disabled");
+            } else {
+                codBtn.classList.remove("disabled");
+            }
+
+            fetch("/checkout/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ payWithWallet, code: code.value }),
             })
-            .catch((error) => {
-                console.error("Error updating checkout page:", error);
+                .then((response) => response.json())
+                .then((data) => {
+                    totalAmount.innerText = data.total.toFixed(2);
+                    walletAmount.innerText = data.usedFromWallet.toFixed(2);
+                    availableBalance.innerText = data.walletBalance.toFixed(2);
+                    if (data.total === 0) {
+                        wltBtn.style.display = "grid";
+                        rzpBtn.style.display = "none";
+                    } else {
+                        wltBtn.style.display = "none";
+                        rzpBtn.style.display = "grid";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error updating checkout page:", error);
+                });
+        }
+
+        function handleCouponBtnClick(data) {
+            const couponCode = document.getElementById("coupon_code");
+            const sanitizedValue = couponCode.value.replace(/[^A-Z0-9]/g, "").toUpperCase();
+            const couponError = document.getElementById("couponError");
+            const total = document.getElementById("total");
+            const discount = document.getElementById("discount");
+            const rzpBtn = document.getElementById("rzp-button");
+            const codBtn = document.getElementById("cod-button");
+            const wltBtn = document.getElementById("wlt-button");
+
+            fetch("/checkout/coupon/", {
+                method: "POST",
+                body: JSON.stringify({ code: sanitizedValue, data }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                })
+                .then((data) => {
+                    if (data.status === "danger") {
+                        couponError.classList.remove("text-success");
+                        couponError.classList.add("text-danger");
+                        couponError.textContent = data.message;
+                        discount.textContent = 0;
+                        rzpBtn.classList.add("disabled");
+                        rzpBtn.style.textDecoration = "line-through";
+                        codBtn.classList.add("disabled");
+                        codBtn.style.textDecoration = "line-through";
+                        wltBtn.classList.add("disabled");
+                        wltBtn.style.textDecoration = "line-through";
+
+                        // couponList.classList.remove("d-block");
+                        // couponList.classList.add("d-none");
+                        // checkoutBtn.disabled = true;
+                        // checkoutBtn.style.textDecoration = "line-through";
+                    } else if (data.status === "success") {
+                        couponError.textContent = data.message + " " + data.coupon.description;
+                        couponError.classList.remove("text-danger");
+                        couponError.classList.add("text-success");
+                        total.textContent = data.total;
+                        discount.textContent = data.discount;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Fetch error:", error);
+                });
+        }
+
+        function handleRemoveCouponBtnClick() {
+            fetch("/checkout/coupon/remove", {
+                method: "GET",
+            }).then((response) => {
+                if (response.ok) {
+                    window.location.reload();
+                }
             });
-    }
-</script>
+        }
+    </script>
+</div>

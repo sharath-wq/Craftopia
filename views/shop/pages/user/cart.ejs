@@ -105,26 +105,38 @@
                         </table>
                     </div>
                     <% if (cartItems && cartItems.products.length) { %>
-                    <!-- <div class="row">
+
+                    <!--  -->
+                    <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="coupon-all">
                                 <div class="coupon">
+                                    <button id="rmCoupon" type="button" class="btn btn-sm">
+                                        <i class="ti ti-close text-danger fw-bolder"></i>
+                                    </button>
                                     <input
                                         id="coupon_code"
                                         class="input-text"
                                         name="coupon_code"
-                                        value=""
+                                        value="<%= coupon?.code %>"
                                         placeholder="Coupon code"
                                         type="text"
+                                        oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();"
                                     />
-                                    <input class="button" name="apply_coupon" value="Apply coupon" type="submit" />
-                                </div>
-                                <div class="coupon2">
-                                    <input class="button" name="update_cart" value="Update cart" type="submit" />
+                                    <input
+                                        class="button"
+                                        name="apply_coupon"
+                                        id="couponBtn"
+                                        type="button"
+                                        value="Apply coupon"
+                                    />
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                        <h6 class="mt-2 text-success" id="couponError"><%= coupon ? "" : couponMessage?.message %></h6>
+                    </div>
+                    <!--  -->
+
                     <div class="row">
                         <div class="col-md-5 ms-auto">
                             <div class="cart-page-total">
@@ -133,8 +145,9 @@
                                     <li>
                                         Subtotal <span>₹ <span id="subtotal"> <%= subtotal.toFixed(2) %></span></span>
                                     </li>
-                                    <li>
-                                        Tax <span>₹ <span id="tax"> <%= tax.toFixed(2) %></span></span>
+
+                                    <li class="d-none" id="couponList">
+                                        Discount <span>₹ <span id="appliedCoupon"></span></span>
                                     </li>
                                     <li>
                                         Total <span>₹ <span id="cart-total"> <%= total.toFixed(2) %></span></span>
@@ -146,7 +159,7 @@
                                     Proceed to checkout
                                 </button>
                                 <% } else { %>
-                                <button class="button btn-dark">Proceed to checkout</button>
+                                <button id="checkoutBtn" class="button btn-dark">Proceed to checkout</button>
                                 <% } %>
                             </div>
                         </div>
@@ -165,10 +178,75 @@
 <!-- shopping-cart-area end -->
 
 <script>
-    // Declare the data variable outside the functions
     let data;
+    const couponBtn = document.getElementById("couponBtn");
+    const rmCoupon = document.getElementById("rmCoupon");
+    const checkoutBtn = document.getElementById("checkoutBtn");
 
-    // Function to update the cart message
+    document.addEventListener("DOMContentLoaded", function () {
+        const couponElement = document.querySelector("#coupon_code");
+        handleCouponBtnClick("onLoad");
+    });
+
+    function handleCouponBtnClick(data) {
+        const couponCode = document.getElementById("coupon_code");
+        const sanitizedValue = couponCode.value.replace(/[^A-Z0-9]/g, "").toUpperCase();
+        const couponError = document.getElementById("couponError");
+        const appliedCoupon = document.getElementById("appliedCoupon");
+        const couponList = document.getElementById("couponList");
+        const cartTotal = document.getElementById("cart-total");
+
+        fetch("/checkout/coupon/", {
+            method: "POST",
+            body: JSON.stringify({ code: sanitizedValue, data }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+            })
+            .then((data) => {
+                if (data.status === "danger") {
+                    couponError.classList.remove("text-success");
+                    couponError.classList.add("text-danger");
+                    couponError.textContent = data.message;
+                    couponList.classList.remove("d-block");
+                    couponList.classList.add("d-none");
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.style.textDecoration = "line-through";
+                } else if (data.status === "success") {
+                    couponError.textContent = data.message + " " + data.coupon.description;
+                    couponError.classList.remove("text-danger");
+                    couponError.classList.add("text-success");
+                    couponList.classList.remove("d-none");
+                    couponList.classList.add("d-block");
+                    appliedCoupon.textContent = data.discount;
+                    cartTotal.textContent = data.total.toFixed(2);
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.style.textDecoration = "none";
+                }
+            })
+            .catch((error) => {
+                console.error("Fetch error:", error);
+            });
+    }
+
+    function handleRemoveCouponBtnClick() {
+        fetch("/checkout/coupon/remove", {
+            method: "GET",
+        }).then((response) => {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    }
+
+    couponBtn.addEventListener("click", handleCouponBtnClick);
+    rmCoupon.addEventListener("click", handleRemoveCouponBtnClick);
+
     function updateCartMessage(data) {
         const cartMessage = document.getElementById("cart-message");
 
@@ -183,7 +261,6 @@
         }, 3000);
     }
 
-    // Function to update the cart count
     function updateCartCount(data) {
         const cartCount = document.getElementById("cartCount");
 
@@ -193,7 +270,6 @@
         }
     }
 
-    // Function to update the quantity displayed in the <span> element
     function updateQuantityDisplay(id, data) {
         const quantitySpan = document.getElementById(`quantity_${id}`);
         const totalProductPrice = document.getElementById(`totalProductPrice_${id}`);
@@ -216,15 +292,11 @@
 
     function updateCartTotal(data) {
         const subTotal = document.getElementById("subtotal");
-        const tax = document.getElementById("tax");
         const cartTotal = document.getElementById("cart-total");
-
         subTotal.innerText = data.subtotal;
-        tax.innerText = data.tax;
         cartTotal.innerText = data.total;
     }
 
-    // Function to handle quantity increment and decrement
     function updateQuantity(id, isIncrement) {
         const action = isIncrement ? "inc" : "dec";
         const url = `/cart/${action}/${id}`;
@@ -247,16 +319,15 @@
                         location.reload();
                     }
 
-                    // Update the cart message
                     updateCartMessage(data);
 
-                    // Update the cart count
                     updateCartCount(data);
 
-                    // Update the quantity displayed in the <span> element
                     updateQuantityDisplay(id, data);
 
                     updateCartTotal(data);
+
+                    handleCouponBtnClick("onUpdate");
                 }
             })
             .catch((error) => {
@@ -264,7 +335,6 @@
             });
     }
 
-    // Add event listeners to all plus and minus buttons
     const plusButtons = document.querySelectorAll(".plusBtn");
     const minusButtons = document.querySelectorAll(".minusBtn");
 

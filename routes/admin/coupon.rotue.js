@@ -11,8 +11,6 @@ router.use((req, res, next) => {
 router.get("/", couponController.couponspage);
 router.get("/add", couponController.addCoupon);
 
-router.post("/add", (req, res) => {
-    res.json(req.body);
-});
+router.post("/add", couponController.createCoupon);
 
 module.exports = router;
