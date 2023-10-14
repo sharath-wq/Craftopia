@@ -171,6 +171,8 @@ exports.getCartData = asyncHandler(async (req, res) => {
 exports.orderPlaced = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
+        const coupon = (await Coupon.findOne({ code: req.session.coupon.code })) || null;
+        const userId = req.user._id;
 
         // Populate the order details, including product details
         const order = await Order.findById(orderId).populate({
@@ -192,6 +194,10 @@ exports.orderPlaced = asyncHandler(async (req, res) => {
                 item.isPaid = "paid";
                 await item.save();
             }
+            if (coupon) {
+                coupon.usedBy.push(userId);
+                await coupon.save();
+            }
             const wallet = await Wallet.findOne({ user: req.user._id });
             wallet.balance = 0;
             await wallet.save();
@@ -199,6 +205,10 @@ exports.orderPlaced = asyncHandler(async (req, res) => {
             for (const item of order.orderItems) {
                 item.isPaid = "paid";
                 await item.save();
+            }
+            if (coupon) {
+                coupon.usedBy.push(userId);
+                await coupon.save();
             }
             const wallet = await Wallet.findOne({ user: req.user._id });
             wallet.balance -= order.totalPrice;
@@ -292,9 +302,16 @@ exports.updateCheckoutPage = asyncHandler(async (req, res) => {
 exports.updateCoupon = asyncHandler(async (req, res) => {
     try {
         const userid = req.user._id;
-        const coupon = await Coupon.findOne({ code: req.body.code, expiryDate: { $gt: Date.now() } });
+        const coupon = await Coupon.findOne({
+            code: req.body.code,
+            expiryDate: { $gt: Date.now() },
+        });
+
         const cartItems = await checkoutHelper.getCartItems(userid);
-        const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
+        const availableCoupons = await Coupon.find({
+            expiryDate: { $gt: Date.now() },
+            usedBy: { $nin: [userid] },
+        })
             .select({ code: 1, _id: 0 })
             .limit(4);
         const { subtotal, total, discount } = await checkoutHelper.calculateTotalPrice(cartItems, userid, false, coupon);
@@ -319,7 +336,12 @@ exports.updateCoupon = asyncHandler(async (req, res) => {
                 });
             }
         } else {
-            if (subtotal < coupon.minAmount) {
+            if (coupon.usedBy.includes(userid)) {
+                res.status(202).json({
+                    status: "danger",
+                    message: "The coupon is alrady used",
+                });
+            } else if (subtotal < coupon.minAmount) {
                 res.status(200).json({
                     status: "danger",
                     message: `You need to spend at least ${coupon.minAmount} to get this offer.`,
