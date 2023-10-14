@@ -31,7 +31,7 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
         }
 
         if (cartItems) {
-            const { subtotal, tax, total, discount } = await checkoutHelper.calculateTotalPrice(
+            const { subtotal, total, discount } = await checkoutHelper.calculateTotalPrice(
                 cartItems,
                 userid,
                 false,
@@ -42,6 +42,11 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
                 res.redirect("/cart");
             }
 
+            let couponMessage = {};
+            if (!coupon) {
+                couponMessage = { status: "text-info", message: "Try FLAT100 | PERCENT20" };
+            }
+
             res.render("shop/pages/user/checkout", {
                 title: "Checkout",
                 page: "checkout",
@@ -49,11 +54,11 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
                 product: cartItems.products,
                 total,
                 subtotal,
-                tax,
                 cartData,
                 wallet,
                 discount,
                 coupon,
+                couponMessage,
             });
         }
     } catch (error) {
@@ -254,16 +259,27 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
 exports.updateCheckoutPage = asyncHandler(async (req, res) => {
     try {
         const userid = req.user._id;
+        const coupon = (await Coupon.findOne({ code: req.body.code, expiryDate: { $gt: Date.now() } })) || null;
         const user = await User.findById(userid).populate("address");
         const cartItems = await checkoutHelper.getCartItems(userid);
 
-        const { subtotal, tax, total, usedFromWallet, walletBalance } = await checkoutHelper.calculateTotalPrice(
-            cartItems,
-            userid,
-            req.body.payWithWallet
-        );
-
-        res.json({ total, subtotal, tax, usedFromWallet, walletBalance });
+        if (coupon) {
+            const { subtotal, total, usedFromWallet, walletBalance, discount } = await checkoutHelper.calculateTotalPrice(
+                cartItems,
+                userid,
+                req.body.payWithWallet,
+                coupon
+            );
+            res.json({ total, subtotal, usedFromWallet, walletBalance, discount });
+        } else {
+            const { subtotal, total, usedFromWallet, walletBalance, discount } = await checkoutHelper.calculateTotalPrice(
+                cartItems,
+                userid,
+                req.body.payWithWallet,
+                coupon
+            );
+            res.json({ total, subtotal, usedFromWallet, walletBalance, discount });
+        }
     } catch (error) {
         throw new Error(error);
     }
@@ -276,28 +292,31 @@ exports.updateCheckoutPage = asyncHandler(async (req, res) => {
 exports.updateCoupon = asyncHandler(async (req, res) => {
     try {
         const userid = req.user._id;
-        const coupon = await Coupon.findOne({ code: req.body.code });
+        const coupon = await Coupon.findOne({ code: req.body.code, expiryDate: { $gt: Date.now() } });
         const cartItems = await checkoutHelper.getCartItems(userid);
-
-        const { subtotal, tax, total, discount } = await checkoutHelper.calculateTotalPrice(
-            cartItems,
-            userid,
-            false,
-            coupon
-        );
+        const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
+            .select({ code: 1, _id: 0 })
+            .limit(4);
+        const { subtotal, total, discount } = await checkoutHelper.calculateTotalPrice(cartItems, userid, false, coupon);
 
         if (!coupon) {
             if (req.body.data === "onLoad" || req.body.data === "onUpdate") {
+                const coupons = availableCoupons.map((coupon) => coupon.code).join(" | ");
                 res.status(202).json({
                     status: "info",
-                    message: "Try FLAT100 | PERCENT20",
+                    message: "Try " + coupons,
                     subtotal,
-                    tax,
                     total,
                     discount,
                 });
             } else {
-                res.status(202).json({ status: "danger", message: "Can't Find coupon", subtotal, tax, total, discount });
+                res.status(202).json({
+                    status: "danger",
+                    message: "The coupon is invalid or expired.",
+                    subtotal,
+                    total,
+                    discount,
+                });
             }
         } else {
             if (subtotal < coupon.minAmount) {
@@ -312,7 +331,6 @@ exports.updateCoupon = asyncHandler(async (req, res) => {
                     message: `${coupon.code} applied`,
                     coupon: coupon,
                     subtotal,
-                    tax,
                     total,
                     discount,
                 });

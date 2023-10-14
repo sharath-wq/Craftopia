@@ -5,8 +5,8 @@ const { status } = require("../../utils/status");
 const OrderItem = require("../../models/orderItemModel");
 const Wallet = require("../../models/walletModel");
 const WalletTransactoins = require("../../models/walletTransactionModel");
-const { productTax } = require("../../utils/constants");
 const Review = require("../../models/reviewModel");
+const Coupon = require("../../models/couponModel");
 
 /**
  * Get orders for a user
@@ -120,26 +120,39 @@ exports.cancelSingleOrder = asyncHandler(async (orderItemId, userId) => {
         updatedOrder.isPaid === "paid"
     ) {
         const wallet = await Wallet.findOne({ user: userId });
-        const tax = (parseInt(updatedOrder.price) * updatedOrder.quantity * productTax) / 100;
-        const returnAmount = parseInt(updatedOrder.price) * updatedOrder.quantity + tax;
+        const orderTotal = parseInt(updatedOrder.price) * updatedOrder.quantity;
         if (!wallet) {
+            let amountToBeRefunded = 0;
+            if (orders.coupon) {
+                const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
+                const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
+                const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
+                amountToBeRefunded = returnAmount;
+            }
             const newWallet = await Wallet.create({
-                balance: returnAmount,
+                balance: amountToBeRefunded,
                 user: orders.user,
             });
             const walletTransaction = await WalletTransactoins.create({
                 wallet: newWallet._id,
-                amount: returnAmount,
+                amount: amountToBeRefunded,
                 type: "credit",
             });
         } else {
-            const existingWallet = await Wallet.findOne({ user: orders.user });
-            existingWallet.balance += returnAmount;
-            await existingWallet.save();
+            let amountToBeRefunded = 0;
+            if (orders.coupon) {
+                const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
+                const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
+                const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
+                amountToBeRefunded = returnAmount;
+            }
+            const existingWallet = await Wallet.findOneAndUpdate({ user: userId });
+            existingWallet.balance += amountToBeRefunded;
+            existingWallet.save();
 
             const walletTransaction = await WalletTransactoins.create({
                 wallet: existingWallet._id,
-                amount: returnAmount,
+                amount: amountToBeRefunded,
                 type: "credit",
             });
         }

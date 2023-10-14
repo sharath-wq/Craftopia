@@ -4,6 +4,7 @@ const User = require("../../models/userModel");
 const Cart = require("../../models/cartModeal");
 const Product = require("../../models/productModel");
 const { incrementQuantity, decrementQuantity, calculateCartTotals } = require("../../helpers/shop/cartHelper");
+const Coupon = require("../../models/couponModel");
 
 /**
  * Cart page Route
@@ -12,7 +13,11 @@ const { incrementQuantity, decrementQuantity, calculateCartTotals } = require(".
 exports.cartpage = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const messages = req.flash();
-    const coupon = req.session.coupon;
+    const coupon = req.session.coupon || null;
+    const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
+        .select({ code: 1, _id: 0 })
+        .limit(4);
+
     try {
         const cart = await Cart.findOne({ user: userId })
             .populate({
@@ -25,10 +30,11 @@ exports.cartpage = asyncHandler(async (req, res) => {
             .exec();
 
         if (cart) {
-            const { subtotal, total, tax, discount } = calculateCartTotals(cart.products, coupon);
+            const { subtotal, total, discount } = calculateCartTotals(cart.products, coupon);
             let couponMessage = {};
             if (!coupon) {
-                couponMessage = { status: "text-info", message: "Try FLAT100 | PERCENT20" };
+                const coupons = availableCoupons.map((coupon) => coupon.code).join(" | ");
+                couponMessage = { status: "text-info", message: "Try " + coupons };
             }
             res.render("shop/pages/user/cart", {
                 title: "Cart",
@@ -37,7 +43,6 @@ exports.cartpage = asyncHandler(async (req, res) => {
                 messages,
                 subtotal,
                 total,
-                tax,
                 coupon,
                 discount,
                 couponMessage,

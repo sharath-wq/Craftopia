@@ -145,11 +145,9 @@
                                     <li>
                                         Subtotal <span>₹ <span id="subtotal"> <%= subtotal.toFixed(2) %></span></span>
                                     </li>
-                                    <li>
-                                        Tax <span>₹ <span id="tax"> <%= tax.toFixed(2) %></span></span>
-                                    </li>
+
                                     <li class="d-none" id="couponList">
-                                        Coupon <span>₹ <span id="appliedCoupon"></span></span>
+                                        Discount <span>₹ <span id="appliedCoupon"></span></span>
                                     </li>
                                     <li>
                                         Total <span>₹ <span id="cart-total"> <%= total.toFixed(2) %></span></span>
@@ -294,11 +292,8 @@
 
     function updateCartTotal(data) {
         const subTotal = document.getElementById("subtotal");
-        const tax = document.getElementById("tax");
         const cartTotal = document.getElementById("cart-total");
-
         subTotal.innerText = data.subtotal;
-        tax.innerText = data.tax;
         cartTotal.innerText = data.total;
     }
 

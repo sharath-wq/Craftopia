@@ -32,8 +32,6 @@ exports.singleOrder = asyncHandler(async (req, res) => {
         const { order, orders } = await orderHelper.getSingleOrder(orderId);
         const review = await orderHelper.getReview(req.user._id, order.product._id);
 
-        console.log(review);
-
         res.render("shop/pages/user/single-order.ejs", {
             title: order.product.title,
             page: order.product.title,

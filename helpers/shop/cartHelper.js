@@ -1,6 +1,5 @@
 const Product = require("../../models/productModel");
 const Cart = require("../../models/cartModeal");
-const { productTax } = require("../../utils/constants");
 
 function calculateCartTotals(products, coupon) {
     let subtotal = 0;
@@ -9,9 +8,7 @@ function calculateCartTotals(products, coupon) {
         subtotal += productTotal;
     }
 
-    const tax = (subtotal * productTax) / 100;
-
-    let total = subtotal + tax;
+    let total = subtotal;
     let discount = 0;
 
     if (coupon) {
@@ -29,7 +26,7 @@ function calculateCartTotals(products, coupon) {
         }
     }
 
-    return { subtotal, total, tax, discount };
+    return { subtotal, total, discount };
 }
 
 const findCartItem = async (userId, productId) => {
@@ -58,7 +55,7 @@ const incrementQuantity = async (userId, productId, res) => {
 
         const productTotal = product.salePrice * foundProduct.quantity;
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
 
         res.json({
             message: "Quantity Increased",
@@ -67,12 +64,11 @@ const incrementQuantity = async (userId, productId, res) => {
             status: "success",
             subtotal: subtotal.toFixed(2),
             total: total.toFixed(2),
-            tax: tax,
         });
     } else {
         const productTotal = product.salePrice * foundProduct.quantity;
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
         res.json({
             message: "Out of Stock",
             status: "danger",
@@ -80,7 +76,6 @@ const incrementQuantity = async (userId, productId, res) => {
             productTotal,
             subtotal: subtotal.toFixed(2),
             total: total.toFixed(2),
-            tax: tax,
         });
     }
 };
@@ -101,7 +96,7 @@ const decrementQuantity = async (userId, productId, res) => {
         await updatedCart.save();
 
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
 
         res.json({
             message: "Quantity Decreased",
@@ -110,18 +105,16 @@ const decrementQuantity = async (userId, productId, res) => {
             productTotal: product.salePrice * productToDecrement.quantity,
             subtotal,
             total,
-            tax,
         });
     } else {
         const cart = await Cart.findOne({ user: userId }).populate("products.product");
-        const { subtotal, total, tax } = calculateCartTotals(cart.products);
+        const { subtotal, total } = calculateCartTotals(cart.products);
         const product = await findProductById(productId);
         res.json({
             message: "Product not found in the cart.",
             status: "error",
             subtotal,
             total,
-            tax,
             productTotal: product.salePrice * productToDecrement.quantity,
         });
     }

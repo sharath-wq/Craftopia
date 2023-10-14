@@ -8,7 +8,6 @@ const OrderItems = require("../../models/orderItemModel");
 const Product = require("../../models/productModel");
 const { generateUniqueOrderID } = require("../../utils/generateUniqueId");
 const Crypto = require("crypto");
-const { productTax } = require("../../utils/constants");
 const Wallet = require("../../models/walletModel");
 
 /**
@@ -28,11 +27,11 @@ exports.calculateTotalPrice = asyncHandler(async (cartItems, userid, payWithWall
         const productTotal = parseFloat(product.product.salePrice) * product.quantity;
         subtotal += productTotal;
     }
-    const tax = (subtotal * productTax) / 100;
     let total;
     let usedFromWallet = 0;
     if (wallet && payWithWallet) {
-        total = subtotal + tax;
+        let discount = 0;
+        total = subtotal;
 
         if (coupon) {
             if (coupon.type === "percentage") {
@@ -55,12 +54,12 @@ exports.calculateTotalPrice = asyncHandler(async (cartItems, userid, payWithWall
             total = 0;
         } else {
             usedFromWallet = wallet.balance;
-            total = subtotal + tax - wallet.balance;
+            total = subtotal - wallet.balance - discount;
             wallet.balance = 0;
         }
-        return { subtotal, tax, total, usedFromWallet, walletBalance: wallet.balance, discount: discount ? discount : 0 };
+        return { subtotal, total, usedFromWallet, walletBalance: wallet.balance, discount: discount ? discount : 0 };
     } else {
-        total = subtotal + tax;
+        total = subtotal;
         let discount = 0;
         if (coupon) {
             if (coupon.type === "percentage") {
@@ -78,7 +77,6 @@ exports.calculateTotalPrice = asyncHandler(async (cartItems, userid, payWithWall
         }
         return {
             subtotal,
-            tax,
             total,
             usedFromWallet,
             walletBalance: wallet ? wallet.balance : 0,
@@ -102,9 +100,8 @@ exports.placeOrder = asyncHandler(async (userId, addressId, paymentMethod, isWal
 
     for (const cartItem of cartItems.products) {
         const productTotal = parseFloat(cartItem.product.salePrice) * cartItem.quantity;
-        const tax = (productTotal * productTax) / 100;
 
-        total += productTotal + tax;
+        total += productTotal;
 
         const item = await OrderItems.create({
             quantity: cartItem.quantity,
