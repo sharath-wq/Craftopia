@@ -10,7 +10,9 @@ router.use((req, res, next) => {
 
 router.get("/", couponController.couponspage);
 router.get("/add", couponController.addCoupon);
+router.get("/edit/:id", couponController.editCouponPage);
 
 router.post("/add", couponController.createCoupon);
+router.post("/edit/:id", couponController.updateCoupon);
 
 module.exports = router;
