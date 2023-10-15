@@ -7,6 +7,21 @@
 
 <div class="slider-area">
     <div class="slider-active owl-carousel">
+        <% if (banners.length) { %> <% banners.forEach(banner => { %>
+        <div class="single-slider-4 slider-height-5 bg-img" style="background-image: url(<%= banner.image_url %>)">
+            <div class="container">
+                <div class="slider-content-5 fadeinup-animated">
+                    <h2 class="animated text-white"><%= banner.title %></h2>
+                    <p class="animated text-white"><%= banner.description %></p>
+                    <a
+                        class="btn btn-lg btn-dark text-white rounded-pill h-auto px-4 fw-bolder py-3 animated"
+                        href="<%= banner.link %>"
+                        >Shop Now</a
+                    >
+                </div>
+            </div>
+        </div>
+        <% }) %> <% } else { %>
         <div class="single-slider-4 slider-height-5 bg-img" style="background-image: url(shop/img/slider/7.jpg)">
             <div class="container">
                 <div class="slider-content-5 fadeinup-animated">
@@ -29,6 +44,7 @@
                 </div>
             </div>
         </div>
+        <% } %>
     </div>
 </div>
 <!-- Slider End -->
