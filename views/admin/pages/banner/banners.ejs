@@ -7,39 +7,35 @@
                     <table id="bannerTable" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Banner For</th>
-                                <th>Upload Banner</th>
-                                <th>Starting Date</th>
-                                <th>Ending Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>Title</th>
+                                <th>Image</th>
+                                <th>Description</th>
+                                <th>Link</th>
+                                <th>Active</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <% banners.forEach(banner => { %>
                             <tr>
-                                <td>Homepage</td>
+                                <td><%= banner.title %></td>
+                                <td><img src="<%= banner.image_url %>" alt="Banner 1 Image" style="max-width: 100px" /></td>
+                                <td><%= banner.description %></td>
                                 <td>
-                                    <input type="file" class="form-control-file" id="banner1" accept="image/*" />
+                                    <a href="<%= banner.link %>" target="_blank"><%= banner.link %></a>
                                 </td>
-                                <td><input type="date" class="form-control" id="startDate1" /></td>
-                                <td><input type="date" class="form-control" id="endDate1" /></td>
-                                <td id="status1">10 Days Left</td>
+                                <td><%= banner.active %></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary">Update</button>
+                                    <%= new Date(banner?.start_date).toLocaleDateString('en-US', { year: 'numeric', month:
+                                    'long', day: 'numeric' }) %>
+                                </td>
+                                <td>
+                                    <%= new Date(banner?.end_date).toLocaleDateString('en-US', { year: 'numeric', month:
+                                    'long', day: 'numeric' }) %>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Product Page</td>
-                                <td>
-                                    <input type="file" class="form-control-file" id="banner2" accept="image/*" />
-                                </td>
-                                <td><input type="date" class="form-control" id="startDate2" /></td>
-                                <td><input type="date" class="form-control" id="endDate2" /></td>
-                                <td id="status2">5 Days Left</td>
-                                <td>
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                </td>
-                            </tr>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>
