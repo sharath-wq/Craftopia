@@ -70,10 +70,12 @@ exports.cancelOrderById = asyncHandler(async (orderId) => {
                 status: status.cancelled,
             });
 
-            const cancelledProduct = await Product.findById(orderItem.product);
-            cancelledProduct.quantity += orderItem.quantity;
-            cancelledProduct.sold -= orderItem.quantity;
-            await cancelledProduct.save();
+            const cancelledProduct = await Product.findByIdAndUpdate(orderItem.product, {
+                $inc: {
+                    quantity: orderItem.quantity,
+                    sold: -orderItem.quantity,
+                },
+            });
         }
 
         // Update the order status
@@ -84,14 +86,16 @@ exports.cancelOrderById = asyncHandler(async (orderId) => {
     } else if (order.payment_method === "cash_on_delivery") {
         // Update product quantities and sold counts for each order item
         for (const item of order.orderItems) {
-            await OrderItem.findByIdAndUpdate(item._id, {
+            const orderItem = await OrderItem.findByIdAndUpdate(item._id, {
                 status: status.cancelled,
             });
 
-            const cancelledProduct = await Product.findById(item.product);
-            cancelledProduct.quantity += item.quantity;
-            cancelledProduct.sold -= item.quantity;
-            await cancelledProduct.save();
+            const cancelledProduct = await Product.findByIdAndUpdate(orderItem.product, {
+                $inc: {
+                    quantity: orderItem.quantity,
+                    sold: -orderItem.quantity,
+                },
+            });
         }
 
         // Update the order status
@@ -108,10 +112,9 @@ exports.cancelSingleOrder = asyncHandler(async (orderItemId, userId) => {
     });
 
     if (updatedOrder.isPaid !== "pending") {
-        const cancelledProduct = await Product.findById(updatedOrder.product);
-        cancelledProduct.quantity += updatedOrder.quantity;
-        cancelledProduct.sold -= updatedOrder.quantity;
-        await cancelledProduct.save();
+        const cancelledProduct = await Product.findById(updatedOrder.product, {
+            $inc: { quantity: updatedOrder.quantity, sold: -updatedOrder.quantity },
+        });
     }
 
     const orders = await Order.findOne({ orderItems: orderItemId });
@@ -125,9 +128,16 @@ exports.cancelSingleOrder = asyncHandler(async (orderItemId, userId) => {
             let amountToBeRefunded = 0;
             if (orders.coupon) {
                 const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
-                const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
-                const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
-                amountToBeRefunded = returnAmount;
+                if (appliedCoupon.type === "fixedAmount") {
+                    const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
+                    const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
+                    amountToBeRefunded = returnAmount;
+                } else if (appliedCoupon.type === "percentage") {
+                    const couponDiscount = ((orderTotal * appliedCoupon.value) / 100).toFixed(2);
+                    const returnAmount = orderTotal - couponDiscount;
+                    amountToBeRefunded = returnAmount;
+                    console.log({ isWorking: "true", couponDiscount, returnAmount });
+                }
             }
             const newWallet = await Wallet.create({
                 balance: amountToBeRefunded,
@@ -142,9 +152,16 @@ exports.cancelSingleOrder = asyncHandler(async (orderItemId, userId) => {
             let amountToBeRefunded = 0;
             if (orders.coupon) {
                 const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
-                const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
-                const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
-                amountToBeRefunded = returnAmount;
+                if (appliedCoupon.type === "fixedAmount") {
+                    const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
+                    const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
+                    amountToBeRefunded = returnAmount;
+                } else if (appliedCoupon.type === "percentage") {
+                    const couponDiscount = ((orderTotal * appliedCoupon.value) / 100).toFixed(2);
+                    const returnAmount = orderTotal - couponDiscount;
+                    amountToBeRefunded = returnAmount;
+                    console.log({ isWorking: "true", couponDiscount, returnAmount });
+                }
             }
             const existingWallet = await Wallet.findOneAndUpdate({ user: userId });
             existingWallet.balance += amountToBeRefunded;

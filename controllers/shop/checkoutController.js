@@ -23,6 +23,9 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
         const cartData = await Cart.findOne({ user: userid });
         let wallet = await Wallet.findOne({ user: userid });
         const coupon = req.session.coupon || null;
+        const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
+            .select({ code: 1, _id: 0 })
+            .limit(4);
 
         if (!wallet) {
             wallet = await Wallet.create({
@@ -44,7 +47,8 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
 
             let couponMessage = {};
             if (!coupon) {
-                couponMessage = { status: "text-info", message: "Try FLAT100 | PERCENT20" };
+                const coupons = availableCoupons.map((coupon) => coupon.code).join(" | ");
+                couponMessage = { status: "text-info", message: "Try " + coupons };
             }
 
             res.render("shop/pages/user/checkout", {

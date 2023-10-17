@@ -70,7 +70,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="maxAmount">Maximum Purchase Amount:</label>
+                            <label for="maxAmount">Maximum Discount Amount:</label>
                             <input
                                 type="number"
                                 class="form-control"
@@ -132,6 +132,9 @@
             } else if (isNaN(value)) {
                 valueError.innerText = "Discount Value must be a number.";
                 isValid = false;
+            } else if (value <= 0) {
+                valueError.innerText = "Discount Value must be a posative number";
+                isValid = false;
             } else {
                 valueError.innerText = "";
                 generateCouponCode();
@@ -182,6 +185,9 @@
             if (minAmount === "") {
                 minAmountError.innerText = "Minimum Purchase Amount is required.";
                 isValid = false;
+            } else if (minAmount < 0) {
+                minAmountError.innerText = "Minumum Purchase Amount must be a posative number";
+                isValid = false;
             } else {
                 minAmountError.innerText = "";
             }
@@ -194,7 +200,10 @@
             const maxAmount = maxAmountInput.value;
             const selectedType = typeInput.value;
             if (selectedType === "percentage" && maxAmount === "") {
-                maxAmountError.innerText = "Maximum Purchase Amount is required for percentage coupons.";
+                maxAmountError.innerText = "Maximum Discount Amount is required for percentage coupons.";
+                isValid = false;
+            } else if (maxAmount < 0) {
+                maxAmountError.innerText = "Maximum Discount Amount Must be a posative number";
                 isValid = false;
             } else {
                 maxAmountError.innerText = "";

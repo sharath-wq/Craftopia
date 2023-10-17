@@ -10,23 +10,22 @@
                         <table class="table-striped">
                             <thead>
                                 <tr>
-                                    <th>remove</th>
                                     <th>images</th>
                                     <th>Product</th>
                                     <th>Price</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% if (populatedWishlist.length) { %> <% populatedWishlist.forEach(product => { %>
                                 <tr>
-                                    <td class="product-remove">
-                                        <a href="/wishlist/remove/<%= product._id %>"
-                                            ><i class="pe-7s-close text-bg-danger text-bg-danger"></i
-                                        ></a>
-                                    </td>
                                     <td class="product-thumbnail">
                                         <a href="/product/<%= product._id %>"
-                                            ><img class="img-thumbnail" src="<%= product.images[0].thumbnailUrl %>" alt=""
+                                            ><img
+                                                style="width: 100px; height: 100px"
+                                                class="img-thumbnail"
+                                                src="<%= product.images[0].thumbnailUrl %>"
+                                                alt=""
                                         /></a>
                                     </td>
                                     <td class="product-name">
@@ -35,6 +34,15 @@
                                     </td>
                                     <td class="product-price-cart">
                                         <span class="amount">₹ <%= product.salePrice %></span>
+                                    </td>
+                                    <td class="product-remove">
+                                        <a onclick="addToCart(`<%= product._id %>`)" class="btn btn-sm btn-success h-auto">
+                                            <i class="pe-7s-cart text-white fw-bolder"></i>
+                                        </a>
+
+                                        <a class="btn btn-sm btn-danger h-auto" href="/wishlist/remove/<%= product._id %>"
+                                            ><i class="pe-7s-close text-bg-danger text-white fw-bolder text-bg-danger"></i
+                                        ></a>
                                     </td>
                                 </tr>
                                 <% }) %> <% } else { %> No Items in wishlist <% } %>
