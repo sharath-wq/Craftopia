@@ -30,6 +30,7 @@ router.get("/blocked/:id", authController.blockedUserpage);
 router.get("/reset-password/:token", ensureLoggedOut({ redirectTo: "/" }), authController.resetPasswordpage);
 router.get("/send-otp", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.sendOtppage);
 router.get("/verify-otp", ensureLoggedIn({ redirectTo: "/auth/login" }), authController.verifyOtppage);
+router.get("/send-email", authController.sendEmailpage);
 router.get("/verify-email", authController.verifyEmailpage);
 
 router.post("/register", registerValidator, authController.registerUser);
@@ -40,6 +41,7 @@ router.post(
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/send-otp", ensureLoggedIn({ redirectTo: "/" }), authController.sendOtp);
 router.post("/verify-otp", ensureLoggedIn({ redirectTo: "/" }), authController.verifyOtp);
+router.post("/send-email", authController.sendEmail);
 router.post("/verify-email", authController.verifyEmail);
 router.post("/resend-email", authController.resendEmail);
 router.put("/reset-password/:token", authController.resetPassword);

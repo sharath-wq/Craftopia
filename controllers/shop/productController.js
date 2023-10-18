@@ -13,7 +13,33 @@ exports.shoppage = asyncHandler(async (req, res) => {
     try {
         const queryOptions = { isListed: true };
         const messages = req.flash();
-        const { search, category, page, perPage, sortBy } = req.query;
+        const { search, page, perPage, sortBy } = req.query;
+        let selectedCategories = [];
+
+        if (req.query.category) {
+            if (Array.isArray(req.query.category)) {
+                selectedCategories = req.query.category;
+            } else {
+                selectedCategories = [req.query.category];
+            }
+        }
+
+        if (selectedCategories.length > 0) {
+            const categoryTitles = selectedCategories[0].split(" ");
+
+            // Create an array to store category ObjectIDs for each title
+            const categoryIds = [];
+
+            for (const title of categoryTitles) {
+                const newTitle = title.split("-").join(" ");
+                console.log(newTitle);
+                const titleIds = await Category.find({ title: newTitle });
+                console.log(titleIds);
+                categoryIds.push(...titleIds);
+            }
+
+            queryOptions.category = { $in: categoryIds };
+        }
 
         if (search) {
             queryOptions.$or = [
@@ -22,10 +48,6 @@ exports.shoppage = asyncHandler(async (req, res) => {
                 { material: { $regex: new RegExp(search, "i") } },
                 { artForm: { $regex: new RegExp(search, "i") } },
             ];
-        }
-
-        if (category) {
-            queryOptions.category = category;
         }
 
         queryOptions.isListed = true;
@@ -70,7 +92,7 @@ exports.shoppage = asyncHandler(async (req, res) => {
             products,
             categories,
             search,
-            category,
+            selectedCategories,
             currentPage,
             itemsPerPage,
             totalProductsCount,

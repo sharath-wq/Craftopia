@@ -3,7 +3,7 @@
         <div class="row gy-5">
             <!-- Sidebar -->
             <div class="col-lg-3 order-2 order-lg-1">
-                <%- include('../../partials/flash-message.ejs') %>
+                <% include('../../partials/flash-message.ejs') %>
                 <div class="shop-sidebar mr-50">
                     <!-- Search Products Widget -->
                     <div class="sidebar-widget mb-50">
@@ -27,18 +27,29 @@
                     <div class="sidebar-widget mb-45">
                         <h3 class="sidebar-title">Categories</h3>
                         <div class="sidebar-categories">
-                            <ul>
-                                <% categories.forEach(element => { %>
-                                <li>
+                            <ul class="list-unstyled">
+                                <% categories.forEach((element) => { %>
+                                <li class="d-flex justify-content-between">
                                     <a
-                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= element._id %>"
-                                        ><%= element.title %>
+                                        class="<%= selectedCategories.includes(element.title) ? 'text-dark' : '' %>"
+                                        href="/shop?page=<%= 0 %>&search=<%= search %>&category=<%= selectedCategories.concat([element.title.replace(/\s+/g, '-')]).join('+') %>"
+                                        onclick="updateSelectedCategories(this)"
+                                    >
+                                        <%= element.title %>
                                     </a>
+
+                                    <!-- <a
+                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= selectedCategories.concat([element.title.replace(/\s+/g, '-')]).join('+') %>"
+                                        class="<%= selectedCategories.includes(element.title) ? 'd-block' : 'd-none' %>"
+                                    >
+                                        <i class="ti ti-close text-danger"></i>
+                                    </a> -->
                                 </li>
-                                <% }) %>
+                                <% }); %>
                             </ul>
                         </div>
                     </div>
+                    <!-- Categories -->
                 </div>
             </div>
             <!-- Products -->
@@ -54,7 +65,7 @@
                                         id="sortBySelect"
                                         name="sortBy"
                                         data-current-page="<%= currentPage %>"
-                                        data-category="<%= category %>"
+                                        data-category="<%= selectedCategories %>"
                                         style="width: 200px; height: 30px"
                                     >
                                         <option <%= sortBy === "default" ? "selected" : "" %> value="default">Default</option>
@@ -109,7 +120,7 @@
                                                         id="wishlistButton"
                                                         class="animate-left"
                                                         title="Wishlist"
-                                                        onclick="toggleWishlist(`<%= product._id %>`)"
+                                                        onclick="toggleWishlist('<%= product._id %>')"
                                                     >
                                                         <i class="pe-7s-like"></i>
                                                     </a>
@@ -117,7 +128,7 @@
                                                     <a
                                                         class="animate-top"
                                                         title="Add To Cart"
-                                                        onclick="addToCart(`<%= product._id %>`)"
+                                                        onclick="addToCart('<%= product._id %>')"
                                                     >
                                                         <i class="pe-7s-cart"></i>
                                                     </a>
@@ -170,35 +181,22 @@
                                                         alt="<%= product.title %>"
                                                     />
                                                 </a>
-                                                <span>hot</span>
+                                                <span class="bg-danger">hot</span>
                                             </div>
                                             <div class="product-content-list">
                                                 <div class="product-list-info">
                                                     <h4><a href="/product/<%= product._id %>"><%= product.title%></a></h4>
                                                     <div class="d-flex justify-content-between">
-                                                        <span class="text-decoration-line-through text-secondary"
-                                                            >₹ <%= product.productPrice %></span
-                                                        >
+                                                        <span class="text-decoration-line-through text-secondary">₹ <%= product.productPrice %></span>
                                                         <span>₹ <%= product.salePrice %></span>
                                                     </div>
                                                 </div>
                                                 <div class="product-list-cart-wishlist">
                                                     <div class="product-list-cart">
-                                                        <a
-                                                            class="btn-hover list-btn-style"
-                                                            onclick="addToCart(`<%= product._id %>`)"
-                                                            >add to cart</a
-                                                                   <%- include('../../partials/flash-message.ejs') %>
-     >
+                                                        <a class="btn-hover list-btn-style" onclick="addToCart('<%= product._id %>')">add to cart</a>
                                                     </div>
                                                     <div class="product-list-wishlist">
-                                                        <a
-                                                            id="wishlistButton"
-                                                            class="btn-hover list-btn-wishlist"
-                                                            onclick="toggleWishlist(`<%= product._id %>`)"
-                                                        >
-                                                            <i class="pe-7s-like"></i>
-                                                        </a>
+                                                        <a id="wishlistButton" class="btn-hover list-btn-wishlist" onclick="toggleWishlist('<%= product._id %>')"><i class="pe-7s-like"></i></a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -216,7 +214,7 @@
                                 <% if (currentPage > 1) { %>
                                 <li>
                                     <a
-                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= category %>"
+                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= selectedCategories.join('+') %>"
                                     >
                                         <i class="ti ti-arrow-left"></i>
                                     </a>
@@ -225,14 +223,16 @@
                                 if (i === 1 || i === currentPage - 1 || i === currentPage || i === currentPage + 1 || i ===
                                 Math.ceil(totalProductsCount / itemsPerPage)) { %>
                                 <li class="<%= currentPage === i ? 'active' : '' %>">
-                                    <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= category %>"><%= i %></a>
+                                    <a href="/shop?page=<%= i %>&search=<%= search %>&category=<%= selectedCategories.join('+') %>"
+                                        ><%= i %></a
+                                    >
                                 </li>
                                 <% } else if (i === 2 || i === currentPage - 2 || i === currentPage + 2) { %>
                                 <li>...</li>
                                 <% } %> <% } %> <% if (currentPage < Math.ceil(totalProductsCount / itemsPerPage)) { %>
                                 <li>
                                     <a
-                                        href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= category %>"
+                                        href="/shop?page=<%= currentPage + 1 %>&search=<%= search %>&category=<%= selectedCategories.join('+') %>"
                                     >
                                         <i class="ti ti-arrow-right"></i>
                                     </a>
@@ -250,6 +250,11 @@
 </div>
 
 <script>
+    function buildURL(selectedCategories, currentPage, search, sortBy) {
+        const categoryParam = Object.keys(selectedCategories).map(category => selectedCategories[category] ? category : null).filter(Boolean).join('+');
+        return `/shop?page=${currentPage}&search=${search}&category=${categoryParam}&sortBy=${sortBy}`;
+    }
+
     const sortBySelect = document.getElementById("sortBySelect");
     const currentPage = sortBySelect.getAttribute("data-current-page");
     const category = sortBySelect.getAttribute("data-category");
@@ -257,6 +262,10 @@
 
     sortBySelect.addEventListener("change", function () {
         const selectedValue = this.value;
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCategories = urlParams.get("category") || {};
+
+        console.log({ selectedCategories });
 
         // Define a mapping of sort options to URLs
         const sortOptionsToUrls = {
@@ -275,4 +284,21 @@
             window.location.href = url;
         }
     });
+
+    function updateSelectedCategories(element) {
+        const title = element.textContent;
+        const urlParams = new URLSearchParams(window.location.search);
+        let selectedCategories = urlParams.get("category") || {};
+
+        // Toggle category selection
+        selectedCategories[title] = !selectedCategories[title];
+
+        const currentPage = urlParams.get("page") || 1;
+        const search = urlParams.get("search") || "";
+        const sortBy = urlParams.get("sortBy") || "default";
+
+        const newUrl = buildURL(selectedCategories, currentPage, search, sortBy);
+        window.location.href = newUrl;
+    }
 </script>
+

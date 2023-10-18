@@ -22,7 +22,11 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
         const cartItems = await checkoutHelper.getCartItems(userid);
         const cartData = await Cart.findOne({ user: userid });
         let wallet = await Wallet.findOne({ user: userid });
-        const coupon = req.session.coupon || null;
+        const coupon =
+            (await Coupon.findOne({ code: req?.session?.coupon?.code, expiryDate: { $gt: Date.now() } })) || null;
+        const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
+            .select({ code: 1, _id: 0 })
+            .limit(4);
 
         if (!wallet) {
             wallet = await Wallet.create({
@@ -44,7 +48,8 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
 
             let couponMessage = {};
             if (!coupon) {
-                couponMessage = { status: "text-info", message: "Try FLAT100 | PERCENT20" };
+                const coupons = availableCoupons.map((coupon) => coupon.code).join(" | ");
+                couponMessage = { status: "text-info", message: "Try " + coupons };
             }
 
             res.render("shop/pages/user/checkout", {
@@ -74,7 +79,7 @@ exports.placeOrder = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
         const { addressId, payment_method, isWallet } = req.body;
-        const coupon = req.session.coupon || null;
+        const coupon = (await Coupon.findOne({ code: req.session.coupon.code, expiryDate: { $gt: Date.now() } })) || null;
         const newOrder = await checkoutHelper.placeOrder(userId, addressId, payment_method, isWallet, coupon);
         if (payment_method === "cash_on_delivery") {
             res.status(200).json({
@@ -94,6 +99,8 @@ exports.placeOrder = asyncHandler(async (req, res) => {
                 await newOrder.save();
                 const walletTransaction = await WalletTransaction.create({
                     wallet: wallet._id,
+                    event: "Order Placed",
+                    orderId: newOrder.orderId,
                     amount: wallet.balance,
                     type: "debit",
                 });
@@ -136,6 +143,8 @@ exports.placeOrder = asyncHandler(async (req, res) => {
             await newOrder.save();
             const walletTransaction = WalletTransaction.create({
                 wallet: wallet._id,
+                event: "Order Placed",
+                orderId: newOrder.orderId,
                 amount: newOrder.totalPrice,
                 type: "debit",
             });

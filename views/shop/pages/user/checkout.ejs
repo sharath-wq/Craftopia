@@ -235,7 +235,7 @@
 
         async function handleWltButtonClick(event) {
             event.preventDefault();
-            if (await checkCartData()) {
+            if ((await checkCartData()) && (await checkCoupon())) {
                 const data = {
                     addressId: selectedAddressId,
                     payment_method: "wallet_payment",
@@ -316,31 +316,27 @@
         }
 
         async function checkCoupon() {
-            const code = document.getElementById("code");
-            if (code) {
+            const code = document.getElementById("coupon_code");
+            if (code.value) {
                 try {
-                    fetch("/checkout/coupon/", {
+                    const response = await fetch("/checkout/coupon/", {
                         method: "POST",
                         body: JSON.stringify({ code: code.value }),
                         headers: {
                             "Content-Type": "application/json",
                         },
-                    })
-                        .then((response) => {
-                            if (response.ok) {
-                                return response.json();
-                            }
-                        })
-                        .then((data) => {
-                            if (data.status === "danger") {
-                            } else if (data.status === "success") {
-                            }
-                            console.log(data);
-                        })
-                        .catch((error) => {
-                            console.error("Fetch error:", error);
-                        });
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === "success") {
+                            return true;
+                        } else if (data.status === "danger") {
+                            showCouponAlert(data);
+                        }
+                    }
                 } catch (error) {
+                    console.error("Fetch error:", error);
                     handleError(error);
                 }
             } else {
@@ -363,6 +359,21 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     proceedToCheckout();
+                }
+            });
+        }
+
+        function showCouponAlert(data) {
+            Swal.fire({
+                title: "Coupon Alert",
+                text: data.message,
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonText: "Remove Coupon",
+                cancelButtonText: "Close",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleRemoveCouponBtnClick();
                 }
             });
         }

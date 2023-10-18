@@ -15,6 +15,13 @@ const walletTransactionSchema = new mongoose.Schema({
         enum: ["credit", "debit"],
         required: true,
     },
+    orderId: {
+        type: String,
+    },
+    event: {
+        type: String,
+        required: true,
+    },
     timestamp: {
         type: Date,
         default: Date.now,
