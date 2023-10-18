@@ -131,6 +131,8 @@ module.exports = {
                 });
                 const walletTransaction = await WalletTransactoins.create({
                     wallet: newWallet._id,
+                    event: "Refund",
+                    orderId: order.orderId,
                     amount: amountToBeRefunded,
                     type: "credit",
                 });
@@ -151,6 +153,8 @@ module.exports = {
                 const walletTransaction = await WalletTransactoins.create({
                     wallet: existingWallet._id,
                     amount: amountToBeRefunded,
+                    event: "Refund",
+                    orderId: order.orderId,
                     type: "credit",
                 });
             }

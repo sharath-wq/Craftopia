@@ -40,16 +40,30 @@
                                                 <i class="pe-7s-camera text-white fw-bold"></i>
                                             </button>
                                         </div>
+                                        <div class="" style="display: flex; flex-direction: column">
+                                            <p class="text-dark" style="margin-bottom: 0px; margin-top: 5px">
+                                                Referal Code
+                                                <span class="text-secondary" id="referralCode"
+                                                    ><%= user?.referralId %></span
+                                                >
+                                            </p>
+                                            <small class="btn text-secondary" id="copyButton" style="margin-top: 0px">
+                                                <i class="pe-7s-copy-file"></i>
+                                            </small>
+                                        </div>
                                     </div>
 
                                     <div class="d-flex flex-column col-9 align-items-start justify-content-center pl-5">
                                         <h1 class="mt-0 font-weight-bold"><%= user?.firstName %> <%= user?.lastName %></h1>
                                         <div class="d-flex w-100 justify-content-between">
-                                            <% if (user?.address[0]) { %>
-                                            <p class="text-secondary">
-                                                <%= user?.address[0]?.city %>, <%= user?.address[0]?.state %>
-                                            </p>
-                                            <% } %> <% if (wallet) { %>
+                                            <div class="">
+                                                <% if (user?.address[0]) { %>
+                                                <p class="text-secondary">
+                                                    <%= user?.address[0]?.city %>, <%= user?.address[0]?.state %>
+                                                </p>
+                                                <% } %>
+                                            </div>
+                                            <% if (wallet) { %>
                                             <a href="/user/profile/wallet/<%= wallet?._id %>" class="text-decoration-none">
                                                 <div class="card shadow bg-white rounded hover">
                                                     <div class="card-body">
@@ -168,6 +182,8 @@
         const imageInput = document.getElementById("image-input");
         const imagePreview = document.getElementById("image-preview");
         const userAvatar = document.getElementById("user-avatar");
+        const referralCode = document.getElementById("referralCode");
+        const copyButton = document.getElementById("copyButton");
 
         // Add a click event listener to the "Change Profile Picture" button
         document.getElementById("change-avatar").addEventListener("click", function () {
@@ -194,6 +210,24 @@
                 imagePreview.style.display = "none";
                 userAvatar.style.display = "block";
             }
+        });
+
+        copyButton.addEventListener("click", function () {
+            const codeToCopy = referralCode.textContent;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = codeToCopy;
+
+            document.body.appendChild(textArea);
+
+            textArea.select();
+            textArea.setSelectionRange(0, 99999);
+
+            document.execCommand("copy");
+
+            document.body.removeChild(textArea);
+
+            copyButton.innerText = "Copied!";
         });
     });
 </script>

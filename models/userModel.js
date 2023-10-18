@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema(
             type: Date,
             default: Date.now(),
         },
+        referralId: {
+            type: String,
+            unique: true,
+        },
         updatedAt: {
             type: Date,
             default: Date.now(),
@@ -90,5 +94,15 @@ userSchema.methods.createResetPasswordToken = async function () {
     this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
     return resetToken;
 };
+
+userSchema.pre("save", function (next) {
+    if (this.isNew) {
+        const randomToken = crypto.randomBytes(2).toString("hex");
+        const last4Digits = this._id.toString().slice(-4);
+        this.referralId = "Ref" + last4Digits + randomToken;
+    }
+
+    next();
+});
 
 module.exports = mongoose.model("User", userSchema);

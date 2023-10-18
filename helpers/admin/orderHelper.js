@@ -28,11 +28,11 @@ async function handleOrderPayment(order, orders, wallet) {
                 user: orders.user,
             });
 
-            await createWalletTransaction(newWallet, amountToBeRefunded);
+            await createWalletTransaction(newWallet, amountToBeRefunded, orders.orderId);
         } else {
             wallet.balance += amountToBeRefunded;
             await wallet.save();
-            await createWalletTransaction(wallet, amountToBeRefunded);
+            await createWalletTransaction(wallet, amountToBeRefunded, orders.orderId);
         }
     } else {
         if (!wallet) {
@@ -41,12 +41,12 @@ async function handleOrderPayment(order, orders, wallet) {
                 user: orders.user,
             });
 
-            await createWalletTransaction(newWallet, parseInt(order.price) * order.quantity);
+            await createWalletTransaction(newWallet, parseInt(order.price) * order.quantity, orders.orderId);
         } else {
             wallet.balance += parseInt(order.price) * order.quantity;
             await wallet.save();
 
-            await createWalletTransaction(wallet, parseInt(order.price) * order.quantity);
+            await createWalletTransaction(wallet, parseInt(order.price) * order.quantity, orders.orderId);
         }
     }
 }
@@ -71,17 +71,17 @@ async function handleReturnAmount(order, orders, orderTotal) {
                 user: orders.user,
             });
 
-            await createWalletTransaction(newWallet, amountToBeRefunded);
+            await createWalletTransaction(newWallet, amountToBeRefunded, orders.orderId);
         } else {
             wallet.balance += amountToBeRefunded;
             await wallet.save();
-            await createWalletTransaction(wallet, amountToBeRefunded);
+            await createWalletTransaction(wallet, amountToBeRefunded, orders.orderId);
         }
     } else {
         wallet.balance += amountToBeRefunded;
         await wallet.save();
 
-        await createWalletTransaction(wallet, amountToBeRefunded);
+        await createWalletTransaction(wallet, amountToBeRefunded, orders.orderId);
     }
 }
 
@@ -124,9 +124,11 @@ module.exports = {
     },
 };
 
-async function createWalletTransaction(wallet, amount) {
+async function createWalletTransaction(wallet, amount, orderId) {
     return WalletTransactoins.create({
         wallet: wallet._id,
+        event: "Refund",
+        orderId: orderId,
         amount: amount,
         type: "credit",
     });

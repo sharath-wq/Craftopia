@@ -22,7 +22,8 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
         const cartItems = await checkoutHelper.getCartItems(userid);
         const cartData = await Cart.findOne({ user: userid });
         let wallet = await Wallet.findOne({ user: userid });
-        const coupon = (await Coupon.findOne({ code: req.session.coupon.code, expiryDate: { $gt: Date.now() } })) || null;
+        const coupon =
+            (await Coupon.findOne({ code: req?.session?.coupon?.code, expiryDate: { $gt: Date.now() } })) || null;
         const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
             .select({ code: 1, _id: 0 })
             .limit(4);
@@ -98,6 +99,8 @@ exports.placeOrder = asyncHandler(async (req, res) => {
                 await newOrder.save();
                 const walletTransaction = await WalletTransaction.create({
                     wallet: wallet._id,
+                    event: "Order Placed",
+                    orderId: newOrder.orderId,
                     amount: wallet.balance,
                     type: "debit",
                 });
@@ -140,6 +143,8 @@ exports.placeOrder = asyncHandler(async (req, res) => {
             await newOrder.save();
             const walletTransaction = WalletTransaction.create({
                 wallet: wallet._id,
+                event: "Order Placed",
+                orderId: newOrder.orderId,
                 amount: newOrder.totalPrice,
                 type: "debit",
             });
