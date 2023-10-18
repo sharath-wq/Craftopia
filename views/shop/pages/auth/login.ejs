@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
-                <% include('../../partials/flash-message.ejs') %>
+                <%- include('../../partials/flash-message.ejs') %>
                 <div class="login">
                     <h1 class="cart-heading">Login</h1>
                     <div class="login-form-container">
@@ -19,9 +19,12 @@
                                         <label>Remember me</label>
                                         <a href="/auth/forgot-password">Forgot Password?</a>
                                     </div>
-                                    <button type="submit" class="default-btn floatright" id="submitButton" disabled>
-                                        Login
-                                    </button>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="submit" class="default-btn floatright" id="submitButton" disabled>
+                                            Login
+                                        </button>
+                                        <a href="/auth/send-email" class="text-decoration-none text-muted">Verify Email</a>
+                                    </div>
                                 </div>
                             </form>
                             <!-- Add spacing and center-align the Google button -->

@@ -1,0 +1,35 @@
+<!-- login-area start -->
+<div class="register-area ptb-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-12 col-lg-6 col-xl-6 ms-auto me-auto">
+                <%- include('../../partials/flash-message.ejs') %>
+                <div class="login">
+                    <h1 class="cart-heading">Enter Email</h1>
+                    <div class="login-form-container">
+                        <div class="login-form">
+                            <form action="/auth/send-email" method="post" id="verificationForm">
+                                <div class="form-group">
+                                    <label for="mobileNumber">Email Address:</label>
+                                    <input
+                                        type="email"
+                                        class="form-control text-muted"
+                                        id="email"
+                                        name="email"
+                                        placeholder="Enter your email Address"
+                                        required
+                                        value=""
+                                    />
+                                </div>
+                                <div class="button-box">
+                                    <button type="submit" class="default-btn floatright">Send Otp</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- login-area end -->

@@ -47,6 +47,12 @@ passport.use(
                 return done(null, false, { message: "Email not registered" });
             }
 
+            if (!user.isEmailVerified) {
+                return done(null, false, {
+                    message: "Email not verified",
+                });
+            }
+
             const isPasswordValid = await user.isPasswordMatched(password);
             if (!isPasswordValid) {
                 return done(null, false, { message: "Invalid Credentials" });
