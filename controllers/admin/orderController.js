@@ -1,11 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../../models/orderModel");
 const status = require("../../utils/status");
-const Product = require("../../models/productModel");
-const OrderItem = require("../../models/orderItemModel");
-const Wallet = require("../../models/walletModel");
-const WalletTransactoins = require("../../models/walletTransactionModel");
-const Coupon = require("../../models/couponModel");
+const { handleReturnedOrder, handleCancelledOrder, updateOrderStatus } = require("../../helpers/admin/orderHelper");
 
 /**
  * Manage Orders Page Route
@@ -72,149 +68,22 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
 
-        const order = await OrderItem.findByIdAndUpdate(orderId, {
-            status: req.body.status,
-        });
+        const order = await updateOrderStatus(orderId, req.body.status);
 
         if (req.body.status === status.status.shipped) {
             order.shippedDate = Date.now();
         } else if (req.body.status === status.status.delivered) {
             order.deliveredDate = Date.now();
         }
+
         await order.save();
 
         if (req.body.status === status.status.cancelled) {
-            if (order.isPaid !== "pending") {
-                const product = await Product.findById(order.product);
-                product.sold -= order.quantity;
-                product.quantity += order.quantity;
-                await product.save();
-            }
-
-            const orders = await Order.findOne({ orderItems: order._id });
-            const wallet = await Wallet.findOne({ user: orders.user });
-
-            if (order.isPaid) {
-                const orders = await Order.findOne({ orderItems: order._id });
-                const orderTotal = parseInt(order.price * order.quantity);
-                if (orders.coupon) {
-                    let amountToBeRefunded = 0;
-                    const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
-                    const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
-                    const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
-                    amountToBeRefunded = returnAmount;
-                    if (!wallet) {
-                        const newWallet = await Wallet.create({
-                            balance: amountToBeRefunded,
-                            user: orders.user,
-                        });
-                        const walletTransaction = await WalletTransactoins.create({
-                            wallet: newWallet._id,
-                            amount: amountToBeRefunded,
-                            type: "credit",
-                        });
-                    } else {
-                        const existingWallet = await Wallet.findOne({ user: orders.user });
-                        existingWallet.balance += amountToBeRefunded;
-                        await existingWallet.save();
-
-                        const walletTransaction = await WalletTransactoins.create({
-                            wallet: existingWallet._id,
-                            amount: amountToBeRefunded,
-                            type: "credit",
-                        });
-                    }
-                } else {
-                    if (!wallet) {
-                        const newWallet = await Wallet.create({
-                            balance: parseInt(order.price) * order.quantity,
-                            user: orders.user,
-                        });
-                        const walletTransaction = await WalletTransactoins.create({
-                            wallet: newWallet._id,
-                            amount: parseInt(order.price) * order.quantity,
-                            type: "credit",
-                        });
-                    } else {
-                        const existingWallet = await Wallet.findOne({ user: orders.user });
-                        existingWallet.balance += parseInt(order.price) * order.quantity;
-                        await existingWallet.save();
-
-                        const walletTransaction = await WalletTransactoins.create({
-                            wallet: existingWallet._id,
-                            amount: parseInt(order.price) * order.quantity,
-                            type: "credit",
-                        });
-                    }
-                }
-            }
+            await handleCancelledOrder(order);
         }
 
-        const orders = await Order.findOne({ orderItems: order._id });
-        const wallet = await Wallet.findOne({ user: orders.user });
-
         if (order.status === status.status.returnPending) {
-            order.status = status.status.returned;
-            const product = await Product.findById(order.product);
-            product.sold -= order.quantity;
-            product.quantity += order.quantity;
-            await product.save();
-
-            const orders = await Order.findOne({ orderItems: order._id });
-            const orderTotal = parseInt(order.price * order.quantity);
-
-            if (orders.coupon) {
-                let amountToBeRefunded = 0;
-                const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
-                const persentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
-                const returnAmount = orderTotal - (appliedCoupon.value * persentage) / 100;
-                amountToBeRefunded = returnAmount;
-                if (!wallet) {
-                    const newWallet = await Wallet.create({
-                        balance: amountToBeRefunded,
-                        user: orders.user,
-                    });
-                    const walletTransaction = await WalletTransactoins.create({
-                        wallet: newWallet._id,
-                        amount: amountToBeRefunded,
-                        type: "credit",
-                    });
-                } else {
-                    const existingWallet = await Wallet.findOne({ user: orders.user });
-                    existingWallet.balance += amountToBeRefunded;
-                    await existingWallet.save();
-
-                    const walletTransaction = await WalletTransactoins.create({
-                        wallet: existingWallet._id,
-                        amount: amountToBeRefunded,
-                        type: "credit",
-                    });
-                }
-            } else {
-                if (!wallet) {
-                    const newWallet = await Wallet.create({
-                        balance: parseInt(order.price) * order.quantity,
-                        user: orders.user,
-                    });
-                    const walletTransaction = await WalletTransactoins.create({
-                        wallet: newWallet._id,
-                        amount: parseInt(order.price) * order.quantity,
-                        type: "credit",
-                    });
-                } else {
-                    const existingWallet = await Wallet.findOne({ user: orders.user });
-                    existingWallet.balance += parseInt(order.price) * order.quantity;
-                    await existingWallet.save();
-
-                    const walletTransaction = await WalletTransactoins.create({
-                        wallet: existingWallet._id,
-                        amount: parseInt(order.price) * order.quantity,
-                        type: "credit",
-                    });
-                }
-            }
-
-            await order.save();
+            await handleReturnedOrder(order);
         }
 
         res.redirect("back");

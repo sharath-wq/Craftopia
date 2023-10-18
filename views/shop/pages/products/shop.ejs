@@ -32,18 +32,18 @@
                                 <li class="d-flex justify-content-between">
                                     <a
                                         class="<%= selectedCategories.includes(element.title) ? 'text-dark' : '' %>"
-                                        href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= selectedCategories.concat([element.title.replace(/\s+/g, '-')]).join('+') %>"
+                                        href="/shop?page=<%= 0 %>&search=<%= search %>&category=<%= selectedCategories.concat([element.title.replace(/\s+/g, '-')]).join('+') %>"
                                         onclick="updateSelectedCategories(this)"
                                     >
                                         <%= element.title %>
                                     </a>
 
-                                    <a
+                                    <!-- <a
                                         href="/shop?page=<%= currentPage - 1 %>&search=<%= search %>&category=<%= selectedCategories.concat([element.title.replace(/\s+/g, '-')]).join('+') %>"
                                         class="<%= selectedCategories.includes(element.title) ? 'd-block' : 'd-none' %>"
                                     >
                                         <i class="ti ti-close text-danger"></i>
-                                    </a>
+                                    </a> -->
                                 </li>
                                 <% }); %>
                             </ul>
