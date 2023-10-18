@@ -10,7 +10,8 @@ async function handleOrderPayment(order, orders, wallet) {
     const orderTotal = parseInt(order.price * order.quantity);
 
     if (orders.coupon) {
-        const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
+        const appliedCoupon = orders.coupon;
+        console.log(appliedCoupon);
         let amountToBeRefunded = 0;
         if (appliedCoupon.type === "fixedAmount") {
             const percentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);
@@ -53,7 +54,7 @@ async function handleOrderPayment(order, orders, wallet) {
 async function handleReturnAmount(order, orders, orderTotal) {
     const wallet = await Wallet.findOne({ user: orders.user });
     if (orders.coupon) {
-        const appliedCoupon = await Coupon.findOne({ code: orders.coupon });
+        const appliedCoupon = orders.coupon;
         let amountToBeRefunded = 0;
         if (appliedCoupon.type === "fixedAmount") {
             const percentage = Math.round((orderTotal / (orders.totalPrice + orders.discount)) * 100);

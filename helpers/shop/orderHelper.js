@@ -114,7 +114,7 @@ module.exports = {
             const wallet = await Wallet.findOne({ user: userId });
             const orderTotal = parseInt(updatedOrder.price) * updatedOrder.quantity;
             const order = await Order.findOne({ orderItems: orderItemId });
-            const appliedCoupon = await Coupon.findOne({ code: order.coupon });
+            const appliedCoupon = order.coupon;
             if (!wallet) {
                 let amountToBeRefunded = 0;
                 if (appliedCoupon.type === "fixedAmount") {

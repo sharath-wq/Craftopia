@@ -22,7 +22,7 @@ exports.checkoutpage = asyncHandler(async (req, res) => {
         const cartItems = await checkoutHelper.getCartItems(userid);
         const cartData = await Cart.findOne({ user: userid });
         let wallet = await Wallet.findOne({ user: userid });
-        const coupon = req.session.coupon || null;
+        const coupon = (await Coupon.findOne({ code: req.session.coupon.code, expiryDate: { $gt: Date.now() } })) || null;
         const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
             .select({ code: 1, _id: 0 })
             .limit(4);
@@ -78,7 +78,7 @@ exports.placeOrder = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
         const { addressId, payment_method, isWallet } = req.body;
-        const coupon = req.session.coupon || null;
+        const coupon = (await Coupon.findOne({ code: req.session.coupon.code, expiryDate: { $gt: Date.now() } })) || null;
         const newOrder = await checkoutHelper.placeOrder(userId, addressId, payment_method, isWallet, coupon);
         if (payment_method === "cash_on_delivery") {
             res.status(200).json({

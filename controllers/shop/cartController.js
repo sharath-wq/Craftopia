@@ -13,7 +13,7 @@ const Coupon = require("../../models/couponModel");
 exports.cartpage = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const messages = req.flash();
-    const coupon = req.session.coupon || null;
+    const coupon = (await Coupon.findOne({ code: req?.session?.coupon?.code, expiryDate: { $gt: Date.now() } })) || null;
     const availableCoupons = await Coupon.find({ expiryDate: { $gt: Date.now() } })
         .select({ code: 1, _id: 0 })
         .limit(4);

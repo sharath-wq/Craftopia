@@ -144,7 +144,7 @@ exports.placeOrder = asyncHandler(async (userId, addressId, paymentMethod, isWal
         phone: address.mobile,
         totalPrice: total.toFixed(2),
         discount: discount,
-        coupon: coupon?.code,
+        coupon: coupon,
         payment_method: paymentMethod,
     });
 
