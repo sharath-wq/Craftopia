@@ -9605,3 +9605,35 @@ input.cart-plus-minus-box {
     color: #050035;
 }
 
+/* Custom */
+.banner-wrapper-4 {
+    position: relative;
+}
+
+.txt-content {
+    display: none;
+}
+
+.txt-content:hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.banner-wrapper-4:hover .txt-content {
+    display: flex;
+}
+
+.banner-wrapper-4:hover img {
+    filter: blur(1px); /* Adjust the blur amount as needed */
+}

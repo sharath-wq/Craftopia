@@ -150,9 +150,12 @@
                                                     </small>
                                                 </div>
                                                 <div class="d-flex justify-content-between">
-                                                    <span class="text-decoration-line-through text-secondary"
-                                                        >₹ <%= product.productPrice %></span
-                                                    >
+                                                    <% if (product.salePrice !== product.productPrice) { %>
+                                                            <div class="">
+                                                                <span class="text-decoration-line-through text-secondary">₹ <%= product.productPrice %></span>
+                                                                <span class="text-success" ><%= product.category.offer %>% Off</span>
+                                                            </div>
+                                                    <% } %>
                                                     <span class="card-text h4">₹ <%= product.salePrice %></span>
                                                 </div>
                                             </div>
@@ -187,8 +190,13 @@
                                                 <div class="product-list-info">
                                                     <h4><a href="/product/<%= product._id %>"><%= product.title%></a></h4>
                                                     <div class="d-flex justify-content-between">
-                                                        <span class="text-decoration-line-through text-secondary">₹ <%= product.productPrice %></span>
-                                                        <span>₹ <%= product.salePrice %></span>
+                                                        <% if (product.salePrice !== product.productPrice) { %>
+                                                            <div class="">
+                                                                <span class="text-decoration-line-through text-secondary">₹ <%= product.productPrice %></span>
+                                                                <span class="text-success" ><%= product.category.offer %>% Off</span>
+                                                            </div>
+                                                        <% } %>
+                                                        <span class="card-text h4">₹ <%= product.salePrice %></span>
                                                     </div>
                                                 </div>
                                                 <div class="product-list-cart-wishlist">

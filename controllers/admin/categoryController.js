@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const Category = require("../../models/categoryModel");
 const validateMongoDbId = require("../../utils/validateMongodbId");
 const { validationResult } = require("express-validator");
+const sharp = require("sharp");
+const { admin } = require("../../utils/firebase");
 
 /**
  * Manage Category Page Route
@@ -53,6 +55,17 @@ exports.editCategorypage = asyncHandler(async (req, res) => {
 exports.addCategory = asyncHandler(async (req, res) => {
     try {
         const errors = validationResult(req);
+        const file = req.file;
+        const categoryImageBuffer = await sharp(file.buffer)
+            .resize(540, 540)
+            .png({ quality: 100 })
+            .webp({ quality: 100 })
+            .jpeg({ quality: 100 })
+            .toBuffer();
+        const categoryFileName = `thumbnails/${Date.now()}_${file.originalname}`;
+        await admin.storage().bucket().file(categoryFileName).save(categoryImageBuffer);
+        const categoryImageUrl = `${process.env.FIREBASE_URL}${categoryFileName}`;
+
         if (!errors.isEmpty()) {
             errors.array().forEach((error) => {
                 req.flash("danger", error.msg);
@@ -64,7 +77,11 @@ exports.addCategory = asyncHandler(async (req, res) => {
                 req.flash("warning", "Category Alrady Exists");
                 res.redirect("/admin/category/add");
             } else {
-                const newCategory = await Category.create(req.body);
+                const newCategory = await Category.create({
+                    title: req.body.title,
+                    isListed: req.body.isListed,
+                    image: categoryImageUrl,
+                });
                 req.flash("success", `${newCategory.title} added Successfully`);
                 res.redirect("/admin/category/add");
             }
@@ -140,7 +157,29 @@ exports.editCategory = asyncHandler(async (req, res) => {
     const id = req.params.id;
     validateMongoDbId(id);
     try {
-        const editedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
+        const { title, isListed, offer, offerDescription, startDate, endDate } = req.body;
+        const file = req.file;
+        const categoryImageBuffer = await sharp(file.buffer)
+            .resize(540, 540)
+            .png({ quality: 100 })
+            .webp({ quality: 100 })
+            .jpeg({ quality: 100 })
+            .toBuffer();
+
+        const categoryFileName = `thumbnails/${Date.now()}_${file.originalname}`;
+        await admin.storage().bucket().file(categoryFileName).save(categoryImageBuffer);
+        const categoryImageUrl = `${process.env.FIREBASE_URL}${categoryFileName}`;
+
+        const editedCategory = await Category.findById(id);
+        editedCategory.title = title;
+        editedCategory.isListed = isListed;
+        editedCategory.offer = offer;
+        editedCategory.image = categoryImageUrl;
+        editedCategory.offerDescription = offerDescription;
+        editedCategory.startDate = startDate;
+        editedCategory.endDate = endDate;
+        editedCategory.save();
+
         req.flash("success", `Category ${editedCategory.title} updated`);
         res.redirect("/admin/category");
     } catch (error) {

@@ -1,36 +1,123 @@
 <div class="row">
     <%- include('../../partials/flash-message.ejs') %>
-        <div class="col-lg-12 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-semibold mb-4">Edit Category</h5>
-                    <div class="table-responsive">
-                        <form action="/admin/category/edit/<%= category._id %>?_method=PUT" method="post">
-                            <div class="mb-3">
-                                <label for="categoryName" class="form-label">Category Name</label>
-                                <input type="text" class="form-control" id="categoryName"
-                                    placeholder="Enter category name" value="<%= category.title %>" name="title"
-                                    required />
-                            </div>
-                            <div class="mb-3">
-                                <label for="categoryStatus" class="form-label">Status</label>
+    <div class="col-lg-12 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-semibold mb-4">Edit Category</h5>
+                <div class="table-responsive">
+                    <form
+                        action="/admin/category/edit/<%= category._id %>?_method=PUT"
+                        method="post"
+                        enctype="multipart/form-data"
+                    >
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Category Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="categoryName"
+                                placeholder="Enter category name"
+                                value="<%= category.title %>"
+                                name="title"
+                                required
+                            />
+                        </div>
+                        <!-- New input fields for the offer -->
+                        <div class="mb-3">
+                            <label for="offerPercentage" class="form-label">Offer Percentage</label>
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="offerPercentage"
+                                placeholder="Enter percentage discount"
+                                name="offer"
+                                value="<%= category.offer %>"
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="startDate"
+                                name="startDate"
+                                value="<%= (category && category.startDate) ? category.startDate.toISOString().split('T')[0] : '' %>"
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="endDate"
+                                name="endDate"
+                                value="<%= (category && category.endDate) ? category.endDate.toISOString().split('T')[0] : '' %>"
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="offerDescription" class="form-label">Offer Description</label>
+                            <textarea
+                                class="form-control"
+                                id="offerDescription"
+                                rows="4"
+                                placeholder="Enter offer description"
+                                name="offerDescription"
+                            >
+<%= category.offerDescription %>
+                            </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryStatus" class="form-label">Status</label>
+                            <div class="form-check">
                                 <div class="form-check">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="true" name="isListed"
-                                            id="list" <%=category.isListed===true ? 'checked' : '' %> />
-                                        <label class="form-check-label" for="list">List</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="false" name="isListed"
-                                            id="unlist" <%=category.isListed===false ? 'checked' : '' %> />
-                                        <label class="form-check-label" for="unlist">Unlist</label>
-                                    </div>
+                                    <input class="form-check-input" type="radio" value="true" name="isListed" id="list" <%=
+                                    category.isListed === true ? 'checked' : '' %> />
+                                    <label class="form-check-label" for="list">List</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="false" name="isListed" id="unlist"
+                                    <%= category.isListed === false ? 'checked' : '' %> />
+                                    <label class="form-check-label" for="unlist">Unlist</label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Add Category</button>
-                        </form>
-                    </div>
+                        </div>
+                        <!-- Input for the image -->
+                        <div class="mb-3">
+                            <label for="categoryImage" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="categoryImage" name="file" accept="image/*" />
+                            <!-- Display the existing image if available -->
+                            <div class="d-flex">
+                                <img
+                                    src="<%= category.image %>"
+                                    alt="Category Image"
+                                    class="img-thumbnail col-6"
+                                    id="imagePreview"
+                                />
+                                <div class="col-6" id="imagePreview"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Category</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 </div>
+
+<script>
+    document.getElementById("categoryImage").addEventListener("change", function () {
+        var preview = document.getElementById("imagePreview");
+        var previewContainer = document.getElementById("imagePreviewContainer");
+        var file = this.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            previewContainer.innerHTML = '<img src="' + e.target.result + '" alt="Category Image" class="img-thumbnail" />';
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

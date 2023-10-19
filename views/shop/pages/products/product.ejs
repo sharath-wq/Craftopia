@@ -62,9 +62,16 @@
                             <span><%= reviews.length %> Ratting (S)</span>
                         </div>
                     </div>
-                    <div class="details-price">
-                        <span>₹ <%= product.salePrice %></span>
-                        <!-- <span>₹ <%= product.productPrice %> </span> -->
+                    <div class="details-price gap-3 d-flex align-items-baseline">
+                        <div class="">
+                            <span class="h3 fw-bold">₹ <%= product.salePrice %></span>
+                        </div>
+                        <div class="">
+                            <span class="text-muted text-decoration-line-through">₹ <%= product.productPrice %></span>
+                        </div>
+                        <div class="">
+                            <span class="h3 text-success"><%= product.category.offer %>% off</span>
+                        </div>
                     </div>
                     <% if (product.quantity === 0) { %>
                     <small class="text-danger h3">Out Of Stock!😓</small>
@@ -187,9 +194,9 @@
                                 <% reviews.forEach(review => { %>
                                 <div class="single-testimonial-2 text-center">
                                     <img style="width: 100px; height: 100px;" class="rounded-circle" src="<%=
-                                    review.user.image || "/shop/img/team/user.png" %>" alt="user" />
+                                    review?.user?.image || "/shop/img/team/user.png" %>" alt="user" />
                                     <p><%= review.review %></p>
-                                    <h4>Posted By <%= review.user.firstName %></h4>
+                                    <h4>Posted By <%= review?.user?.firstName %></h4>
                                     <span><%= review.rating %> Stars </span>
                                 </div>
                                 <% }) %>

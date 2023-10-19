@@ -14,10 +14,30 @@ exports.shopHomepage = asyncHandler(async (req, res) => {
             .limit(2)
             .sort({ _id: -1 });
         const messages = req.flash();
-        const products = await Product.find({ isListed: true, isDeleted: false }).populate("images").limit(10).exec();
+        const products = await Product.find({ isListed: true, isDeleted: false })
+            .populate("images")
+            .populate("category")
+            .limit(10)
+            .exec();
         shuffleArray(products);
-        const PopularProducts = await Product.find().sort({ sold: -1 }).populate("images").limit(10).exec();
-        res.render("shop/pages/index", { title: "Craftopia", page: "home", products, messages, PopularProducts, banners });
+        const PopularProducts = await Product.find()
+            .sort({ sold: -1 })
+            .populate("images")
+            .populate("category")
+            .limit(10)
+            .exec();
+
+        const categoryOffers = await Category.find().limit(3);
+
+        res.render("shop/pages/index", {
+            title: "Craftopia",
+            page: "home",
+            products,
+            messages,
+            PopularProducts,
+            banners,
+            categoryOffers,
+        });
     } catch (error) {
         throw new Error(error);
     }
