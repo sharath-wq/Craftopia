@@ -55,7 +55,7 @@ exports.shoppage = asyncHandler(async (req, res) => {
 
         const currentPage = parseInt(page) || 1;
         const itemsPerPage = parseInt(perPage) || 8;
-        const allProducts = await Product.find(queryOptions).populate("images").exec();
+        const allProducts = await Product.find(queryOptions).populate("images").populate("category").exec();
 
         // Apply pagination to the shuffled products
         const skip = (currentPage - 1) * itemsPerPage;
@@ -114,7 +114,7 @@ exports.singleProductpage = asyncHandler(async (req, res) => {
     validateMongoDbId(id);
     try {
         const messages = req.flash();
-        const product = await Product.findById(id).populate("images").exec();
+        const product = await Product.findById(id).populate("images").populate("category").exec();
         const reviews = await Review.find({ product: id }).populate("user");
         const relatedProducts = await Product.find({
             category: product.category,

@@ -22,8 +22,8 @@
                     <div class="form-group">
                         <label for="category">Category:</label>
                         <select class="form-select" name="category" id="category" required>
-                            <option selected value="<%= product.category._id %>"><%= product.category.title %></option>
-                            <% categories.forEach(category=> { %> <% if (category.title !== product.category.title) { %>
+                            <option selected value="<%= product?.category?._id %>"><%= product?.category?.title %></option>
+                            <% categories.forEach(category=> { %> <% if (category?.title !== product?.category?.title) { %>
                             <option value="<%= category._id %>"><%= category.title %></option>
                             <% } %> <% }) %>
                         </select>
