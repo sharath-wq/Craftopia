@@ -61,15 +61,24 @@
                                 </p>
                                 <!-- Product Price -->
                                 <p class="card-text"><strong>Product Price:</strong> ₹<%= order.price %></p>
-                                
+
                                 <% if (order.isPaid === "paid") { %>
-                                    <p class="card-text"><strong>Payment Status: </strong><span class="capitalize text-success"><%= order.isPaid %></span></p>
+                                <p class="card-text">
+                                    <strong>Payment Status: </strong
+                                    ><span class="capitalize text-success"><%= order.isPaid %></span>
+                                </p>
                                 <% } else if (order.isPaid === "cod") { %>
-                                    <p class="card-text"><strong>Payment Status: </strong><span class="capitalize text-warning"><%= order.isPaid %></span></p>
+                                <p class="card-text">
+                                    <strong>Payment Status: </strong
+                                    ><span class="capitalize text-warning"><%= order.isPaid %></span>
+                                </p>
                                 <% } else if (order.isPaid === "pending") {%>
-                                    <p class="card-text"><strong>Payment Status: </strong><span class="capitalize text-danger"><%= order.isPaid %></span></p>
+                                <p class="card-text">
+                                    <strong>Payment Status: </strong
+                                    ><span class="capitalize text-danger"><%= order.isPaid %></span>
+                                </p>
                                 <% } %>
-                                
+
                                 <!-- Quantity -->
                                 <p class="card-text">
                                     <strong>Quantity:</strong>
@@ -87,6 +96,16 @@
                                 >
                                     Return Order
                                 </button>
+                                <% } else { %>
+                                <button
+                                    type="button"
+                                    class="btn btn-info h-auto"
+                                    id="invoiceBtn"
+                                    data-invoice-id="<%= order._id %>"
+                                >
+                                    Download Invoice
+                                </button>
+
                                 <% } } else if (order.status==="Pending" || order.status==="Shipped" ) { %>
                                 <button class="btn btn-danger h-auto" data-toggle="modal" data-target="#cancelOrderModal">
                                     Cancel Order
@@ -113,7 +132,7 @@
                                                 <option value="3" <% if (review?.rating==="3") { %>selected<% } %>>3 stars</option>
                                                 <option value="2" <% if (review?.rating==="2") { %>selected<% } %>>2 stars</option>
                                                 <option value="1" <% if (review?.rating==="1") { %>selected<% } %>>1 stars</option>
-                                            </select>
+                                        </select>
                                     </div>
                                     <!-- Review Text -->
                                     <div class="form-group">
@@ -209,3 +228,44 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.getElementById("invoiceBtn").addEventListener("click", function (orderId) {
+        var invoiceButton = this;
+        var invoiceId = this.getAttribute("data-invoice-id");
+
+        // Disable the button and change its text
+        invoiceButton.disabled = true;
+        invoiceButton.textContent = "Downloading...";
+
+        fetch(`/orders/download/${invoiceId}`)
+            .then((response) => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    console.error("Failed to download the invoice");
+                }
+            })
+            .then((blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "invoice.pdf";
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+                // Re-enable the button and restore its original text
+                invoiceButton.disabled = false;
+                invoiceButton.textContent = "Download Invoice";
+            })
+            .catch((error) => {
+                // Handle errors here
+
+                // Re-enable the button and restore its original text
+                invoiceButton.disabled = false;
+                invoiceButton.textContent = "Download Invoice";
+
+                console.error("An error occurred:", error);
+            });
+    });
+</script>

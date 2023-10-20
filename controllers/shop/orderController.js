@@ -6,7 +6,9 @@ const {
     cancelOrderById,
     cancelSingleOrder,
     returnOrder,
+    generateInvoice,
 } = require("../../helpers/shop/orderHelper");
+const OrderItem = require("../../models/orderItemModel");
 
 /**
  * Orders Page Route
@@ -105,6 +107,29 @@ exports.returnOrder = asyncHandler(async (req, res) => {
         } else {
             res.json(result);
         }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Download Invoice
+ * Method GET
+ */
+exports.donwloadInvoice = asyncHandler(async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const data = await generateInvoice(orderId);
+
+        easyinvoice.createInvoice(data, function (result) {
+            //The response will contain a base64 encoded PDF file
+            console.log("PDF base64 string: ", result.pdf);
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader("Content-Disposition", `attachment; filename=invoice-${orderId}.pdf`);
+
+            // Send the PDF as a response
+            res.send(Buffer.from(result.pdf, "base64"));
+        });
     } catch (error) {
         throw new Error(error);
     }

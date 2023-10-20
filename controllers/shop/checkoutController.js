@@ -79,7 +79,8 @@ exports.placeOrder = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
         const { addressId, payment_method, isWallet } = req.body;
-        const coupon = (await Coupon.findOne({ code: req.session.coupon.code, expiryDate: { $gt: Date.now() } })) || null;
+        const coupon =
+            (await Coupon.findOne({ code: req?.session?.coupon?.code, expiryDate: { $gt: Date.now() } })) || null;
         const newOrder = await checkoutHelper.placeOrder(userId, addressId, payment_method, isWallet, coupon);
         if (payment_method === "cash_on_delivery") {
             res.status(200).json({
@@ -180,7 +181,7 @@ exports.getCartData = asyncHandler(async (req, res) => {
 exports.orderPlaced = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
-        const coupon = (await Coupon.findOne({ code: req.session.coupon.code })) || null;
+        const coupon = (await Coupon.findOne({ code: req?.session?.coupon?.code })) || null;
         const userId = req.user._id;
 
         // Populate the order details, including product details
