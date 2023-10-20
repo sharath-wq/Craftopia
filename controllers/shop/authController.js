@@ -7,6 +7,8 @@ const crypto = require("crypto");
 const sendEmail = require("../../utils/sendEmail");
 const Otp = require("../../models/otpModel");
 const { generateOtp, sendOtp } = require("../../utils/sendOtp");
+const Wallet = require("../../models/walletModel");
+const WalletTransation = require("../../models/walletTransactionModel");
 
 /**
  * Login Page Route
@@ -75,6 +77,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
 
             if (!existingUser) {
                 const newUser = await User.create(req.body);
+                await Wallet.create({ user: newUser._id });
                 const otp = await Otp.create({
                     user_id: newUser._id,
                     user_email: newUser.email,
@@ -178,13 +181,19 @@ exports.sendEmailpage = asyncHandler(async (req, res) => {
 exports.sendEmail = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     try {
-        const otp = await Otp.create({
-            user_id: user._id,
-            user_email: user.email,
-            otp_code: generateOtp(),
-            expiration_time: Date.now() + 5 * 60 * 1000,
-        });
-        const html = `<!DOCTYPE html>
+        const isVerified = await User.findOne({ email: req.body.email, isEmailVerified: true });
+
+        if (isVerified) {
+            req.flash("success", "Email Alrady verified Try login");
+            res.redirect("/auth/login");
+        } else {
+            const otp = await Otp.create({
+                user_id: user._id,
+                user_email: user.email,
+                otp_code: generateOtp(),
+                expiration_time: Date.now() + 5 * 60 * 1000,
+            });
+            const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -223,22 +232,23 @@ exports.sendEmail = asyncHandler(async (req, res) => {
 </body>
 </html>
 `;
-        try {
-            await sendEmail({
-                email: user.email,
-                subject: "Email Verification",
-                html: html,
-            });
-            req.flash("success", "Email sent. Please check your inbox.");
-            return res.render("shop/pages/auth/verify-email", {
-                title: "Verify Email",
-                page: "Verify Email",
-                email: user.email,
-            });
-        } catch (emailError) {
-            console.error(emailError);
-            req.flash("danger", "Failed to send verification email");
-            return res.redirect("/auth/verify-email");
+            try {
+                await sendEmail({
+                    email: user.email,
+                    subject: "Email Verification",
+                    html: html,
+                });
+                req.flash("success", "Email sent. Please check your inbox.");
+                return res.render("shop/pages/auth/verify-email", {
+                    title: "Verify Email",
+                    page: "Verify Email",
+                    email: user.email,
+                });
+            } catch (emailError) {
+                console.error(emailError);
+                req.flash("danger", "Failed to send verification email");
+                return res.redirect("/auth/verify-email");
+            }
         }
     } catch (error) {
         // Handle the top-level error
@@ -279,6 +289,28 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
         const user = await User.findByIdAndUpdate(otp.user_id, {
             isEmailVerified: true,
         });
+
+        const referalCode = user.referedBy;
+        if (referalCode) {
+            console.log("Working");
+            const referedUser = await User.findOne({ referralId: referalCode });
+            const referedUserWallet = await Wallet.findOneAndUpdate({ user: referedUser._id }, { $inc: { balance: 100 } });
+
+            const rerefedUserWalletTransactions = await WalletTransation.create({
+                amount: 100,
+                event: "Referal",
+                type: "credit",
+                wallet: referedUserWallet._id,
+            });
+            const userWallet = await Wallet.findOneAndUpdate({ user: user._id }, { $inc: { balance: 50 } });
+            const userWalletTransaction = await WalletTransation.create({
+                wallet: userWallet._id,
+                amount: 50,
+                type: "credit",
+                event: "Welcome Bounce",
+            });
+        }
+
         req.flash("success", "Email Vefifed successfully");
         res.redirect("/auth/login");
     } catch (error) {
