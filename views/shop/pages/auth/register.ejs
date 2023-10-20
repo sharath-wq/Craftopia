@@ -9,36 +9,54 @@
                     <div class="login-form-container">
                         <div class="login-form">
                             <form action="/auth/register" method="post" id="registrationForm">
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    placeholder="First Name"
-                                    value="<%= data?.firstName %>"
-                                    required
-                                />
-                                <p class="text-danger" id="firstNameError"></p>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    placeholder="Last Name"
-                                    value="<%= data?.lastName %>"
-                                    required
-                                />
-                                <p class="text-danger" id="lastNameError"></p>
-                                <input name="email" placeholder="Email" type="email" value="<%= data?.email %>" required />
-                                <p class="text-danger" id="emailError"></p>
-                                <input
-                                    type="text"
-                                    name="mobile"
-                                    placeholder="Mobile"
-                                    value="<%= data?.mobile %>"
-                                    required
-                                />
-                                <p class="text-danger" id="mobileError"></p>
-                                <input type="password" name="password" placeholder="Password" required />
-                                <p class="text-danger" id="passwordError"></p>
-                                <input type="password" name="confirm-password" placeholder="Confirm Password" required />
-                                <p class="text-danger" id="confirmPasswordError"></p>
+                                <div class="form-group">
+                                    <label for="firstName">First Name <span class="text-danger">*</span></label>
+                                    <input
+                                        type="text"
+                                        id="firstName"
+                                        name="firstName"
+                                        value="<%= data?.firstName %>"
+                                        required
+                                    />
+                                    <p class="text-danger" id="firstNameError"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name <span class="text-danger">*</span></label>
+                                    <input
+                                        type="text"
+                                        id="lastName"
+                                        name="lastName"
+                                        value="<%= data?.lastName %>"
+                                        required
+                                    />
+                                    <p class="text-danger" id="lastNameError"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email <span class="text-danger">*</span></label>
+                                    <input type="email" id="email" name="email" value="<%= data?.email %>" required />
+                                    <p class="text-danger" id="emailError"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mobile">Mobile <span class="text-danger">*</span></label>
+                                    <input type="text" id="mobile" name="mobile" value="<%= data?.mobile %>" required />
+                                    <p class="text-danger" id="mobileError"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password <span class="text-danger">*</span></label>
+                                    <input type="password" id="password" name="password" required />
+                                    <p class="text-danger" id="passwordError"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm-password"
+                                        >Confirm Password <span class="text-danger">*</span></label
+                                    >
+                                    <input type="password" id="confirm-password" name="confirm-password" required />
+                                    <p class="text-danger" id="confirmPasswordError"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="referralCode">Referral Code</label>
+                                    <input type="text" id="referedBy" name="referedBy" />
+                                </div>
                                 <div class="button-box">
                                     <button type="submit" class="default-btn floatright" id="registerButton">
                                         Register

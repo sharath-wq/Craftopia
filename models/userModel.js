@@ -64,6 +64,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             unique: true,
         },
+        referedBy: {
+            type: String,
+        },
         updatedAt: {
             type: Date,
             default: Date.now(),
