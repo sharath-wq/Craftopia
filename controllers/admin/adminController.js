@@ -7,7 +7,6 @@ const moment = require("moment");
 const Product = require("../../models/productModel");
 const numeral = require("numeral");
 const { status } = require("../../utils/status");
-const OrderItem = require("../../models/orderItemModel");
 
 /**
  * Home Page Route
@@ -241,3 +240,27 @@ exports.updateRole = asyncHandler(async (req, res) => {
         throw new Error(error);
     }
 });
+
+/**
+ * Generate Sales Report
+ * Method POST
+ */
+exports.generateSalesReport = async (req, res, next) => {
+    try {
+        const fromDate = new Date(req.query.fromDate);
+        const toDate = new Date(req.query.toDate);
+        const salesData = await Order.find({
+            orderedDate: {
+                $gte: fromDate,
+                $lte: toDate,
+            },
+        }).select("orderId totalPrice orderedDate payment_method -_id");
+
+        const grandTotal = salesData.map(item);
+
+        res.status(200).json(salesData);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
