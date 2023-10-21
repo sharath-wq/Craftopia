@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const Product = require("./productModel");
 const schedule = require("node-schedule");
 
@@ -33,6 +33,8 @@ const categorySchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+const Category = mongoose.model("Category", categorySchema); // Define the Category model
+
 async function updateProductPrices(category) {
     const products = await Product.find({ category: category._id });
     const currentDate = new Date();
@@ -54,11 +56,10 @@ async function updateProductPrices(category) {
 categorySchema.pre("save", async function (next) {
     try {
         await updateProductPrices(this);
-        next(); // Don't forget to call next() to continue the save operation
+        next();
     } catch (error) {
-        // Handle errors here, e.g., log the error
         console.error("Error in pre-save middleware:", error);
-        next(error); // Pass the error to continue the save operation
+        next(error);
     }
 });
 
@@ -74,4 +75,4 @@ schedule.scheduleJob(dailyScheduleRule, async () => {
     }
 });
 
-module.exports = mongoose.model("Category", categorySchema);
+module.exports = Category;

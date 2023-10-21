@@ -9,6 +9,7 @@ const {
     generateInvoice,
 } = require("../../helpers/shop/orderHelper");
 const OrderItem = require("../../models/orderItemModel");
+const { default: easyinvoice } = require("easyinvoice");
 
 /**
  * Orders Page Route
