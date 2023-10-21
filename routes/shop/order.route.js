@@ -10,6 +10,7 @@ router.use((req, res, next) => {
 // Order Routes
 router.get("/", orderController.orderspage);
 router.get("/:id", orderController.singleOrder);
+router.get("/download/:id", orderController.donwloadInvoice);
 router.put("/:id", orderController.cancelOrder);
 router.put("/single/:id", orderController.cancelSingleOrder);
 router.post("/return/:id", orderController.returnOrder);

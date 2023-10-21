@@ -15,6 +15,7 @@ router.get("/dashboard", adminController.dashboardpage);
 router.get("/settings", adminController.settingspage);
 router.get("/sales-report", adminController.salesReportpage);
 
+router.get("/get/sales-report", adminController.generateSalesReport);
 router.use((req, res) => {
     res.render("admin/pages/404", { title: "404", page: "404" });
 });

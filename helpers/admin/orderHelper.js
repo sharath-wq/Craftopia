@@ -73,15 +73,15 @@ async function handleReturnAmount(order, orders, orderTotal) {
 
             await createWalletTransaction(newWallet, amountToBeRefunded, orders.orderId);
         } else {
-            wallet.balance += amountToBeRefunded;
+            wallet.balance += orderTotal;
             await wallet.save();
-            await createWalletTransaction(wallet, amountToBeRefunded, orders.orderId);
+            await createWalletTransaction(wallet, orderTotal, orders.orderId);
         }
     } else {
-        wallet.balance += amountToBeRefunded;
+        wallet.balance += orderTotal;
         await wallet.save();
 
-        await createWalletTransaction(wallet, amountToBeRefunded, orders.orderId);
+        await createWalletTransaction(wallet, orderTotal, orders.orderId);
     }
 }
 
@@ -115,10 +115,8 @@ module.exports = {
 
         const orders = await Order.findOne({ orderItems: order._id });
 
-        if (orders.coupon) {
-            const orderTotal = parseInt(order.price * order.quantity);
-            await handleReturnAmount(order, orders, orderTotal);
-        }
+        const orderTotal = parseInt(order.price * order.quantity);
+        await handleReturnAmount(order, orders, orderTotal);
 
         await order.save();
     },
