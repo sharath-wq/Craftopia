@@ -62,27 +62,27 @@
 
 <!--  Row 1 -->
 <div class="row">
-    <!-- <div class="col-lg-8 d-flex align-items-strech">
-        <div class="card w-100">
-            <div class="card-body">
-                <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
-                    <div class="mb-3 mb-sm-0">
-                        <h5 class="card-title fw-semibold">Sales Overview</h5>
-                    </div>
-                    <div>
-                        <select class="form-select">
-                            <option value="1">March 2023</option>
-                            <option value="2">April 2023</option>
-                            <option value="3">May 2023</option>
-                            <option value="4">June 2023</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="chart"></div>
+    <!-- Graph -->
+    <div class="col-lg-7">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card mb-4">
+                <article class="card-body">
+                    <h5 class="card-title">Sale statistics</h5>
+                    <canvas id="saleChart" height="120px"></canvas>
+                </article>
             </div>
         </div>
-    </div> -->
-    <div class="col-lg-4 d-flex align-items-stretch">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card mb-4">
+                <article class="card-body">
+                    <h5 class="card-title">User statistics</h5>
+                    <canvas id="userChart" height="120px"></canvas>
+                </article>
+            </div>
+        </div>
+    </div>
+    <!-- Graph End -->
+    <div class="col-lg-5 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-body p-4">
                 <div class="mb-4 d-flex justify-content-between">
@@ -93,16 +93,20 @@
                     <% recentOrders.forEach(order => { %>
                     <div class="media mb-3">
                         <img
-                            src="<%= order.user.image || '/admin/images/profile/user-1.jpg' %>"
+                            src="<%= order?.user?.image || '/admin/images/profile/user-1.jpg' %>"
                             class="mr-3 rounded-circle"
                             alt="User Image"
                             style="width: 60px"
                         />
                         <div class="media-body">
-                            <h5 class="mt-0"><%= order.user.firstName %></h5>
-                            <small><%= moment(order.orderedDate).fromNow() %></small>
+                            <h5 class="mt-0"><%= order?.user?.firstName %></h5>
+                            <small>
+                                <% var orderedMoment = moment(order.orderedDate); var now = moment(); if
+                                (now.diff(orderedMoment, 'minutes') < 1) { %> Just now <% } else { %> <%=
+                                orderedMoment.fromNow() %> <% } %>
+                            </small>
                         </div>
-                        <p class="mb-0 text-success">₹ <%= order.totalPrice.toFixed(2) %></p>
+                        <p class="mb-0 text-success">₹ <%= order?.totalPrice?.toFixed(2) %></p>
                     </div>
                     <% }) %>
                 </div>
@@ -110,3 +114,87 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if ($("#saleChart").length && $("#userChart").length) {
+            var saleCtx = document.getElementById("saleChart").getContext("2d");
+            var userCtx = document.getElementById("userChart").getContext("2d");
+            var saleChart;
+            var userChart;
+
+            // Function to update the chart data
+            function updateChart(salesData) {
+                if (saleChart) {
+                    saleChart.destroy(); // Destroy the existing chart if it exists
+                }
+
+                if (userChart) {
+                    userChart.destroy();
+                }
+
+                saleChart = new Chart(saleCtx, {
+                    type: "line",
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], // Use the provided labels
+                        datasets: [
+                            {
+                                label: "Sales",
+                                tension: 0.3,
+                                fill: true,
+                                backgroundColor: "rgba(44, 120, 220, 0.2)",
+                                borderColor: "rgba(44, 120, 220)",
+                                data: salesData.sales,
+                            },
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    usePointStyle: true,
+                                },
+                            },
+                        },
+                    },
+                });
+
+                userChart = new Chart(userCtx, {
+                    type: "line",
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], // Use the provided labels
+                        datasets: [
+                            {
+                                label: "Users",
+                                tension: 0.3,
+                                fill: true,
+                                backgroundColor: "rgba(4, 209, 130, 0.2)",
+                                borderColor: "rgb(4, 209, 130)",
+                                data: salesData.users, // Assuming you want to use "visitors" data
+                            },
+                        ],
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    usePointStyle: true,
+                                },
+                            },
+                        },
+                    },
+                });
+            }
+
+            // Fetch data from the endpoint
+            fetch("/admin/sales-data")
+                .then((response) => response.json())
+                .then((data) => {
+                    updateChart(data); // Assuming the response has "labels," "sales," and "visitors" properties
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                });
+        }
+    });
+</script>
