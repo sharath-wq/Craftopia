@@ -165,7 +165,7 @@ exports.editCategory = asyncHandler(async (req, res) => {
         editedCategory.offerDescription = offerDescription;
         editedCategory.startDate = startDate;
         editedCategory.endDate = endDate;
-        editedCategory.save();
+        await editedCategory.save();
 
         req.flash("success", `Category ${editedCategory.title} updated`);
         res.redirect("/admin/category");

@@ -33,25 +33,6 @@ const categorySchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Category = mongoose.model("Category", categorySchema); // Define the Category model
-
-async function updateProductPrices(category) {
-    const products = await Product.find({ category: category._id });
-    const currentDate = new Date();
-    if (category.offer && category.offer > 0 && category.startDate <= currentDate && currentDate <= category.endDate) {
-        for (const product of products) {
-            const newPrice = product.productPrice - product.productPrice * (category.offer / 100);
-            product.salePrice = Math.round(newPrice);
-            await product.save();
-        }
-    } else {
-        for (const product of products) {
-            product.salePrice = product.productPrice;
-            await product.save();
-        }
-    }
-}
-
 // Define a pre-save middleware to trigger the updateProductPrices function
 categorySchema.pre("save", async function (next) {
     try {
@@ -62,6 +43,25 @@ categorySchema.pre("save", async function (next) {
         next(error);
     }
 });
+
+const Category = mongoose.model("Category", categorySchema);
+
+async function updateProductPrices(category) {
+    const products = await Product.find({ category: category._id });
+    const currentDate = new Date();
+    if (category.offer && category.offer > 0 && category.startDate <= currentDate && currentDate <= category.endDate) {
+        for (const product of products) {
+            const newPrice = product.productPrice - (product.productPrice * category.offer) / 100;
+            product.salePrice = Math.round(newPrice);
+            await product.save();
+        }
+    } else {
+        for (const product of products) {
+            product.salePrice = product.productPrice;
+            await product.save();
+        }
+    }
+}
 
 const dailyScheduleRule = new schedule.RecurrenceRule();
 dailyScheduleRule.hour = 0;
