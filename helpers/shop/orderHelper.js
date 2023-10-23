@@ -7,7 +7,6 @@ const Wallet = require("../../models/walletModel");
 const WalletTransactoins = require("../../models/walletTransactionModel");
 const Review = require("../../models/reviewModel");
 const Coupon = require("../../models/couponModel");
-const easyinvoice = require("easyinvoice");
 const User = require("../../models/userModel");
 
 module.exports = {
@@ -211,82 +210,123 @@ module.exports = {
 
     generateInvoice: asyncHandler(async (orderId) => {
         const order = await OrderItem.findById(orderId).populate("product");
-        const orders = await Order.findOne({ orderItems: order._id });
-        const user = await User.findById(orders.user);
+        const orders = await Order.findOne({ orderItems: order._id })
+            .populate({
+                path: "orderItems",
+                populate: {
+                    path: "product",
+                    model: "Product", // Replace 'Product' with your actual Product model name
+                },
+            })
+            .exec();
+
+        // const user = await User.findById(orders.user);
 
         const data = {
-            customize: {
-                //  "template": fs.readFileSync('template.html', 'base64') // Must be base64 encoded html
-            },
-            images: {
-                // The logo on top of your invoice
-                logo: "https://firebasestorage.googleapis.com/v0/b/craftopia-c8c47.appspot.com/o/logo%2Fcraftopia.png?alt=media&token=3cc6b45e-e956-4d95-b9fe-c09cdb11428f",
-            },
-            // Your own data
-            sender: {
-                company: "Craftopia Private Limited",
-                address: "Vikas Nagar, Maradu",
-                zip: "682020",
-                city: "Maradu",
-                country: "India",
-            },
-            // Your recipient
-            client: {
-                company: `${user.firstName} ${user.lastName}`,
-                address: orders.street,
-                zip: orders.zip,
-                city: orders.city,
-                country: "India",
-                // "custom1": "custom value 1",
-                // "custom2": "custom value 2",
-                // "custom3": "custom value 3"
-            },
-            information: {
-                // Invoice number
-                number: orders.phone,
-                // Invoice data
-                date: new Date(order.createdAt).toLocaleDateString("en-GB"),
-                // Invoice due date
-                deliveryDate: new Date(order.deliveredDate).toLocaleDateString("en-GB"),
-            },
-            // The products you would like to see on your invoice
-            // Total values are being calculated automatically
-            products: [
+            content: [
                 {
-                    quantity: order.quantity,
-                    description: order.product.title,
-                    "tax-rate": 0,
-                    price: order.price,
+                    text: "INVOICE",
+                    style: "header",
+                    alignment: "center",
+                    margin: [0, 0, 0, 20],
                 },
+                {
+                    columns: [
+                        {
+                            width: "*",
+                            stack: [
+                                { text: `Order Date: ${order.createdAt.toLocaleDateString()}` },
+                                { text: `Order ID: ${orders.orderId}` },
+                            ],
+                        },
+                        {
+                            width: "*",
+                            stack: [
+                                { text: `Delivered Date: ${order.deliveredDate.toLocaleDateString()}`, alignment: "right" },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    columns: [
+                        {
+                            width: "*",
+                            text: [
+                                { text: "Billing Address:", style: "subheader" },
+                                {
+                                    text: [
+                                        orders.shippingAddress,
+                                        orders.street,
+                                        orders.city,
+                                        orders.state,
+                                        orders.zip,
+                                        orders.phone,
+                                    ].join("\n"),
+                                    style: "address",
+                                },
+                            ],
+                        },
+                        {
+                            width: "*",
+                            text: [
+                                { text: "Payment Information:", style: "subheader" },
+                                `Payment Method: ${orders.payment_method}\nPayment Status: ${orders.payment_status}\nWallet Payment: ₹${orders.wallet}`,
+                            ],
+                        },
+                    ],
+                    margin: [0, 20, 0, 10],
+                },
+                { text: "Order Summary:", style: "subheader", margin: [0, 20, 0, 10] },
+                {
+                    table: {
+                        body: [
+                            [
+                                { text: "Product", style: "tableHeader" },
+                                { text: "Quantity", style: "tableHeader" },
+                                { text: "Price", style: "tableHeader" },
+                            ],
+                            ...orders.orderItems.map((item) => [
+                                item.product.title,
+                                item.quantity,
+                                { text: `₹${parseFloat(item.price).toFixed(2)}`, alignment: "right" },
+                            ]),
+                            ["Subtotal", "", { text: `₹${parseFloat(orders.totalPrice).toFixed(2)}`, alignment: "right" }],
+                            ["Total", "", { text: `₹${parseFloat(orders.totalPrice).toFixed(2)}`, alignment: "right" }],
+                        ],
+                    },
+                },
+                { text: "Thank you for shopping with us!", style: "thankYou", alignment: "center", margin: [0, 20, 0, 0] },
             ],
-            // The message you would like to display on the bottom of your invoice
-            "bottom-notice": "Thank You for Shopping with Us.",
-            // Settings to customize your invoice
-            settings: {
-                currency: "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
-                locale: "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
-                "margin-top": 25, // Defaults to '25'
-                "margin-right": 25, // Defaults to '25'
-                "margin-left": 25, // Defaults to '25'
-                "margin-bottom": 25, // Defaults to '25'
-                format: "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
-                height: "1000px", // allowed units: mm, cm, in, px
-                width: "500px", // allowed units: mm, cm, in, px
-                orientation: "portrait", // portrait or landscape, defaults to portrait
-            },
-            // Translate your invoice to your preferred language
-            translate: {
-                // "invoice": "FACTUUR",  // Default to 'INVOICE'
-                // "number": "Nummer", // Defaults to 'Number'
-                // "date": "Datum", // Default to 'Date'
-                // "due-date": "Verloopdatum", // Defaults to 'Due Date'
-                // "subtotal": "Subtotaal", // Defaults to 'Subtotal'
-                // "products": "Producten", // Defaults to 'Products'
-                // "quantity": "Aantal", // Default to 'Quantity'
-                // "price": "Prijs", // Defaults to 'Price'
-                // "product-total": "Totaal", // Defaults to 'Total'
-                // "total": "Totaal", // Defaults to 'Total'
-                // "vat": "btw" // Defaults to 'vat'
+            styles: {
+                header: {
+                    fontSize: 24,
+                    bold: true,
+                    decoration: "underline",
+                },
+                subheader: {
+                    fontSize: 16,
+                    bold: true,
+                },
+                address: {
+                    fontSize: 14,
+                },
+                info: {
+                    fontSize: 14,
+                },
+                tableHeader: {
+                    fillColor: "#337ab7",
+                    color: "#ffffff",
+                    alignment: "center",
+                    bold: true,
+                },
+                tableCell: {
+                    fillColor: "#f2f2f2",
+                    alignment: "center",
+                },
+                thankYou: {
+                    fontSize: 16,
+                    italic: true,
+                },
             },
         };
 
