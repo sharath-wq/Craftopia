@@ -130,7 +130,6 @@ exports.registerUser = asyncHandler(async (req, res) => {
                         subject: "Email Verification",
                         html: html,
                     });
-                    req.flash("success", "Email Send Please check your inbox");
                     res.render("shop/pages/auth/verify-email", {
                         title: "Verify Email",
                         page: "Verify Email",

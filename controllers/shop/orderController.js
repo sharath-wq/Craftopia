@@ -9,7 +9,8 @@ const {
     generateInvoice,
 } = require("../../helpers/shop/orderHelper");
 const OrderItem = require("../../models/orderItemModel");
-const { default: easyinvoice } = require("easyinvoice");
+const pdfMake = require("pdfmake/build/pdfmake");
+const vfsFonts = require("pdfmake/build/vfs_fonts");
 
 /**
  * Orders Page Route
@@ -120,16 +121,19 @@ exports.returnOrder = asyncHandler(async (req, res) => {
 exports.donwloadInvoice = asyncHandler(async (req, res) => {
     try {
         const orderId = req.params.id;
+
         const data = await generateInvoice(orderId);
+        pdfMake.vfs = vfsFonts.pdfMake.vfs;
 
-        easyinvoice.createInvoice(data, function (result) {
-            //The response will contain a base64 encoded PDF file
-            console.log("PDF base64 string: ", result.pdf);
+        // Create a PDF document
+        const pdfDoc = pdfMake.createPdf(data);
+
+        // Generate the PDF and send it as a response
+        pdfDoc.getBuffer((buffer) => {
             res.setHeader("Content-Type", "application/pdf");
-            res.setHeader("Content-Disposition", `attachment; filename=invoice-${orderId}.pdf`);
+            res.setHeader("Content-Disposition", `attachment; filename=invoices.pdf`);
 
-            // Send the PDF as a response
-            res.send(Buffer.from(result.pdf, "base64"));
+            res.end(buffer);
         });
     } catch (error) {
         throw new Error(error);

@@ -158,23 +158,10 @@ exports.editCategory = asyncHandler(async (req, res) => {
     validateMongoDbId(id);
     try {
         const { title, isListed, offer, offerDescription, startDate, endDate } = req.body;
-        const file = req.file;
-        const categoryImageBuffer = await sharp(file.buffer)
-            .resize(540, 540)
-            .png({ quality: 100 })
-            .webp({ quality: 100 })
-            .jpeg({ quality: 100 })
-            .toBuffer();
-
-        const categoryFileName = `thumbnails/${Date.now()}_${file.originalname}`;
-        await admin.storage().bucket().file(categoryFileName).save(categoryImageBuffer);
-        const categoryImageUrl = `${process.env.FIREBASE_URL}${categoryFileName}`;
-
         const editedCategory = await Category.findById(id);
         editedCategory.title = title;
         editedCategory.isListed = isListed;
         editedCategory.offer = offer;
-        editedCategory.image = categoryImageUrl;
         editedCategory.offerDescription = offerDescription;
         editedCategory.startDate = startDate;
         editedCategory.endDate = endDate;
@@ -198,6 +185,56 @@ exports.deleteCategory = asyncHandler(async (req, res) => {
         const deletedCategory = await Category.findByIdAndDelete(id);
         req.flash("success", `Category ${deletedCategory.title} deleted`);
         res.redirect("/admin/category");
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Delette Category Image
+ * Method DELETE
+ */
+exports.deleteImage = asyncHandler(async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+        const category = await Category.findById(categoryId);
+        const categoryImageUrl = category.image;
+        const categoryUrlParts = categoryImageUrl.split("/");
+        const categoryPath = categoryUrlParts.slice(4).join("/");
+
+        await admin.storage().bucket().file(categoryPath).delete();
+
+        await Category.findByIdAndUpdate(categoryId, {
+            image: "",
+        });
+
+        res.json({ message: "Image Removed" });
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Add New Image
+ * Method POST
+ */
+exports.addNewImage = asyncHandler(async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+        const file = req.file;
+        const categoryImageBuffer = await sharp(file.buffer)
+            .resize(540, 540)
+            .png({ quality: 100 })
+            .webp({ quality: 100 })
+            .jpeg({ quality: 100 })
+            .toBuffer();
+        const categoryFileName = `thumbnails/${Date.now()}_${file.originalname}`;
+        await admin.storage().bucket().file(categoryFileName).save(categoryImageBuffer);
+        const categoryImageUrl = `${process.env.FIREBASE_URL}${categoryFileName}`;
+
+        const category = await Category.findByIdAndUpdate(categoryId, { image: categoryImageUrl });
+
+        res.redirect(`/admin/category/edit/${categoryId}`);
     } catch (error) {
         throw new Error(error);
     }

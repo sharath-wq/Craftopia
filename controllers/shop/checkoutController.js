@@ -209,7 +209,7 @@ exports.orderPlaced = asyncHandler(async (req, res) => {
                 await coupon.save();
             }
             const wallet = await Wallet.findOne({ user: req.user._id });
-            wallet.balance = 0;
+            wallet.balance -= order.wallet;
             await wallet.save();
         } else if (order.payment_method === "wallet_payment") {
             for (const item of order.orderItems) {
@@ -221,7 +221,7 @@ exports.orderPlaced = asyncHandler(async (req, res) => {
                 await coupon.save();
             }
             const wallet = await Wallet.findOne({ user: req.user._id });
-            wallet.balance -= order.totalPrice;
+            wallet.balance -= order.wallet;
             await wallet.save();
         }
         if (cartItems) {

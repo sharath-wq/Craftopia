@@ -80,7 +80,6 @@ async function handleReturnAmount(order, orders, orderTotal) {
     } else {
         wallet.balance += orderTotal;
         await wallet.save();
-
         await createWalletTransaction(wallet, orderTotal, orders.orderId);
     }
 }

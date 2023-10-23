@@ -7,7 +7,6 @@ const moment = require("moment");
 const Product = require("../../models/productModel");
 const numeral = require("numeral");
 const { status } = require("../../utils/status");
-const OrderItem = require("../../models/orderItemModel");
 
 /**
  * Home Page Route
@@ -44,21 +43,10 @@ exports.dashboardpage = asyncHandler(async (req, res) => {
             .select("totalAmount orderedDate totalPrice")
             .sort({ _id: -1 });
 
-        //
-        let totalSalesAmount = recentOrders.reduce((total, order) => {
-            const nonCancelledItems = order.orderItems.filter(
-                (item) => item.status === status.delivered || item.status === status.shipped
-            );
-
-            if (nonCancelledItems.length > 0) {
-                const totalPrice = nonCancelledItems.reduce((acc, item) => {
-                    return acc + parseFloat(item.price);
-                }, 0);
-                return total + totalPrice;
-            } else {
-                return total;
-            }
-        }, 0);
+        let totalSalesAmount = 0;
+        recentOrders.forEach((order) => {
+            totalSalesAmount += order.totalPrice;
+        });
 
         totalSalesAmount = numeral(totalSalesAmount).format("0.0a");
 
@@ -237,6 +225,71 @@ exports.updateRole = asyncHandler(async (req, res) => {
                 req.flash("danger", `Can't Update the role`);
             }
         }
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+/**
+ * Generate Sales Report
+ * Method POST
+ */
+exports.generateSalesReport = async (req, res, next) => {
+    try {
+        const fromDate = new Date(req.query.fromDate);
+        const toDate = new Date(req.query.toDate);
+        const salesData = await Order.find({
+            orderedDate: {
+                $gte: fromDate,
+                $lte: toDate,
+            },
+        }).select("orderId totalPrice orderedDate payment_method -_id");
+
+        res.status(200).json(salesData);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+/**
+ * Get Sales Data
+ * Method GET
+ */
+exports.getSalesData = asyncHandler(async (req, res) => {
+    try {
+        const currentMonth = new Date();
+        const twelveMonthsAgo = new Date(currentMonth);
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+
+        const totalSalesByMonth = Array(12).fill(0);
+        const activeUsersByMonth = Array(12).fill(0);
+
+        for (let i = 0; i < 12; i++) {
+            const startOfMonth = new Date(currentMonth);
+            startOfMonth.setMonth(startOfMonth.getMonth() - i);
+            startOfMonth.setDate(1);
+            const endOfMonth = new Date(currentMonth);
+            endOfMonth.setMonth(endOfMonth.getMonth() - i + 1);
+            endOfMonth.setDate(0);
+
+            const orderFilter = { orderedDate: { $gte: startOfMonth, $lte: endOfMonth } };
+            const userFilter = { createdAt: { $gte: startOfMonth, $lte: endOfMonth } };
+            const order = await Order.find(orderFilter);
+            const user = await User.find(userFilter);
+
+            order.forEach((doc) => {
+                totalSalesByMonth[i] += doc.totalPrice;
+            });
+
+            user.forEach((doc) => {
+                activeUsersByMonth[i]++;
+            });
+        }
+
+        console.log(activeUsersByMonth);
+
+        res.json({ sales: totalSalesByMonth, users: activeUsersByMonth });
     } catch (error) {
         throw new Error(error);
     }
