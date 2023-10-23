@@ -245,8 +245,6 @@ exports.generateSalesReport = async (req, res, next) => {
             },
         }).select("orderId totalPrice orderedDate payment_method -_id");
 
-        const grandTotal = salesData.map(item);
-
         res.status(200).json(salesData);
     } catch (error) {
         console.error(error);
