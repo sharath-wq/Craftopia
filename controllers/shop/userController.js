@@ -282,8 +282,7 @@ exports.addReview = asyncHandler(async (req, res) => {
 exports.walletTransactionspage = asyncHandler(async (req, res) => {
     try {
         const walletId = req.params.id;
-        const walletTransactions = await WalletTransaction.find({ wallet: walletId });
-        console.log({ walletTransactions });
+        const walletTransactions = await WalletTransaction.find({ wallet: walletId }).sort({ timestamp: -1 });
         res.render("shop/pages/user/walletTransactions", {
             title: "Wallet Transactions",
             page: "Wallet-Transactions",
