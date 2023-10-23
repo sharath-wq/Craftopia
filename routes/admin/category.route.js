@@ -14,10 +14,12 @@ router.get("/", categoryController.categoriespage);
 router.get("/add", categoryController.addCategorypage);
 router.get("/edit/:id", categoryController.editCategorypage);
 
-router.post("/add", upload.single("file"), validateCategory, categoryController.addCategory);
+router.post("/add", validateCategory, categoryController.addCategory);
 router.put("/unlist/:id", categoryController.unlist);
 router.put("/list/:id", categoryController.list);
-router.put("/edit/:id", upload.single("file"), categoryController.editCategory);
+router.put("/edit/:id", categoryController.editCategory);
+router.post("/edit/images/upload/new/:id", upload.single("file"), categoryController.addNewImage);
 router.delete("/delete/:id", categoryController.deleteCategory);
+router.delete("/images/delete/:id", categoryController.deleteImage);
 
 module.exports = router;
