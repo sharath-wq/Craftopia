@@ -146,6 +146,14 @@ exports.editCategory = asyncHandler(async (req, res) => {
     validateMongoDbId(id);
     try {
         const { title, isListed, offer, offerDescription, startDate, endDate } = req.body;
+
+        const isExisting = await Category.findOne({ title: title, _id: { $ne: id } });
+
+        if (isExisting) {
+            req.flash("warning", "Category already exist with same name");
+            res.redirect("back");
+        }
+
         const editedCategory = await Category.findById(id);
         editedCategory.title = title;
         editedCategory.isListed = isListed;
