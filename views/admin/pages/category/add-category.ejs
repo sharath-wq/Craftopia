@@ -5,7 +5,7 @@
             <div class="card-body p-4">
                 <h5 class="card-title fw-semibold mb-4">Add Category</h5>
                 <div class="table-responsive">
-                    <form action="/admin/category/add" method="post" enctype="multipart/form-data">
+                    <form action="/admin/category/add" method="post">
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Category Name</label>
                             <input
@@ -16,9 +16,6 @@
                                 name="title"
                                 required
                             />
-                        </div>
-                        <div class="mb-3">
-                            <input type="file" class="form-control" id="categoryImage" name="file" accept="image/*" />
                         </div>
                         <div class="mb-3 d-flex">
                             <div class="col-6">
@@ -47,7 +44,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="imagePreview" class="mt-2 col-6"></div>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>
@@ -56,29 +52,3 @@
         </div>
     </div>
 </div>
-
-<!-- JavaScript to display image preview -->
-<script>
-    document.getElementById("categoryImage").addEventListener("change", function (e) {
-        var imagePreview = document.getElementById("imagePreview");
-        imagePreview.innerHTML = ""; // Clear any previous previews
-
-        if (e.target.files.length > 0) {
-            var file = e.target.files[0];
-            if (file.type.startsWith("image/")) {
-                var img = document.createElement("img");
-                img.classList.add("img-thumbnail");
-                img.file = file;
-                imagePreview.appendChild(img);
-
-                var reader = new FileReader();
-                reader.onload = (function (aImg) {
-                    return function (e) {
-                        aImg.src = e.target.result;
-                    };
-                })(img);
-                reader.readAsDataURL(file);
-            }
-        }
-    });
-</script>

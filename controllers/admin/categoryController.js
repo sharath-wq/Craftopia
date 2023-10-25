@@ -55,17 +55,6 @@ exports.editCategorypage = asyncHandler(async (req, res) => {
 exports.addCategory = asyncHandler(async (req, res) => {
     try {
         const errors = validationResult(req);
-        const file = req.file;
-        const categoryImageBuffer = await sharp(file.buffer)
-            .resize(540, 540)
-            .png({ quality: 100 })
-            .webp({ quality: 100 })
-            .jpeg({ quality: 100 })
-            .toBuffer();
-        const categoryFileName = `thumbnails/${Date.now()}_${file.originalname}`;
-        await admin.storage().bucket().file(categoryFileName).save(categoryImageBuffer);
-        const categoryImageUrl = `${process.env.FIREBASE_URL}${categoryFileName}`;
-
         if (!errors.isEmpty()) {
             errors.array().forEach((error) => {
                 req.flash("danger", error.msg);
@@ -80,7 +69,6 @@ exports.addCategory = asyncHandler(async (req, res) => {
                 const newCategory = await Category.create({
                     title: req.body.title,
                     isListed: req.body.isListed,
-                    image: categoryImageUrl,
                 });
                 req.flash("success", `${newCategory.title} added Successfully`);
                 res.redirect("/admin/category/add");
