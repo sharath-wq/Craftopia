@@ -33,7 +33,14 @@
                         <div class="checkbox-form">
                             <div class="d-flex">
                                 <h3>Select Address</h3>
-                                <a href="/user/address/add" class="btn btn-sm btn-dark" title="Add New Address">Add</a>
+                                <button
+                                    type="button"
+                                    class="btn btn-dark btn-sm"
+                                    data-toggle="modal"
+                                    data-target="#addressModal"
+                                >
+                                    Add
+                                </button>
                             </div>
                             <div class="different-address">
                                 <div id="" class="row">
@@ -188,7 +195,6 @@
             </form>
         </div>
     </div>
-
     <!-- Checkout Area End -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
@@ -624,3 +630,123 @@
         }
     </script>
 </div>
+
+<div
+    class="modal fade"
+    id="addressModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="addressModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModalLabel">Address Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/user/address/add" method="post" id="addressForm">
+                    <div class="row">
+                        <!-- Name -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="title" required />
+                            </div>
+                        </div>
+                        <!-- Street -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="street">Street</label>
+                                <input type="text" class="form-control" id="street" name="street" required />
+                            </div>
+                        </div>
+                        <!-- City -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" id="city" name="city" required />
+                            </div>
+                        </div>
+                        <!-- State -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" class="form-control" id="state" name="state" required />
+                            </div>
+                        </div>
+                        <!-- Pin Code -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="pincode">Pin Code</label>
+                                <input type="text" class="form-control" id="pincode" name="pincode" required />
+                            </div>
+                        </div>
+                        <!-- Mobile Number -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mobile">Mobile Number</label>
+                                <input type="tel" class="form-control" id="mobile" name="mobile" required />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add Button -->
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-dark h-auto">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Get a reference to the form
+    const addressForm = document.getElementById("addressForm");
+
+    addressForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(addressForm);
+
+        // Create an empty object to store the form data
+        const formDataObject = {};
+
+        // Iterate through the FormData and populate the object
+        formData.forEach((value, key) => {
+            formDataObject[key] = value;
+        });
+
+        // Convert the object to a JSON string
+        const jsonData = JSON.stringify(formDataObject);
+
+        const fetchOptions = {
+            method: "POST",
+            body: jsonData, // Send the JSON data
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+
+        fetch("/user/address/add", fetchOptions)
+            .then((response) => {
+                if (response.ok) {
+                    console.log("Address added successfully");
+                    return response.json();
+                } else {
+                    console.error("Error adding address");
+                }
+            })
+            .then((data) => {
+                if (data.status === "ok") {
+                    window.location.reload();
+                }
+            })
+            .catch((error) => {
+                console.error("Network error:", error);
+            });
+    });
+</script>

@@ -117,10 +117,16 @@ exports.addAddresspage = asyncHandler(async (req, res) => {
 exports.addAddress = asyncHandler(async (req, res) => {
     try {
         const userid = req.user._id;
+        const contentType = req.get("Content-Type");
         const newAddress = await Address.create(req.body);
+
         await User.findByIdAndUpdate(userid, { $push: { address: newAddress._id } });
-        req.flash("success", "Address Added");
-        res.redirect("/user/address");
+        if (contentType === "application/x-www-form-urlencoded") {
+            req.flash("success", "Address Added");
+            res.redirect("/user/address");
+        } else if (contentType === "application/json") {
+            res.json({ status: "ok" });
+        }
     } catch (error) {
         throw new Error(error);
     }
