@@ -1,46 +1,44 @@
 <div class="container mt-4">
-    <h2>My Orders</h2>
-    <ul class="list-group mt-5 col-md-10">
+    <h2 class="text-center">My Orders</h2>
+    <ul class="list-group mt-3">
         <% if (orders && orders.length) { %> <% orders.forEach(order => { %> <% order.orderItems.forEach(orderItem => { %>
         <li class="list-group-item">
-            <div class="row d-flex justify-content-center">
-                <div class="col-md-10 d-flex">
-                    <div class="col-md-4 align-self-center">
-                        <a href="/product/<%= orderItem.product._id %>">
-                            <img
-                                class="img-fluid img-thumbnail"
-                                src="<%= orderItem.product.images[0].thumbnailUrl %>"
-                                alt="Card image cap"
-                                style="height: 200px; width: 200px"
-                            />
-                        </a>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body text-start">
-                            <h3 class="card-text">Order Number: <%= order.orderId %></h3>
-                            <p class="card-text">
-                                Order Status: <% if (orderItem.status === 'Pending') { %>
-                                <strong class="text-warning"><%= orderItem.status %></strong>
-                                <% } else if (orderItem.status === 'Shipped') { %>
-                                <strong class="text-primary"><%= orderItem.status %></strong>
-                                <% } else if (orderItem.status === 'Cancelled' ) { %>
-                                <strong class="text-danger"><%= orderItem.status %></strong>
-                                <% } else if (orderItem.status === 'Delivered') { %>
-                                <strong class="text-success"><%= orderItem.status %></strong>
-                                <% } else if (orderItem.status === 'Returned') { %>
-                                <strong class="text-info"><%= orderItem.status %></strong>
-                                <% } %>
-                            </p>
-                            <p class="card-text">
-                                Product Name: <strong class="text-dark"><%= orderItem.product.title %></strong>
-                            </p>
-                            <a href="/orders/<%= orderItem._id %>" class="btn btn-dark h-auto">View Order</a>
+            <div class="row">
+                <div class="col-12 col-md-4 mb-3">
+                    <a href="/product/<%= orderItem.product._id %>">
+                        <img
+                            class="img-fluid img-thumbnail"
+                            src="<%= orderItem.product.images[0].thumbnailUrl %>"
+                            alt="Card image cap"
+                        />
+                    </a>
+                </div>
+                <div class="col-12 col-md-8">
+                    <div class="card-body d-flex flex-column gap-1 mt-20">
+                        <h3 class="card-text">Order Number: <%= order.orderId %></h3>
+                        <p class="card-text">
+                            Order Status: <% if (orderItem.status === 'Pending') { %>
+                            <strong class="text-warning"><%= orderItem.status %></strong>
+                            <% } else if (orderItem.status === 'Shipped') { %>
+                            <strong class="text-primary"><%= orderItem.status %></strong>
+                            <% } else if (orderItem.status === 'Cancelled' ) { %>
+                            <strong class="text-danger"><%= orderItem.status %></strong>
+                            <% } else if (orderItem.status === 'Delivered') { %>
+                            <strong class="text-success"><%= orderItem.status %></strong>
+                            <% } else if (orderItem.status === 'Returned') { %>
+                            <strong class="text-info"><%= orderItem.status %></strong>
+                            <% } %>
+                        </p>
+                        <p class="card-text">
+                            Product Name: <strong class="text-dark"><%= orderItem.product.title %></strong>
+                        </p>
+                        <div class="mt-3">
+                            <a href="/orders/<%= orderItem._id %>" class="btn btn-dark btn-block h-auto">View Order</a>
                         </div>
                     </div>
                 </div>
             </div>
         </li>
-
         <% }) %> <% }) %> <% } else { %>
         <li class="list-group-item">No Orders</li>
         <% } %>

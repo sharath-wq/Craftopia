@@ -2,6 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const User = require("../models/userModel");
+const Wallet = require("../models/walletModel");
 const { findOneAndReplace } = require("../models/categoryModel");
 const passwordGenerator = require("password-generator");
 const { v4: uuidv4 } = require("uuid");
@@ -29,6 +30,10 @@ passport.use(
                     image: profile.picture,
                     isEmailVerified: true,
                     password: passwordGenerator(12, false),
+                });
+
+                await Wallet.create({
+                    user: newUser._id,
                 });
 
                 return done(null, newUser);

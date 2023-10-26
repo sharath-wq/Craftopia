@@ -11,7 +11,7 @@ router.use((req, res, next) => {
 
 // Category Routes
 router.get("/", categoryController.categoriespage);
-router.get("/add", categoryController.addCategorypage);
+router.get("/add", upload.single("file"), categoryController.addCategorypage);
 router.get("/edit/:id", categoryController.editCategorypage);
 
 router.post("/add", validateCategory, categoryController.addCategory);

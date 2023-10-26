@@ -55,17 +55,6 @@ exports.editCategorypage = asyncHandler(async (req, res) => {
 exports.addCategory = asyncHandler(async (req, res) => {
     try {
         const errors = validationResult(req);
-        const file = req.file;
-        const categoryImageBuffer = await sharp(file.buffer)
-            .resize(540, 540)
-            .png({ quality: 100 })
-            .webp({ quality: 100 })
-            .jpeg({ quality: 100 })
-            .toBuffer();
-        const categoryFileName = `thumbnails/${Date.now()}_${file.originalname}`;
-        await admin.storage().bucket().file(categoryFileName).save(categoryImageBuffer);
-        const categoryImageUrl = `${process.env.FIREBASE_URL}${categoryFileName}`;
-
         if (!errors.isEmpty()) {
             errors.array().forEach((error) => {
                 req.flash("danger", error.msg);
@@ -80,7 +69,6 @@ exports.addCategory = asyncHandler(async (req, res) => {
                 const newCategory = await Category.create({
                     title: req.body.title,
                     isListed: req.body.isListed,
-                    image: categoryImageUrl,
                 });
                 req.flash("success", `${newCategory.title} added Successfully`);
                 res.redirect("/admin/category/add");
@@ -158,6 +146,14 @@ exports.editCategory = asyncHandler(async (req, res) => {
     validateMongoDbId(id);
     try {
         const { title, isListed, offer, offerDescription, startDate, endDate } = req.body;
+
+        const isExisting = await Category.findOne({ title: title, _id: { $ne: id } });
+
+        if (isExisting) {
+            req.flash("warning", "Category already exist with same name");
+            res.redirect("back");
+        }
+
         const editedCategory = await Category.findById(id);
         editedCategory.title = title;
         editedCategory.isListed = isListed;
@@ -165,7 +161,7 @@ exports.editCategory = asyncHandler(async (req, res) => {
         editedCategory.offerDescription = offerDescription;
         editedCategory.startDate = startDate;
         editedCategory.endDate = endDate;
-        editedCategory.save();
+        await editedCategory.save();
 
         req.flash("success", `Category ${editedCategory.title} updated`);
         res.redirect("/admin/category");

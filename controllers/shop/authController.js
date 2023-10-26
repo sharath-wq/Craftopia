@@ -291,7 +291,6 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
 
         const referalCode = user.referedBy;
         if (referalCode) {
-            console.log("Working");
             const referedUser = await User.findOne({ referralId: referalCode });
             const referedUserWallet = await Wallet.findOneAndUpdate({ user: referedUser._id }, { $inc: { balance: 100 } });
 

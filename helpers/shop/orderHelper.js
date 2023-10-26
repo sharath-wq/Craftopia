@@ -210,15 +210,7 @@ module.exports = {
 
     generateInvoice: asyncHandler(async (orderId) => {
         const order = await OrderItem.findById(orderId).populate("product");
-        const orders = await Order.findOne({ orderItems: order._id })
-            .populate({
-                path: "orderItems",
-                populate: {
-                    path: "product",
-                    model: "Product", // Replace 'Product' with your actual Product model name
-                },
-            })
-            .exec();
+        const orders = await Order.findOne({ orderItems: order._id });
 
         // const user = await User.findById(orders.user);
 
@@ -270,7 +262,7 @@ module.exports = {
                             width: "*",
                             text: [
                                 { text: "Payment Information:", style: "subheader" },
-                                `Payment Method: ${orders.payment_method}\nPayment Status: ${orders.payment_status}\nWallet Payment: ₹${orders.wallet}`,
+                                `Payment Method: ${orders.payment_method}\nPayment Status: ${order.isPaid}\nWallet Payment: ₹${orders.wallet}`,
                             ],
                         },
                     ],
@@ -285,11 +277,11 @@ module.exports = {
                                 { text: "Quantity", style: "tableHeader" },
                                 { text: "Price", style: "tableHeader" },
                             ],
-                            ...orders.orderItems.map((item) => [
-                                item.product.title,
-                                item.quantity,
-                                { text: `₹${parseFloat(item.price).toFixed(2)}`, alignment: "right" },
-                            ]),
+                            [
+                                order.product.title,
+                                order.quantity,
+                                { text: `₹${parseFloat(order.price).toFixed(2)}`, alignment: "right" },
+                            ],
                             ["Subtotal", "", { text: `₹${parseFloat(orders.totalPrice).toFixed(2)}`, alignment: "right" }],
                             ["Total", "", { text: `₹${parseFloat(orders.totalPrice).toFixed(2)}`, alignment: "right" }],
                         ],
