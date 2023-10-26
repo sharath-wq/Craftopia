@@ -3,13 +3,13 @@
         <%- include('../../partials/flash-message.ejs') %>
         <div class="row">
             <!-- Images -->
-            <div class="col-md-12 col-lg-7 col-12">
+            <div class="col-lg-7 col-12">
+                <!-- Use col-lg classes for larger screens -->
                 <div class="product-details-img-content">
                     <div class="product-details-tab mr-35 product-details-tab2">
                         <div
                             class="product-details-small nav mr-10 product-details-2 overflow-scroll"
-                            style="height: 650px"
-                            role="tablist"
+                            style="max-height: 650px"
                         >
                             <% product.images.forEach(function(image, index) { %>
                             <a
@@ -19,7 +19,7 @@
                                 role="tab"
                                 aria-selected="<%= index === 0 %>"
                             >
-                                <img src="<%= image.thumbnailUrl %>" alt="" />
+                                <img src="<%= image.thumbnailUrl %>" alt="" class="img-thumbnail" />
                             </a>
                             <% }); %>
                         </div>
@@ -46,9 +46,7 @@
                 </div>
             </div>
 
-            <!-- Images -->
-
-            <div class="col-md-12 col-lg-5 col-12">
+            <div class="col-lg-5 col-12">
                 <div class="product-details-content">
                     <h3><%= product.title %></h3>
                     <div class="rating-number">
@@ -59,7 +57,7 @@
                             </div>
                         </div>
                         <div class="quick-view-number">
-                            <span><%= reviews.length %> Ratting (S)</span>
+                            <span><%= reviews.length %> Rating(s)</span>
                         </div>
                     </div>
                     <div class="details-price gap-3 d-flex align-items-baseline">
@@ -102,22 +100,12 @@
                             <li class="categories-title">Share :</li>
                             <li>
                                 <a href="#">
-                                    <i class="icofont icofont-social-facebook"></i>
+                                    <i class="icofont text-primary icofont-social-facebook"></i>
                                 </a>
                             </li>
                             <li>
                                 <a href="#">
-                                    <i class="icofont icofont-social-twitter"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="icofont icofont-social-pinterest"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="icofont icofont-social-flikr"></i>
+                                    <i class="icofont text-success icofont-social-whatsapp"></i>
                                 </a>
                             </li>
                         </ul>
@@ -125,11 +113,11 @@
                     <div class="quickview-plus-minus">
                         <div class="quickview-btn-cart">
                             <% if (product.quantity === 0) { %>
-                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
+                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notified!')">Notify me</a>
                             <% }else if (product.isDeleted) { %>
-                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notfied!')">notify me</a>
+                            <a class="btn btn-secondary h-auto" onclick="alert('You will be notified!')">Notify me</a>
                             <% } else { %>
-                            <a class="btn-hover-black" onclick="addToCart(`<%= product._id %>`)">add to cart</a>
+                            <a class="btn-hover-black" onclick="addToCart(`<%= product._id %>`)">Add to Cart</a>
                             <% } %>
                         </div>
                         <div class="quickview-btn-wishlist">
@@ -144,6 +132,7 @@
         </div>
     </div>
 </div>
+
 <div class="product-description-review-area pb-90">
     <div class="container">
         <div class="product-description-review text-center">
@@ -209,7 +198,7 @@
         </div>
     </div>
 </div>
-<!-- product area start -->
+
 <div class="product-area pb-95">
     <div class="container">
         <div class="section-title-3 text-center mb-50">
@@ -221,7 +210,7 @@
                 <div class="product-wrapper">
                     <div class="product-img">
                         <a href="/product/<%= item._id %>">
-                            <img src="<%= item.images[0].thumbnailUrl %>" alt="" />
+                            <img src="<%= item.images[0].thumbnailUrl %>" alt="" class="img-thumbnail" />
                         </a>
                         <span>hot</span>
                         <div class="product-action">
@@ -250,4 +239,3 @@
         </div>
     </div>
 </div>
-<!-- product area end -->
