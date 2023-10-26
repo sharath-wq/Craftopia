@@ -1,16 +1,16 @@
 <!-- shopping-cart-area start -->
-<div class="cart-main-area pt-95 pb-100 wishlist">
+<div class="cart-main-area pt-3 pt-md-4 pt-lg-5 pb-4 pb-md-5 pb-lg-6 wishlist">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <%- include('../../partials/flash-message.ejs') %>
-                <h1 class="cart-heading">wishlist</h1>
+            <div class="col-12">
+                <% include('../../partials/flash-message.ejs') %>
+                <h1 class="cart-heading">Wishlist</h1>
                 <form action="#">
                     <div class="table-content table-responsive">
-                        <table class="table-striped">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>images</th>
+                                    <th>Images</th>
                                     <th>Product</th>
                                     <th>Price</th>
                                     <th>Actions</th>
@@ -20,13 +20,9 @@
                                 <% if (populatedWishlist.length) { %> <% populatedWishlist.forEach(product => { %>
                                 <tr>
                                     <td class="product-thumbnail">
-                                        <a href="/product/<%= product._id %>"
-                                            ><img
-                                                style="width: 100px; height: 100px"
-                                                class="img-thumbnail"
-                                                src="<%= product.images[0].thumbnailUrl %>"
-                                                alt=""
-                                        /></a>
+                                        <a href="/product/<%= product._id %>">
+                                            <img class="img-thumbnail" src="<%= product.images[0].thumbnailUrl %>" alt="" />
+                                        </a>
                                     </td>
                                     <td class="product-name">
                                         <a href="/product/<%= product._id %>"><%= product.title %></a>
@@ -36,16 +32,23 @@
                                         <span class="amount">₹ <%= product.salePrice %></span>
                                     </td>
                                     <td class="product-remove">
-                                        <a onclick="addToCart(`<%= product._id %>`)" class="btn btn-sm btn-success h-auto">
+                                        <a
+                                            onclick="addToCart('<%= product._id %>')"
+                                            class="btn btn-success btn-sm h-auto mb-2 mb-sm-0"
+                                        >
                                             <i class="pe-7s-cart text-white fw-bolder"></i>
                                         </a>
 
-                                        <a class="btn btn-sm btn-danger h-auto" href="/wishlist/remove/<%= product._id %>"
-                                            ><i class="pe-7s-close text-bg-danger text-white fw-bolder text-bg-danger"></i
-                                        ></a>
+                                        <a class="btn btn-danger btn-sm h-auto" href="/wishlist/remove/<%= product._id %>">
+                                            <i class="pe-7s-close text-white fw-bolder"></i>
+                                        </a>
                                     </td>
                                 </tr>
-                                <% }) %> <% } else { %> No Items in wishlist <% } %>
+                                <% }) %> <% } else { %>
+                                <tr>
+                                    <td colspan="4">No Items in Wishlist</td>
+                                </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>

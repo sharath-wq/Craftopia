@@ -12,8 +12,9 @@
                             enctype="multipart/form-data"
                         >
                             <div class="row">
-                                <div class="col-md-12 d-flex pb-5">
-                                    <div class="form-group text-center col-3 d-flex flex-column align-items-center">
+                                <!-- Profile -->
+                                <div class="row">
+                                    <div class="col-12 col-md-3 d-flex flex-column align-items-center">
                                         <div class="position-relative">
                                             <img src="<%= user?.image ? user?.image : "/shop/img/team/user.png" %>"
                                             id="user-avatar" class="img-fluid rounded-circle" style="width: 150px; height:
@@ -40,7 +41,14 @@
                                                 <i class="pe-7s-camera text-white fw-bold"></i>
                                             </button>
                                         </div>
-                                        <div class="" style="display: flex; flex-direction: column">
+                                        <div class="d-md-none">
+                                            <!-- Show on mobile -->
+                                            <a href="/user/profile/wallet/<%= wallet?._id %>" class="text-decoration-none">
+                                                <h6 class="card-title"><i class="pe-7s-wallet"></i> Wallet Balance</h6>
+                                                <h5 class="card-text">
+                                                    ₹ <%= wallet?.balance ? wallet.balance.toFixed(2) : "0" %>
+                                                </h5>
+                                            </a>
                                             <p class="text-dark" style="margin-bottom: 0px; margin-top: 5px">
                                                 Referal Code:
                                                 <span class="text-secondary" id="referralCode"
@@ -50,50 +58,57 @@
                                             <small class="btn text-secondary" id="copyButton" style="margin-top: 0px">
                                                 <i class="pe-7s-copy-file"></i>
                                             </small>
-                                            <div class="marquee-container">
-                                                <p class="text-success marquee">
-                                                    Invite a friend and earn 100 wallet cash.
-                                                </p>
-                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="d-flex flex-column col-9 align-items-start justify-content-center pl-5">
-                                        <h1 class="mt-0 font-weight-bold"><%= user?.firstName %> <%= user?.lastName %></h1>
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <div class="">
-                                                <% if (user?.address[0]) { %>
-                                                <p class="text-secondary">
-                                                    <%= user?.address[0]?.city %>, <%= user?.address[0]?.state %>
-                                                </p>
-                                                <% } %>
-                                            </div>
-                                            <% if (wallet) { %>
-                                            <a href="/user/profile/wallet/<%= wallet?._id %>" class="text-decoration-none">
-                                                <div class="card shadow bg-white rounded hover">
-                                                    <div class="card-body">
-                                                        <h6 class="card-title">
-                                                            <i class="pe-7s-wallet"></i> Wallet Balance
-                                                        </h6>
-                                                        <h5 class="card-text">
-                                                            ₹ <%= wallet?.balance ? wallet.balance.toFixed(2) : "0" %>
-                                                        </h5>
+                                    <div class="col-12 col-md-9">
+                                        <div class="d-none d-md-block">
+                                            <!-- Show on desktop -->
+                                            <h1 class="mt-0 font-weight-bold">
+                                                <%= user?.firstName %> <%= user?.lastName %>
+                                            </h1>
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <div class="">
+                                                    <% if (user?.address[0]) { %>
+                                                    <p class="text-secondary">
+                                                        <%= user?.address[0]?.city %>, <%= user?.address[0]?.state %>
+                                                    </p>
+                                                    <% } %>
+                                                    <p class="text-dark" style="margin-bottom: 0px; margin-top: 5px">
+                                                        Referal Code:
+                                                        <span class="text-secondary" id="referralCode"
+                                                            ><%= user?.referralId %></span
+                                                        >
+                                                    </p>
+                                                    <small
+                                                        class="btn text-secondary"
+                                                        id="copyButton"
+                                                        style="margin-top: 0px"
+                                                    >
+                                                        <i class="pe-7s-copy-file"></i>
+                                                    </small>
+                                                </div>
+                                                <a
+                                                    href="/user/profile/wallet/<%= wallet?._id %>"
+                                                    class="text-decoration-none"
+                                                >
+                                                    <div class="card shadow bg-white rounded hover">
+                                                        <div class="card-body">
+                                                            <h6 class="card-title">
+                                                                <i class="pe-7s-wallet"></i> Wallet Balance
+                                                            </h6>
+                                                            <h5 class="card-text">
+                                                                ₹ <%= wallet?.balance ? wallet.balance.toFixed(2) : "0" %>
+                                                            </h5>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </a>
-                                            <% } else { %>
-                                            <div class="card shadow bg-white rounded hover">
-                                                <div class="card-body">
-                                                    <h6 class="card-title"><i class="pe-7s-wallet"></i> Wallet Balance</h6>
-                                                    <h5 class="card-text">
-                                                        ₹ <%= wallet?.balance ? wallet.balance.toFixed(2) : "0" %>
-                                                    </h5>
-                                                </div>
+                                                </a>
                                             </div>
-                                            <% } %>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Profile end -->
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -168,9 +183,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary mx-auto d-block h-auto">
-                                        Save Changes
-                                    </button>
+                                    <button type="submit" class="btn btn-dark mx-auto d-block h-auto">Save Changes</button>
                                 </div>
                             </div>
                         </form>
