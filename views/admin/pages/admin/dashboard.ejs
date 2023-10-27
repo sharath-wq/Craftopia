@@ -63,7 +63,7 @@
 <!--  Row 1 -->
 <div class="row">
     <!-- Graph -->
-    <div class="col-lg-7">
+    <div class="col-lg-8">
         <div class="col-xl-12 col-lg-12">
             <div class="card mb-4">
                 <article class="card-body">
@@ -72,17 +72,9 @@
                 </article>
             </div>
         </div>
-        <div class="col-xl-12 col-lg-12">
-            <div class="card mb-4">
-                <article class="card-body">
-                    <h5 class="card-title">User statistics</h5>
-                    <canvas id="userChart" height="120px"></canvas>
-                </article>
-            </div>
-        </div>
     </div>
     <!-- Graph End -->
-    <div class="col-lg-5 d-flex align-items-stretch">
+    <div class="col-lg-4 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-body p-4">
                 <div class="mb-4 d-flex justify-content-between">
@@ -117,11 +109,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        if ($("#saleChart").length && $("#userChart").length) {
+        if ($("#saleChart").length) {
             var saleCtx = document.getElementById("saleChart").getContext("2d");
-            var userCtx = document.getElementById("userChart").getContext("2d");
             var saleChart;
-            var userChart;
 
             // Function to generate labels for the chart
             function generateLabels() {
@@ -142,11 +132,8 @@
                     saleChart.destroy(); // Destroy the existing chart if it exists
                 }
 
-                if (userChart) {
-                    userChart.destroy();
-                }
-
-                var chartLabels = generateLabels();
+                var chartLabels = salesData.map((item) => item.month); // Extract month labels from salesData
+                var salesValues = salesData.map((item) => item.sales); // Extract sales values from salesData
 
                 saleChart = new Chart(saleCtx, {
                     type: "line",
@@ -159,33 +146,7 @@
                                 fill: true,
                                 backgroundColor: "rgba(44, 120, 220, 0.2)",
                                 borderColor: "rgba(44, 120, 220)",
-                                data: salesData.sales,
-                            },
-                        ],
-                    },
-                    options: {
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    usePointStyle: true,
-                                },
-                            },
-                        },
-                    },
-                });
-
-                userChart = new Chart(userCtx, {
-                    type: "line",
-                    data: {
-                        labels: chartLabels,
-                        datasets: [
-                            {
-                                label: "Users",
-                                tension: 0.3,
-                                fill: true,
-                                backgroundColor: "rgba(4, 209, 130, 0.2)",
-                                borderColor: "rgb(4, 209, 130)",
-                                data: salesData.users, // Assuming you want to use "visitors" data
+                                data: salesValues,
                             },
                         ],
                     },

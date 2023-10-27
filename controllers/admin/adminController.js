@@ -256,41 +256,48 @@ exports.generateSalesReport = async (req, res, next) => {
  * Get Sales Data
  * Method GET
  */
-exports.getSalesData = asyncHandler(async (req, res) => {
+exports.getSalesData = async (req, res) => {
     try {
-        const currentMonth = new Date();
-        const twelveMonthsAgo = new Date(currentMonth);
-        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+        const pipeline = [
+            {
+                $project: {
+                    year: { $year: "$orderedDate" },
+                    month: { $month: "$orderedDate" },
+                    totalPrice: 1,
+                },
+            },
+            {
+                $group: {
+                    _id: { year: "$year", month: "$month" },
+                    totalSales: { $sum: "$totalPrice" },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    month: {
+                        $concat: [
+                            { $toString: "$_id.year" },
+                            "-",
+                            {
+                                $cond: {
+                                    if: { $lt: ["$_id.month", 10] },
+                                    then: { $concat: ["0", { $toString: "$_id.month" }] },
+                                    else: { $toString: "$_id.month" },
+                                },
+                            },
+                        ],
+                    },
+                    sales: "$totalSales",
+                },
+            },
+        ];
 
-        const totalSalesByMonth = Array(12).fill(0);
-        const activeUsersByMonth = Array(12).fill(0);
+        const monthlySalesArray = await Order.aggregate(pipeline);
 
-        for (let i = 0; i < 12; i++) {
-            const startOfMonth = new Date(currentMonth);
-            startOfMonth.setMonth(startOfMonth.getMonth() - i);
-            startOfMonth.setDate(1);
-            const endOfMonth = new Date(currentMonth);
-            endOfMonth.setMonth(endOfMonth.getMonth() - i + 1);
-            endOfMonth.setDate(0);
-
-            const orderFilter = { orderedDate: { $gte: startOfMonth, $lte: endOfMonth } };
-            const userFilter = { createdAt: { $gte: startOfMonth, $lte: endOfMonth } };
-            const order = await Order.find(orderFilter);
-            const user = await User.find(userFilter);
-
-            order.forEach((doc) => {
-                totalSalesByMonth[i] += doc.totalPrice;
-            });
-
-            user.forEach((doc) => {
-                activeUsersByMonth[i]++;
-            });
-        }
-
-        console.log(activeUsersByMonth);
-
-        res.json({ sales: totalSalesByMonth, users: activeUsersByMonth });
+        res.json(monthlySalesArray);
     } catch (error) {
-        throw new Error(error);
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-});
+};
