@@ -1,14 +1,14 @@
-const asyncHandler = require("express-async-handler");
-const User = require("../../models/userModel");
-const { validationResult } = require("express-validator");
-const validateMongoDbId = require("../../utils/validateMongodbId");
-const Category = require("../../models/categoryModel");
-const crypto = require("crypto");
-const sendEmail = require("../../utils/sendEmail");
-const Otp = require("../../models/otpModel");
-const { generateOtp, sendOtp } = require("../../utils/sendOtp");
-const Wallet = require("../../models/walletModel");
-const WalletTransation = require("../../models/walletTransactionModel");
+const asyncHandler = require('express-async-handler');
+const User = require('../../models/userModel');
+const { validationResult } = require('express-validator');
+const validateMongoDbId = require('../../utils/validateMongodbId');
+const Category = require('../../models/categoryModel');
+const crypto = require('crypto');
+const sendEmail = require('../../utils/sendEmail');
+const Otp = require('../../models/otpModel');
+const { generateOtp, sendOtp } = require('../../utils/sendOtp');
+const Wallet = require('../../models/walletModel');
+const WalletTransation = require('../../models/walletTransactionModel');
 
 /**
  * Login Page Route
@@ -18,7 +18,7 @@ exports.loginpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
         const categories = await Category.find({ isListed: true });
-        res.render("shop/pages/auth/login", { title: "Login", page: "login", messages, categories });
+        res.render('shop/pages/auth/login', { title: 'Login', page: 'login', messages, categories });
     } catch (error) {
         throw new Error(error);
     }
@@ -34,8 +34,8 @@ exports.logoutUser = asyncHandler(async (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            req.flash("success", "Logged Out!");
-            res.redirect("/auth/login");
+            req.flash('success', 'Logged Out!');
+            res.redirect('/auth/login');
         });
     } catch (error) {
         throw new Error(error);
@@ -51,7 +51,7 @@ exports.blockedUserpage = asyncHandler(async (req, res) => {
         const id = req.params.id;
         validateMongoDbId(id);
         const user = await User.findById(id);
-        res.render("shop/pages/auth/blocked", { title: "Blocked", page: "blocked", user });
+        res.render('shop/pages/auth/blocked', { title: 'Blocked', page: 'blocked', user });
     } catch (error) {
         throw new Error(error);
     }
@@ -67,10 +67,10 @@ exports.registerUser = asyncHandler(async (req, res) => {
         const messages = req.flash();
         if (!errors.isEmpty()) {
             errors.array().forEach((error) => {
-                req.flash("danger", error.msg);
+                req.flash('danger', error.msg);
             });
             const messages = req.flash();
-            res.render("shop/pages/auth/register", { title: "Register", page: "Login", messages, data: req.body });
+            res.render('shop/pages/auth/register', { title: 'Register', page: 'Login', messages, data: req.body });
         } else {
             const email = req.body.email;
             const existingUser = await User.findOne({ email: email });
@@ -127,33 +127,27 @@ exports.registerUser = asyncHandler(async (req, res) => {
 `;
                     sendEmail({
                         email: newUser.email,
-                        subject: "Email Verification",
+                        subject: 'Email Verification',
                         html: html,
                     });
-                    res.render("shop/pages/auth/verify-email", {
-                        title: "Verify Email",
-                        page: "Verify Email",
+                    res.render('shop/pages/auth/verify-email', {
+                        title: 'Verify Email',
+                        page: 'Verify Email',
                         email: newUser.email,
                         messages,
                     });
                 } catch (error) {
-                    req.flash("danger", "Failed to send Verification mail Otp");
-                    res.render("shop/pages/auth/verify-email", {
-                        title: "Verify Email",
-                        page: "Verify Email",
+                    req.flash('danger', 'Failed to send Verification mail Otp');
+                    res.render('shop/pages/auth/verify-email', {
+                        title: 'Verify Email',
+                        page: 'Verify Email',
                         email: newUser.email,
                         messages,
                     });
                 }
-                res.render("shop/pages/auth/verify-email", {
-                    title: "Verify Email",
-                    page: "Verify Email",
-                    email: newUser.email,
-                    messages,
-                });
             } else {
-                req.flash("warning", "Email Alardy Registerd Please login");
-                res.redirect("/auth/login");
+                req.flash('warning', 'Email Alardy Registerd Please login');
+                res.redirect('/auth/login');
             }
         }
     } catch (error) {
@@ -167,7 +161,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
  */
 exports.sendEmailpage = asyncHandler(async (req, res) => {
     try {
-        res.render("shop/pages/auth/send-email", { title: "Send Email", page: "Send Email" });
+        res.render('shop/pages/auth/send-email', { title: 'Send Email', page: 'Send Email' });
     } catch (error) {
         throw new Error(error);
     }
@@ -183,8 +177,8 @@ exports.sendEmail = asyncHandler(async (req, res) => {
         const isVerified = await User.findOne({ email: req.body.email, isEmailVerified: true });
 
         if (isVerified) {
-            req.flash("success", "Email Alrady verified Try login");
-            res.redirect("/auth/login");
+            req.flash('success', 'Email Alrady verified Try login');
+            res.redirect('/auth/login');
         } else {
             const otp = await Otp.create({
                 user_id: user._id,
@@ -234,26 +228,26 @@ exports.sendEmail = asyncHandler(async (req, res) => {
             try {
                 await sendEmail({
                     email: user.email,
-                    subject: "Email Verification",
+                    subject: 'Email Verification',
                     html: html,
                 });
-                req.flash("success", "Email sent. Please check your inbox.");
-                return res.render("shop/pages/auth/verify-email", {
-                    title: "Verify Email",
-                    page: "Verify Email",
+                req.flash('success', 'Email sent. Please check your inbox.');
+                return res.render('shop/pages/auth/verify-email', {
+                    title: 'Verify Email',
+                    page: 'Verify Email',
                     email: user.email,
                 });
             } catch (emailError) {
                 console.error(emailError);
-                req.flash("danger", "Failed to send verification email");
-                return res.redirect("/auth/verify-email");
+                req.flash('danger', 'Failed to send verification email');
+                return res.redirect('/auth/verify-email');
             }
         }
     } catch (error) {
         // Handle the top-level error
         console.error(error);
-        req.flash("danger", "An error occurred. Please try again later.");
-        return res.redirect("/auth/verify-email");
+        req.flash('danger', 'An error occurred. Please try again later.');
+        return res.redirect('/auth/verify-email');
     }
 });
 
@@ -265,7 +259,7 @@ exports.verifyEmailpage = asyncHandler(async (req, res) => {
     try {
         const email = req.body.email || req.user.email;
         const messages = req.flash();
-        res.render("shop/pages/auth/verify-email", { title: "Verify Email", page: "Verify Email", messages, email });
+        res.render('shop/pages/auth/verify-email', { title: 'Verify Email', page: 'Verify Email', messages, email });
     } catch (error) {
         throw new Error(error);
     }
@@ -279,8 +273,8 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
     try {
         const otp = await Otp.findOne({ otp_code: req.body.otp, expiration_time: { $gt: Date.now() }, used: false });
         if (!otp) {
-            req.flash("danger", "Otp is invalid or expired try again latter");
-            res.redirect("/auth/verify-otp");
+            req.flash('danger', 'Otp is invalid or expired try again latter');
+            res.redirect('/auth/verify-otp');
         }
 
         await otp.updateOne({ expiration_time: null, used: true });
@@ -296,21 +290,21 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
 
             const rerefedUserWalletTransactions = await WalletTransation.create({
                 amount: 100,
-                event: "Referal",
-                type: "credit",
+                event: 'Referal',
+                type: 'credit',
                 wallet: referedUserWallet._id,
             });
             const userWallet = await Wallet.findOneAndUpdate({ user: user._id }, { $inc: { balance: 50 } });
             const userWalletTransaction = await WalletTransation.create({
                 wallet: userWallet._id,
                 amount: 50,
-                type: "credit",
-                event: "Welcome Bounce",
+                type: 'credit',
+                event: 'Welcome Bounce',
             });
         }
 
-        req.flash("success", "Email Vefifed successfully");
-        res.redirect("/auth/login");
+        req.flash('success', 'Email Vefifed successfully');
+        res.redirect('/auth/login');
     } catch (error) {
         throw new Error(error);
     }
@@ -372,13 +366,13 @@ exports.resendEmail = asyncHandler(async (req, res) => {
         `;
         sendEmail({
             email: user.email,
-            subject: "Email Verification",
+            subject: 'Email Verification',
             html: html,
         });
-        req.flash("success", "Email Send Please check your inbox");
-        return res.render("shop/pages/auth/verify-email", {
-            title: "Verify Email",
-            page: "Verify Email",
+        req.flash('success', 'Email Send Please check your inbox');
+        return res.render('shop/pages/auth/verify-email', {
+            title: 'Verify Email',
+            page: 'Verify Email',
             email: user.email,
         });
     } catch (error) {
@@ -393,7 +387,7 @@ exports.resendEmail = asyncHandler(async (req, res) => {
 exports.registerpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        res.render("shop/pages/auth/register", { title: "Register", page: "register", data: "", messages });
+        res.render('shop/pages/auth/register', { title: 'Register', page: 'register', data: '', messages });
     } catch (error) {
         throw new Error(error);
     }
@@ -406,7 +400,7 @@ exports.registerpage = asyncHandler(async (req, res) => {
 exports.forgotPasswordpage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        res.render("shop/pages/auth/forgot-password", { title: "Forgot Password", page: "forgot-password", messages });
+        res.render('shop/pages/auth/forgot-password', { title: 'Forgot Password', page: 'forgot-password', messages });
     } catch (error) {
         throw new Error(error);
     }
@@ -421,14 +415,14 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
         const user = await User.findOne({ email: req.body.email });
 
         if (!user) {
-            req.flash("danger", "Email Not Found");
-            return res.redirect("/auth/forgot-password");
+            req.flash('danger', 'Email Not Found');
+            return res.redirect('/auth/forgot-password');
         }
 
         const resetToken = await user.createResetPasswordToken();
         await user.save();
 
-        const resetUrl = `${req.protocol}://${req.get("host")}/auth/reset-password/${resetToken}`;
+        const resetUrl = `${req.protocol}://${req.get('host')}/auth/reset-password/${resetToken}`;
         const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -473,23 +467,23 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
         try {
             await sendEmail({
                 email: user.email,
-                subject: "Password Reset",
+                subject: 'Password Reset',
                 html: html,
             });
 
-            req.flash("success", "Reset Link sent to your mail id");
-            return res.redirect("/auth/forgot-password");
+            req.flash('success', 'Reset Link sent to your mail id');
+            return res.redirect('/auth/forgot-password');
         } catch (error) {
             user.passwordResetToken = undefined;
             user.passwordResetTokenExpires = undefined;
             console.error(error);
-            req.flash("danger", "There was an error sending the password reset email, please try again later");
-            return res.redirect("/auth/forgot-password");
+            req.flash('danger', 'There was an error sending the password reset email, please try again later');
+            return res.redirect('/auth/forgot-password');
         }
     } catch (error) {
         console.error(error);
-        req.flash("danger", "An error occurred, please try again later");
-        return res.redirect("/auth/forgot-password");
+        req.flash('danger', 'An error occurred, please try again later');
+        return res.redirect('/auth/forgot-password');
     }
 });
 
@@ -499,15 +493,15 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
  */
 exports.resetPasswordpage = asyncHandler(async (req, res) => {
     try {
-        const token = crypto.createHash("sha256").update(req.params.token).digest("hex");
+        const token = crypto.createHash('sha256').update(req.params.token).digest('hex');
         const user = await User.findOne({ passwordResetToken: token, passwordResetTokenExpires: { $gt: Date.now() } });
 
         if (!user) {
-            req.flash("warning", "Token is invalid or has expired");
-            res.redirect("/auth/forgot-password");
+            req.flash('warning', 'Token is invalid or has expired');
+            res.redirect('/auth/forgot-password');
         }
 
-        res.render("shop/pages/auth/reset-password", { title: "Reset Password", page: "Reset-password", token });
+        res.render('shop/pages/auth/reset-password', { title: 'Reset Password', page: 'Reset-password', token });
     } catch (error) {
         throw new Error(error);
     }
@@ -523,8 +517,8 @@ exports.resetPassword = asyncHandler(async (req, res) => {
         const user = await User.findOne({ passwordResetToken: token, passwordResetTokenExpires: { $gt: Date.now() } });
 
         if (!user) {
-            req.flash("warning", "Token is invalid or has expired");
-            res.redirect("/auth/forgot-password");
+            req.flash('warning', 'Token is invalid or has expired');
+            res.redirect('/auth/forgot-password');
         }
 
         user.password = req.body.password;
@@ -534,8 +528,8 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 
         await user.save();
 
-        req.flash("success", "Password changed");
-        res.redirect("/auth/login");
+        req.flash('success', 'Password changed');
+        res.redirect('/auth/login');
     } catch (error) {
         throw new Error(error);
     }
@@ -548,7 +542,7 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 exports.sendOtppage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        res.render("shop/pages/auth/send-otp", { title: "Send Otp", page: "Send Otp", messages });
+        res.render('shop/pages/auth/send-otp', { title: 'Send Otp', page: 'Send Otp', messages });
     } catch (error) {
         throw new Error(error);
     }
@@ -561,7 +555,7 @@ exports.sendOtppage = asyncHandler(async (req, res) => {
 exports.verifyOtppage = asyncHandler(async (req, res) => {
     try {
         const messages = req.flash();
-        res.render("shop/pages/auth/verify-otp", { title: "Verify Otp", page: "Verify Otp", messages });
+        res.render('shop/pages/auth/verify-otp', { title: 'Verify Otp', page: 'Verify Otp', messages });
     } catch (error) {
         throw new Error(error);
     }
@@ -583,11 +577,11 @@ exports.sendOtp = asyncHandler(async (req, res) => {
 
         try {
             sendOtp(mobile, otp.otp_code);
-            req.flash("success", "OTP sent successfully");
-            res.redirect("/auth/verify-otp");
+            req.flash('success', 'OTP sent successfully');
+            res.redirect('/auth/verify-otp');
         } catch (error) {
-            req.flash("danger", "Failed to send OTP");
-            res.redirect("/auth/send-otp");
+            req.flash('danger', 'Failed to send OTP');
+            res.redirect('/auth/send-otp');
         }
     } catch (error) {
         throw new Error(error);
@@ -603,8 +597,8 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
         const otp = await Otp.findOne({ otp_code: req.body.otp, expiration_time: { $gt: Date.now() }, used: false });
 
         if (!otp) {
-            req.flash("danger", "Otp is invalid or expired");
-            res.redirect("/auth/verify-otp");
+            req.flash('danger', 'Otp is invalid or expired');
+            res.redirect('/auth/verify-otp');
         }
 
         await otp.updateOne({ expiration_time: null, used: true });
@@ -614,8 +608,8 @@ exports.verifyOtp = asyncHandler(async (req, res) => {
             isMobileVerified: true,
         });
 
-        req.flash("success", "Mobile number verifed successfully");
-        res.redirect("/");
+        req.flash('success', 'Mobile number verifed successfully');
+        res.redirect('/');
     } catch (error) {
         throw new Error(error);
     }
